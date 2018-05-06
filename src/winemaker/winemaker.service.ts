@@ -3,6 +3,7 @@ import { DWinemaker } from './winemaker.dto';
 import { Winemaker } from './winemaker.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Place } from '../place/place.entity';
 
 @Component()
 export class WinemakerService {
@@ -22,6 +23,7 @@ export class WinemakerService {
     winemaker.website = data.website;
     winemaker.background = data.background;
     winemaker.code = data.code;
+    winemaker.placeId = data.placeId;
     return this.repo.save(winemaker);
   }
 
@@ -36,6 +38,10 @@ export class WinemakerService {
   }
 
   list() {
-    return this.repo.find({});
+    return this.repo.createQueryBuilder('winemaker')
+      .leftJoinAndSelect('winemaker.place', 'place')
+      .orderBy('place.name', 'ASC')
+      .addOrderBy('winemaker.name', 'ASC')
+      .getMany();
   }
 }

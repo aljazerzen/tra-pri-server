@@ -19,6 +19,8 @@ export class Winemaker {
   @Column({ nullable: true })
   code: string;
 
+  @Column({ nullable: true })
+  placeId: number;
   @ManyToOne(() => Place, place => place.winemakers)
   place: Place;
 

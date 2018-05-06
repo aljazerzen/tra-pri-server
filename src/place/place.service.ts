@@ -25,7 +25,7 @@ export class PlaceService {
 
   async get(id: number) {
     const place = await this.repo.findOne(id);
-    if(!place) throw new NotFoundException('place');
+    if (!place) throw new NotFoundException('place');
     return place;
   }
 
@@ -34,6 +34,6 @@ export class PlaceService {
   }
 
   async list() {
-    return this.repo.find({});
+    return this.repo.find({ order: { name: 'ASC' } });
   }
 }

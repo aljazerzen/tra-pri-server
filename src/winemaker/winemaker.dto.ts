@@ -1,4 +1,4 @@
-import { IsDefined, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { IsDefined, IsInt, IsNotEmpty, IsString, MaxLength } from 'class-validator';
 import { Winemaker } from './winemaker.entity';
 import { DPlace } from '../place/place.dto';
 
@@ -17,6 +17,8 @@ export class DWinemaker {
   @IsString()
   code: string;
 
+  @IsInt()
+  placeId: number;
   place: DPlace;
 
   static create(entity: Winemaker) {
@@ -26,8 +28,10 @@ export class DWinemaker {
     r.website = entity.website;
     r.background = entity.background;
     r.code = entity.code;
-    if (entity.place)
+    r.placeId = entity.placeId;
+    if (entity.place) {
       r.place = DPlace.create(entity.place);
+    }
     return r;
   }
 

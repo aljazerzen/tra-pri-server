@@ -33,7 +33,7 @@ export class WineService {
 
   async get(id: number) {
     const wine = await this.repo.findOne(id);
-    if(!wine) throw new NotFoundException('wine');
+    if (!wine) throw new NotFoundException('wine');
     return wine;
   }
 
@@ -42,6 +42,6 @@ export class WineService {
   }
 
   async list() {
-    return this.repo.find({});
+    return this.repo.find({ order: { name: 'ASC' } });
   }
 }
