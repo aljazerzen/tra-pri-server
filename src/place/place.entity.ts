@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Coordinates } from '../coordinates/coordinates.entity';
+import { Winemaker } from '../winemaker/winemaker.entity';
 
 @Entity()
 export class Place {
@@ -13,4 +14,6 @@ export class Place {
   @Column(() => Coordinates)
   coordinates: Coordinates;
 
+  @OneToMany(() => Winemaker, winemaker => winemaker.place)
+  winemakers: Winemaker[];
 }

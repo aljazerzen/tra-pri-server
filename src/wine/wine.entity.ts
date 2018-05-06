@@ -1,4 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Winemaker } from '../winemaker/winemaker.entity';
+import { WineType } from '../wine-type/wine-type.entity';
+import { Sugar } from '../sugar/sugar.entity';
+import { Variety } from '../variety/variety.entity';
 
 @Entity()
 export class Wine {
@@ -22,14 +26,17 @@ export class Wine {
   @Column({ type: 'text', default: '' })
   awards: string;
 
-  // @Column('text')
-  // winemakerId: string;
+  @ManyToOne(() => Winemaker, winemaker => winemaker.wines)
+  winemaker: Winemaker;
 
-  // @Column('text')
-  // typeid: string;
+  @ManyToOne(() => WineType, type => type.wines)
+  type: WineType;
 
-  // @Column('text')
-  // sugarid: string;
+  @ManyToOne(() => Sugar, sugar => sugar.wines)
+  sugar: Sugar;
+
+  @ManyToMany(() => Variety) @JoinTable()
+  varieties: Variety[];
 
   @Column({ type: 'decimal', nullable: true })
   price: number;
