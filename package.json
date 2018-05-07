@@ -16,6 +16,7 @@
     "@nestjs/typeorm": "^2.0.0",
     "class-validator": "^0.8.5",
     "dotenv": "^5.0.1",
+    "express": "^4.16.3",
     "nodemon": "^1.17.3",
     "pg": "^7.4.2",
     "reflect-metadata": "^0.1.10",
