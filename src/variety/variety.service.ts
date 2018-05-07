@@ -31,6 +31,17 @@ export class VarietyService {
     return variety;
   }
 
+  async getMany(ids: number[]) {
+    console.log(ids);
+    const varieties = await this.repo.createQueryBuilder('variety')
+      .where('id IN (:...ids)', { ids })
+      .getMany();
+
+    if (varieties.length < ids.length)
+      throw new NotFoundException('varieties');
+    return varieties;
+  }
+
   async remove(varietyId: number) {
     await this.repo.delete({ id: varietyId });
   }

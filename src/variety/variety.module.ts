@@ -8,6 +8,7 @@ import { VarietyService } from './variety.service';
   modules: [TypeOrmModule.forFeature([Variety])],
   controllers: [VarietyController],
   components: [VarietyService],
+  exports: [VarietyService]
 })
 export class VarietyModule {
 }

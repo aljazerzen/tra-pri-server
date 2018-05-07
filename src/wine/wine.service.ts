@@ -3,12 +3,14 @@ import { DWine } from './wine.dto';
 import { Wine } from './wine.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { VarietyService } from '../variety/variety.service';
 
 @Component()
 export class WineService {
 
   constructor(
-    @InjectRepository(Wine) private repo: Repository<Wine>
+    @InjectRepository(Wine) private repo: Repository<Wine>,
+    private varietyService: VarietyService,
   ) {
   }
 
@@ -28,11 +30,16 @@ export class WineService {
     wine.volume = data.volume;
     wine.abv = data.abv;
     wine.code = data.code;
+    wine.winemakerId = data.winemakerId;
+    wine.typeId = data.typeId;
+    wine.sugarId = data.sugarId;
+    wine.varieties = data.varietyIds ? await this.varietyService.getMany(data.varietyIds) : [];
+
     return this.repo.save(wine);
   }
 
   async get(id: number) {
-    const wine = await this.repo.findOne(id);
+    const wine = await this.repo.findOne(id, { relations: ['varieties'] });
     if (!wine) throw new NotFoundException('wine');
     return wine;
   }

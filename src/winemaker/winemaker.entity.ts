@@ -10,7 +10,7 @@ export class Winemaker {
   @Column({ type: 'varchar', length: 100 })
   name: string;
 
-  @Column({ type: 'varchar', length: 300 })
+  @Column({ type: 'varchar', length: 300, nullable: true })
   website: string;
 
   @Column({ type: 'text', default: '' })

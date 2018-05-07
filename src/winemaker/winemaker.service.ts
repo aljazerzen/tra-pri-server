@@ -4,6 +4,7 @@ import { Winemaker } from './winemaker.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Place } from '../place/place.entity';
+import { CannotDeleteException } from '../cannot-delete.exception';
 
 @Component()
 export class WinemakerService {
@@ -34,7 +35,11 @@ export class WinemakerService {
   }
 
   async remove(winemakerId: number) {
-    await this.repo.delete({ id: winemakerId });
+    try {
+      await this.repo.delete({ id: winemakerId });
+    } catch (e) {
+      throw new CannotDeleteException('winemaker');
+    }
   }
 
   list() {

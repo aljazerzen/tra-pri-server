@@ -1,9 +1,10 @@
-import { IsDefined, IsInt, IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min } from 'class-validator';
+import { IsArray, IsDefined, IsInt, IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Wine } from './wine.entity';
 import { DWinemaker } from '../winemaker/winemaker.dto';
 import { DWineType } from '../wine-type/wine-type.dto';
 import { DSugar } from '../sugar/sugar.dto';
+import { DVariety } from '../variety/variety.dto';
 
 export class DWine {
   id: number;
@@ -36,9 +37,21 @@ export class DWine {
   @IsString()
   code: string;
 
+  @IsInt()
+  winemakerId: number;
   winemaker: DWinemaker;
+
+  @IsInt()
+  typeId: number;
   type: DWineType;
+
+  @IsInt()
+  sugarId: number;
   sugar: DSugar;
+
+  @IsInt({ each: true }) @IsArray()
+  varietyIds: number[];
+  varieties: DVariety[];
 
   static create(entity: Wine) {
     const r = new DWine();
@@ -53,12 +66,18 @@ export class DWine {
     r.volume = entity.volume;
     r.abv = entity.abv;
     r.code = entity.code;
+    r.winemakerId = entity.winemakerId;
+    r.typeId = entity.typeId;
+    r.sugarId = entity.sugarId;
+
     if(entity.winemaker)
       r.winemaker = DWinemaker.create(entity.winemaker);
     if(entity.type)
       r.type = DWineType.create(entity.type);
     if(entity.sugar)
       r.sugar = DSugar.create(entity.sugar);
+    if(entity.varieties)
+      r.varieties = DVariety.createList(entity.varieties);
     return r;
   }
 

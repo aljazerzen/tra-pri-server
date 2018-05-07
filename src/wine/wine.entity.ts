@@ -26,12 +26,18 @@ export class Wine {
   @Column({ type: 'text', default: '' })
   awards: string;
 
+  @Column({ nullable: true })
+  winemakerId: number;
   @ManyToOne(() => Winemaker, winemaker => winemaker.wines)
   winemaker: Winemaker;
 
+  @Column({ nullable: true })
+  typeId: number;
   @ManyToOne(() => WineType, type => type.wines)
   type: WineType;
 
+  @Column({ nullable: true })
+  sugarId: number;
   @ManyToOne(() => Sugar, sugar => sugar.wines)
   sugar: Sugar;
 

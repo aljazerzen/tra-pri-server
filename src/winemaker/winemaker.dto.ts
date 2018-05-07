@@ -8,7 +8,7 @@ export class DWinemaker {
   @IsString() @IsDefined() @IsNotEmpty() @MaxLength(100)
   name: string;
 
-  @IsString() @IsDefined() @IsNotEmpty() @MaxLength(300)
+  @IsString() @MaxLength(300)
   website: string;
 
   @IsString()
