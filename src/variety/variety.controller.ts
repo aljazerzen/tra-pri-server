@@ -1,8 +1,10 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { DVariety } from './variety.dto';
 import { VarietyService } from './variety.service';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('varieties')
+@UseGuards(AuthGuard)
 export class VarietyController {
 
   constructor(

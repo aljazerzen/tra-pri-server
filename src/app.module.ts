@@ -6,6 +6,7 @@ import { WineTypeModule } from './wine-type/wine-type.module';
 import { SugarModule } from './sugar/sugar.module';
 import { WinemakerModule } from './winemaker/winemaker.module';
 import { VarietyModule } from './variety/variety.module';
+import { AuthController } from './auth/auth.controller';
 
 @Module({
   imports: [
@@ -18,6 +19,9 @@ import { VarietyModule } from './variety/variety.module';
     VarietyModule,
     SugarModule,
   ],
+  controllers: [
+    AuthController
+  ]
 
 })
 export class AppModule {

@@ -1,8 +1,10 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { DWinemaker } from './winemaker.dto';
 import { WinemakerService } from './winemaker.service';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('winemakers')
+@UseGuards(AuthGuard)
 export class WinemakerController {
 
   constructor(

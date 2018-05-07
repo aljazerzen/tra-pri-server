@@ -13,7 +13,7 @@ export class ValidatorPipe implements PipeTransform<any> {
     const object = plainToClass(metatype, value);
     const errors = await validate(object, { skipMissingProperties: true, whitelist: true });
     if (errors.length > 0) {
-      throw new BadRequestException(this.extractErrorMessages(errors), 'validation error');
+      throw new BadRequestException(this.extractErrorMessages(errors), 'VALIDATION_ERROR');
     }
 
     return object;

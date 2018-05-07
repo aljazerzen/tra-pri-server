@@ -1,8 +1,10 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { DPlace } from './place.dto';
 import { PlaceService } from './place.service';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('places')
+@UseGuards(AuthGuard)
 export class PlaceController {
 
   constructor(

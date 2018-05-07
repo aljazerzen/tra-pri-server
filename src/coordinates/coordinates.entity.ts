@@ -1,9 +1,9 @@
 import { Column } from 'typeorm';
 
 export class Coordinates {
-  @Column('float8')
+  @Column({ type: 'float8', nullable: true })
   lat: number;
 
-  @Column('float8')
+  @Column({ type: 'float8', nullable: true })
   lng: number;
 }

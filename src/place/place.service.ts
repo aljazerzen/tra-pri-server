@@ -33,7 +33,7 @@ export class PlaceService {
     await this.repo.delete({ id: placeId });
   }
 
-  async list() {
+  list() {
     return this.repo.find({ order: { name: 'ASC' } });
   }
 }
