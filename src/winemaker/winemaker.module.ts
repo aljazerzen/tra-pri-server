@@ -3,9 +3,11 @@ import { WinemakerController } from './winemaker.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Winemaker } from './winemaker.entity';
 import { WinemakerService } from './winemaker.service';
+import { FileModule } from '../file/file.module';
+import { FileService } from '../file/file.service';
 
 @Module({
-  modules: [TypeOrmModule.forFeature([Winemaker])],
+  imports: [TypeOrmModule.forFeature([Winemaker]), FileModule],
   controllers: [WinemakerController],
   components: [WinemakerService],
 })

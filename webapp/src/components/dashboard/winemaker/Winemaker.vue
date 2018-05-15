@@ -61,6 +61,28 @@
     </div>
 
     <div class="field">
+      <label class="label">Slike</label>
+
+      <div class="field image-inline">
+        <div class="control" v-for="image in winemaker.images" v-bind:key="image.id">
+          <figure class="image is-128x128">
+            <img v-bind:src="image.url">
+          </figure>
+          <a class="is-danger is-medium delete" v-on:click="removeImage(image)"></a>
+        </div>
+
+        <div class="control file">
+          <label class="file-label">
+            <input class="file-input" type="file" ref="newImage" v-on:change="uploadImage()">
+            <span class="file-cta button" v-bind:class="isUploading ? 'is-loading' : ''">
+              <span class="file-label">Dodaj</span>
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
       <label class="label">Zgodba</label>
       <div class="control">
         <textarea class="textarea" v-model="winemaker.background" v-bind:rows="3"></textarea>
@@ -95,9 +117,11 @@
         isLoading: true,
         isLoadingPlaces: true,
         isSaving: false,
+        isUploading: false,
         winemaker: {},
         places: [],
         errors: [],
+        newImage: null,
       };
     },
     created() {
@@ -151,9 +175,33 @@
             await this.$http.delete('winemakers/' + this.winemaker.id);
           }
           this.back();
-        } catch(e) {
+        } catch (e) {
           errorHandler(this)(e);
         }
+      },
+
+      async uploadImage() {
+        if (this.$refs.newImage.files.length) {
+          const formData = new FormData();
+          formData.append('file', this.$refs.newImage.files[0]);
+
+          try {
+            this.isUploading = true;
+            const upload = await this.$http.post('image', formData).then(data => data.json());
+            this.isUploading = false;
+
+            if (!this.winemaker.images)
+              this.winemaker.images = [];
+            this.winemaker.images.push(upload);
+          } catch (e) {
+            errorHandler(this)(e);
+          }
+          this.isUploading = false;
+        }
+      },
+
+      async removeImage(image) {
+        this.winemaker.images = this.winemaker.images.filter(i => i.id !== image.id);
       },
 
       back() {

@@ -8,6 +8,7 @@ async function bootstrap() {
   config();
 
   const expressInstance = express();
+  expressInstance.use(express.static('public'));
   expressInstance.use(express.static('webapp/dist'));
 
   const app = await NestFactory.create(AppModule, expressInstance, { cors: true });

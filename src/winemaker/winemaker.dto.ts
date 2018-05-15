@@ -1,12 +1,17 @@
-import { IsDefined, IsInt, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { IsDefined, IsInt, IsNotEmpty, IsString, MaxLength, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 import { Winemaker } from './winemaker.entity';
 import { DPlace } from '../place/place.dto';
+import { DFile } from '../file/file.dto';
 
 export class DWinemaker {
   id: number;
 
   @IsString() @IsDefined() @IsNotEmpty() @MaxLength(100)
   name: string;
+
+  @IsDefined() @ValidateNested({ each: true }) @Type(() => DFile)
+  images: DFile[];
 
   @IsString() @MaxLength(300)
   website: string;
@@ -31,6 +36,9 @@ export class DWinemaker {
     r.placeId = entity.placeId;
     if (entity.place) {
       r.place = DPlace.create(entity.place);
+    }
+    if (entity.images) {
+      r.images = entity.images.map(i => DFile.create(i));
     }
     return r;
   }

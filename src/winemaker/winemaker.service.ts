@@ -3,14 +3,15 @@ import { DWinemaker } from './winemaker.dto';
 import { Winemaker } from './winemaker.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Place } from '../place/place.entity';
 import { CannotDeleteException } from '../cannot-delete.exception';
+import { FileService } from '../file/file.service';
 
 @Component()
 export class WinemakerService {
 
   constructor(
-    @InjectRepository(Winemaker) private repo: Repository<Winemaker>
+    @InjectRepository(Winemaker) private repo: Repository<Winemaker>,
+    private fileService: FileService,
   ) {
   }
 
@@ -25,11 +26,13 @@ export class WinemakerService {
     winemaker.background = data.background;
     winemaker.code = data.code;
     winemaker.placeId = data.placeId;
+    winemaker.images = await this.fileService.findMany(data.images.map(i => i.id));
+
     return this.repo.save(winemaker);
   }
 
   async get(id: number) {
-    const winemaker = await this.repo.findOne(id);
+    const winemaker = await this.repo.findOne(id, { relations: ['images'] });
     if(!winemaker) throw new NotFoundException('winemaker');
     return winemaker;
   }

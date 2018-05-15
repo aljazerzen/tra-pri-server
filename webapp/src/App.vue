@@ -37,4 +37,21 @@
     margin-right: auto;
     margin-left: auto;
   }
+
+  .image-inline>.control {
+    position: relative;
+    display: inline-block;
+    margin-right: 1em;
+    vertical-align: text-top;
+  }
+
+  .image-inline .delete {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+  }
+
+  .image-inline .image {
+    overflow: hidden;
+  }
 </style>

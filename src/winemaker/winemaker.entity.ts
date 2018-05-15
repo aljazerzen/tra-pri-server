@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, JoinTable } from 'typeorm';
 import { Place } from '../place/place.entity';
 import { Wine } from '../wine/wine.entity';
+import { File } from '../file/file.entity';
 
 @Entity()
 export class Winemaker {
@@ -12,6 +13,9 @@ export class Winemaker {
 
   @Column({ type: 'varchar', length: 300, nullable: true })
   website: string;
+
+  @ManyToMany(() => File, file => file.winemakers) @JoinTable()
+  images: File[];
 
   @Column({ type: 'text', default: '' })
   background: string;
