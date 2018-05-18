@@ -48,7 +48,11 @@ export class WineService {
     await this.repo.delete({ id: wineId });
   }
 
-  async list() {
-    return this.repo.find({ order: { name: 'ASC' } });
+  async list(relations: string[] = []) {
+    return this.repo.find({ order: { name: 'ASC' }, relations });
+  }
+
+  listFull() {
+    return this.list(['winemaker', 'winemaker.place', 'winemaker.images', 'varieties', 'sugar', 'type']);
   }
 }

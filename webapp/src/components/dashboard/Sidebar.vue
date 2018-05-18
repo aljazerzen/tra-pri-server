@@ -24,16 +24,10 @@
       </li>
     </ul>
     <p class="menu-label">
-      Paketi
-    </p>
-    <ul class="menu-list">
-      <li><a>Zgodovina</a></li>
-      <li><a>Ustvari</a></li>
-    </ul>
-    <p class="menu-label">
       Sistem
     </p>
     <ul class="menu-list">
+      <li><router-link to="/paketi">Vsebinski paketi</router-link></li>
       <li><a>Statistika</a></li>
       <li><a v-on:click="logout()">Odjava</a></li>
     </ul>

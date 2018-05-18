@@ -8,6 +8,7 @@ import { WinemakerModule } from './winemaker/winemaker.module';
 import { VarietyModule } from './variety/variety.module';
 import { AuthController } from './auth/auth.controller';
 import { FileModule } from './file/file.module';
+import { PackageModule } from './package/package.module';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { FileModule } from './file/file.module';
     SugarModule,
     WinemakerModule,
     VarietyModule,
-    SugarModule,
+    PackageModule,
   ],
   controllers: [
     AuthController

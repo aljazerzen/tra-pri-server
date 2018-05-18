@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn, CreateDateColumn, OneToOne } from 'typeorm';
 import { FILE_TYPE } from './file.constants';
 import { Winemaker } from '../winemaker/winemaker.entity';
+import { WinePackage } from '../package/wine-package.entity';
 
 @Entity()
 export class File {
@@ -19,6 +20,9 @@ export class File {
 
   @ManyToMany(() => Winemaker, wm => wm.images)
   winemakers: Winemaker;
+
+  @OneToOne(() => WinePackage, pack => pack.file)
+  winePackage: WinePackage;
 
   @CreateDateColumn()
   createdAt: Date

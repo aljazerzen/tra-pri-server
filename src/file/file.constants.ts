@@ -1,3 +1,3 @@
 export enum FILE_TYPE {
-  IMAGE = 'IMAGE', VIDEO = 'VIDEO'
+  IMAGE = 'IMAGE', VIDEO = 'VIDEO', PACKAGE = 'PACK',
 }

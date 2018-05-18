@@ -1,6 +1,10 @@
 export function errorHandler(vue) {
   return (e) => {
     switch (e.status) {
+      case 0:
+        vue.errors = ['Strežnik nedosegljiv.'];
+        break;
+
       case 500:
         vue.errors = ['Napaka na strežniku.'];
         return;

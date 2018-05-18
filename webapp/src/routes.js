@@ -9,7 +9,8 @@ import WineTypes from './components/dashboard/wine-type/WineTypes';
 import Varieties from './components/dashboard/variety/Varieties';
 import Variety from './components/dashboard/variety/Variety';
 import Dashboard from './components/dashboard/Dashboard';
-import Login from './components/Login'
+import Packages from './components/dashboard/package/Packages';
+import Login from './components/Login';
 
 export default [
   {
@@ -25,6 +26,7 @@ export default [
       { path: '/vrste', component: WineTypes },
       { path: '/sorte', component: Varieties },
       { path: '/sorte/:id', name: 'variety', component: Variety },
+      { path: '/paketi', component: Packages },
     ]
   },
   { path: '/login', component: Login },

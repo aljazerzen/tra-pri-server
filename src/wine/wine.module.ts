@@ -9,6 +9,7 @@ import { VarietyModule } from '../variety/variety.module';
   modules: [TypeOrmModule.forFeature([Wine]), VarietyModule],
   controllers: [WineController],
   components: [WineService],
+  exports: [WineService]
 })
 export class WineModule {
 }

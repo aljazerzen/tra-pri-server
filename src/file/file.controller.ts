@@ -1,4 +1,13 @@
-import { Controller, FileInterceptor, Post, Delete, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  FileInterceptor,
+  Post,
+  Delete,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+  Get
+} from '@nestjs/common';
 import { FileService } from './file.service';
 import { FILE_TYPE } from './file.constants';
 import { DFile } from './file.dto';
@@ -20,8 +29,15 @@ export class FileController {
     return DFile.create(entity);
   }
 
+  @Get('files/unused')
+  async listUnused() {
+    return this.fileService.getUnused();
+  }
+
   @Delete('files/unused')
   async removeUnused() {
-    await this.fileService.removeUnused();
+    const files = await this.fileService.getUnused();
+    await this.fileService.remove(files);
+    return { deleted: files.length };
   }
 }
