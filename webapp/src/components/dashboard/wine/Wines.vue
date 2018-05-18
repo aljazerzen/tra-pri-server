@@ -14,62 +14,15 @@
       <router-link :to="{ name: 'wine', params: { id: wine.id }}">
         <div class="card-header">
           <div class="card-header-title level">
-            <p class="level-left">{{ wine.name }} <span v-if="wine.year" class="tag is-light">{{ wine.year}}</span></p>
-            <p class="level-right " v-if="wine.code">{{ wine.code }}</p>
+            <p class="level-left"><i class="has-text-grey">{{ wine.winemaker.name }}: </i> {{ wine.name }}</p>
+            <p class="level-right " v-if="wine.code">
+              <span v-if="wine.year" class="tag is-light">{{ wine.year}}</span>
+              {{ wine.code }}
+            </p>
           </div>
         </div>
       </router-link>
     </div>
-
-    <!--<nav class="panel">
-      <p class="panel-heading">
-        Vina
-      </p>
-      <div class="panel-block">
-        <p class="control has-icons-left">
-          <input class="input is-small" type="text" placeholder="search">
-          <span class="icon is-small is-left">
-            <i class="fas fa-search" aria-hidden="true"></i>
-          </span>
-        </p>
-      </div>
-      <a class="panel-block is-active">
-        <span class="panel-icon">
-          <i class="fas fa-book" aria-hidden="true"></i>
-        </span>
-        bulma
-      </a>
-      <a class="panel-block">
-        <span class="panel-icon">
-          <i class="fas fa-book" aria-hidden="true"></i>
-        </span>
-        marksheet
-      </a>
-      <a class="panel-block">
-        <span class="panel-icon">
-          <i class="fas fa-book" aria-hidden="true"></i>
-        </span>
-        minireset.css
-      </a>
-      <a class="panel-block">
-        <span class="panel-icon">
-          <i class="fas fa-book" aria-hidden="true"></i>
-        </span>
-        jgthms.github.io
-      </a>
-      <a class="panel-block">
-        <span class="panel-icon">
-          <i class="fas fa-code-fork" aria-hidden="true"></i>
-        </span>
-        daniellowtw/infboard
-      </a>
-      <a class="panel-block">
-        <span class="panel-icon">
-          <i class="fas fa-code-fork" aria-hidden="true"></i>
-        </span>
-        mojs
-      </a>
-    </nav>-->
   </div>
 </template>
 
@@ -101,7 +54,11 @@
   }
 
   .card-header-title .tag {
-    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  .card-header-title .level-left i {
+    margin-right: 10px;
   }
 
   .a {

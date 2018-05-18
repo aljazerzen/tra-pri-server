@@ -130,28 +130,27 @@
       </div>
     </div>
 
-    <div class="field columns">
-      <div class="field column">
-        <label class="label">Priporočena temperatura</label>
-        <div class="control">
-          <input class="input" type="text" v-model="wine.temperature">
-        </div>
+    <div class="field">
+      <label class="label">Kulinarika</label>
+      <div class="control">
+        <textarea class="textarea" v-model="wine.culinary" v-bind:rows="2"></textarea>
       </div>
-      <div class="field column">
-        <label class="label">Kulinarika</label>
-        <div class="control">
-          <input class="input" type="text" v-model="wine.culinary">
-        </div>
-      </div>
-
     </div>
+
+    <div class="field">
+      <label class="label">Priporočena temperatura</label>
+      <div class="control">
+        <input class="input" type="text" v-model="wine.temperature">
+      </div>
+    </div>
+
     <div class="field columns">
 
       <div class="field column">
         <label class="label">Cena</label>
         <div class="control field has-addons">
           <div class="control is-expanded">
-            <input class="input" type="number" v-model="wine.price">
+            <input class="input" type="number" v-model="wine.price" step="1">
           </div>
           <p class="control">
             <a class="button is-static">€</a>
@@ -163,7 +162,7 @@
         <label class="label">Prostornina</label>
         <div class="control field has-addons">
           <div class="control is-expanded">
-            <input class="input" type="number" v-model="wine.volume">
+            <input class="input" type="number" v-model="wine.volume" step="0.25">
           </div>
           <p class="control">
             <a class="button is-static">L</a>
@@ -175,7 +174,7 @@
         <label class="label">Alkohol</label>
         <div class="control field has-addons">
           <div class="control is-expanded">
-            <input class="input" type="number" v-model="wine.abv">
+            <input class="input" type="number" v-model="wine.abv" step="0.5">
           </div>
           <p class="control">
             <a class="button is-static">%</a>
@@ -240,7 +239,7 @@
         this.wine.id = this.$route.params.id;
 
         if (this.isNew())
-          this.wine = { name: '', varietyIds: [] };
+          this.wine = { name: '', varietyIds: [], volume: 0.75 };
         else {
           this.isLoading = true;
           this.wine = await this.$http.get('wines/' + this.wine.id).then(data => data.json())

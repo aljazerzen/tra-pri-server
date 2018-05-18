@@ -49,7 +49,7 @@ export class WineService {
   }
 
   async list(relations: string[] = []) {
-    return this.repo.find({ order: { name: 'ASC' }, relations });
+    return this.repo.find({ order: { winemakerId: 'ASC', name: 'ASC' }, relations });
   }
 
   listFull() {
