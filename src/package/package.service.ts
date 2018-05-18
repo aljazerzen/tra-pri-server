@@ -41,7 +41,7 @@ export class PackageService {
     const { data, images } = this.simplify(wines);
 
     const pack = new WinePackage();
-    pack.wineCount = data.length;
+    pack.wineCount = data.wines.length;
     pack.date = new Date();
     pack.size = 0;
     await this.repo.save(pack);
@@ -67,7 +67,7 @@ export class PackageService {
       return name;
     };
 
-    const data = wines.map(wine => ({
+    const mappedWines = wines.map(wine => ({
       abv: +wine.abv,
       awards: wine.awards,
       code: wine.code || null,
@@ -97,7 +97,7 @@ export class PackageService {
       year: wine.year || null,
     }));
 
-    return { data, images };
+    return { data: { wines: mappedWines }, images };
   }
 
   async compress(jsonData, images: { name: string, file: File}[], name: string) {
