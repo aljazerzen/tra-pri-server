@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as crypto from 'crypto';
 import { FILE_TYPE } from './file.constants';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Component()
 export class FileService {
@@ -13,11 +14,12 @@ export class FileService {
 
   static ALLOWED_EXTENSIONS = {
     [FILE_TYPE.IMAGE]: ['.png', '.jpg', '.jpeg'],
-    [FILE_TYPE.VIDEO]: ['.mp4'],
+    [FILE_TYPE.VIDEO]: ['.mp4', '.webm'],
   };
 
   constructor(
-    @InjectRepository(File) private repo) { //: Repository<File>)
+    @InjectRepository(File) private repo: Repository<File>,
+  ) {
   }
 
   async findMany(ids: number[]): Promise<File[]> {
@@ -30,6 +32,13 @@ export class FileService {
     if (ids.length > files.length)
       throw new NotFoundException('files');
     return files;
+  }
+
+  async get(id: number): Promise<File> {
+    const file = await this.repo.findOne(id);
+    if (!file)
+      throw new NotFoundException('files');
+    return file;
   }
 
   async saveUpload(upload, type: FILE_TYPE) {
@@ -78,7 +87,7 @@ export class FileService {
   }
 
   async remove(files: File[]) {
-    for(let file of files) {
+    for (let file of files) {
       await new Promise(resolve => fs.unlink(path.resolve(FileService.UPLOAD_PATH, file.key), resolve));
     }
 

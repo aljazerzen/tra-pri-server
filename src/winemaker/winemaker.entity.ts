@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, JoinTable } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, JoinTable, JoinColumn, OneToOne } from 'typeorm';
 import { Place } from '../place/place.entity';
 import { Wine } from '../wine/wine.entity';
 import { File } from '../file/file.entity';
@@ -16,6 +16,9 @@ export class Winemaker {
 
   @ManyToMany(() => File, file => file.winemakers) @JoinTable()
   images: File[];
+
+  @ManyToOne(() => File, v => v.winemakerVideo)
+  video: File;
 
   @Column({ type: 'text', default: '' })
   background: string;

@@ -1,7 +1,9 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn, CreateDateColumn, OneToOne } from 'typeorm';
+import { Wine } from './../wine/wine.entity';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn, CreateDateColumn, OneToOne, ManyToOne, OneToMany } from 'typeorm';
 import { FILE_TYPE } from './file.constants';
 import { Winemaker } from '../winemaker/winemaker.entity';
 import { WinePackage } from '../package/wine-package.entity';
+import { Variety } from '../variety/variety.entity';
 
 @Entity()
 export class File {
@@ -19,7 +21,16 @@ export class File {
   url: string;
 
   @ManyToMany(() => Winemaker, wm => wm.images)
-  winemakers: Winemaker;
+  winemakers: Winemaker[];
+
+  @ManyToMany(() => Variety, v => v.images)
+  varieties: Variety[];
+
+  @ManyToMany(() => Wine, v => v.images)
+  wines: Wine[];
+
+  @OneToMany(() => Winemaker, v => v.video)
+  winemakerVideo: Wine[];
 
   @OneToOne(() => WinePackage, pack => pack.file)
   winePackage: WinePackage;

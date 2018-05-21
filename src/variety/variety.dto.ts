@@ -1,4 +1,5 @@
-import { IsBoolean, IsDefined, IsInt, IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min } from 'class-validator';
+import { DFile } from './../file/file.dto';
+import { IsBoolean, IsDefined, IsInt, IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Variety } from './variety.entity';
 
@@ -7,6 +8,9 @@ export class DVariety {
 
   @IsString() @IsDefined() @IsNotEmpty() @MaxLength(100)
   name: string;
+
+  @IsDefined() @ValidateNested({ each: true }) @Type(() => DFile)
+  images: DFile[];
 
   @IsString()
   description: string;
@@ -20,6 +24,9 @@ export class DVariety {
     r.name = entity.name;
     r.description = entity.description;
     r.hasLocalOrigins= entity.hasLocalOrigins;
+    if (entity.images) {
+      r.images = entity.images.map(i => DFile.create(i));
+    }
     return r;
   }
 

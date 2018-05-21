@@ -29,6 +29,13 @@ export class FileController {
     return DFile.create(entity);
   }
 
+  @Post('video')
+  @UseInterceptors(FileInterceptor('file'))
+  async video(@UploadedFile() upload) {
+    const entity = await this.fileService.saveUpload(upload, FILE_TYPE.VIDEO);
+    return DFile.create(entity);
+  }
+
   @Get('files/unused')
   async listUnused() {
     return this.fileService.getUnused();

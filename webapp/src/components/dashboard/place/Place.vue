@@ -28,89 +28,101 @@
 </template>
 
 <script>
-  const vipava = { lat: 45.8395977, lng: 13.9481168 };
+const vipava = { lat: 45.8395977, lng: 13.9481168 };
 
-  export default {
-    name: 'Place',
-    data() {
-      return {
-        place: {},
-        map: null,
-        marker: null,
-      };
+export default {
+  name: "Place",
+  data() {
+    return {
+      place: {},
+      map: null,
+      marker: null
+    };
+  },
+  created() {
+    this.load();
+  },
+  mounted() {
+    this.initMaps();
+  },
+  watch: {
+    $route: "load"
+  },
+  methods: {
+    isNew() {
+      return !this.place || !Number.isInteger(+this.place.id);
     },
-    created() {
-      this.load();
-    },
-    mounted() {
-      this.initMaps();
-    },
-    watch: {
-      '$route': 'load'
-    },
-    methods: {
-      isNew() {
-        return !this.place || !Number.isInteger(+this.place.id);
-      },
 
-      async load() {
-        this.place.id = this.$route.params.id;
+    async load() {
+      this.place.id = this.$route.params.id;
 
-        if (this.isNew())
-          this.place = { name: '', coordinates: vipava };
-        else {
-          this.place = await this.$http.get('places/' + this.place.id).then(data => data.json());
-          if(this.place.coordinates) {
-            this.marker.setPosition(this.place.coordinates);
-            this.map.setCenter(this.place.coordinates);
-          }
-        }
-      },
+      if (this.isNew()) this.place = { name: "", coordinates: vipava };
+      else {
+        this.place = await this.$http
+          .get("places/" + this.place.id)
+          .then(data => data.json());
 
-      async save() {
-        if (this.isNew()) {
-          this.place = await this.$http.post('places', this.place).then(data => data.json());
-        } else {
-          this.place = await this.$http.put('places/' + this.place.id, this.place).then(data => data.json());
-        }
-        this.back();
-      },
+        const mapCenter =
+          this.place.coordinates &&
+          this.place.coordinates.lat &&
+          this.place.coordinates.lng
+            ? this.place.coordinates
+            : vipava;
 
-      async remove() {
-        if (!this.isNew()) {
-          await this.$http.delete('places/' + this.place.id);
-        }
-        this.back();
-      },
-
-      initMaps() {
-        // eslint-disable-next-line
-        this.map = new google.maps.Map(this.$refs.map, {
-          center: vipava,
-          zoom: 13
-        });
-        // eslint-disable-next-line
-        this.marker = new google.maps.Marker({ position: vipava, map: this.map });
-
-        this.map.addListener('click', (event) => {
-          this.marker.setPosition(event.latLng);
-          this.place.coordinates = { lat: event.latLng.lat(), lng: event.latLng.lng() };
-        });
-      },
-
-      back() {
-        if (window.history.length === 1)
-          window.close();
-        else
-          this.$router.go(-1);
+        this.marker.setPosition(mapCenter);
+        this.map.setCenter(mapCenter);
       }
+    },
+
+    async save() {
+      if (this.isNew()) {
+        this.place = await this.$http
+          .post("places", this.place)
+          .then(data => data.json());
+      } else {
+        this.place = await this.$http
+          .put("places/" + this.place.id, this.place)
+          .then(data => data.json());
+      }
+      this.back();
+    },
+
+    async remove() {
+      if (!this.isNew()) {
+        await this.$http.delete("places/" + this.place.id);
+      }
+      this.back();
+    },
+
+    initMaps() {
+      // eslint-disable-next-line
+      this.map = new google.maps.Map(this.$refs.map, {
+        center: vipava,
+        zoom: 13
+      });
+      // eslint-disable-next-line
+      this.marker = new google.maps.Marker({ position: vipava, map: this.map });
+
+      this.map.addListener("click", event => {
+        this.marker.setPosition(event.latLng);
+        this.place.coordinates = {
+          lat: event.latLng.lat(),
+          lng: event.latLng.lng()
+        };
+      });
+    },
+
+    back() {
+      if (window.history.length === 1) window.close();
+      else this.$router.go(-1);
     }
-  };
+  }
+};
 </script>
 
 <style scoped>
-  #map {
-    height: 500px;
-    margin-bottom: 1em;
-  }
+#map {
+  height: 500px;
+  margin-bottom: 1em;
+}
 </style>

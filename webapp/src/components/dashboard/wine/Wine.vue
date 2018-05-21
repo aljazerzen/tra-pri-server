@@ -40,6 +40,8 @@
       </div>
     </div>
 
+    <ImageBar v-bind:object="wine" />
+
     <div class="field columns">
       <div class="field column">
         <label class="label">Vrsta</label>
@@ -202,126 +204,144 @@
 </template>
 
 <script>
-  import { errorHandler } from '../../../errorHandler';
+import { errorHandler } from "../../../errorHandler";
+import ImageBar from '../../common/ImageBar';
 
-  export default {
-    name: 'Wine',
-    data() {
-      return {
-        isLoading: true,
-        isLoadingWinemakers: true,
-        isSaving: false,
-        addVarietyDropdown: false,
-        wine: {},
-        errors: [],
-        winemakers: [],
-        wineTypes: [],
-        sugars: [],
-        varieties: [],
-      };
+export default {
+  name: "Wine",
+  components: { ImageBar },
+  data() {
+    return {
+      isLoading: true,
+      isLoadingWinemakers: true,
+      isSaving: false,
+      addVarietyDropdown: false,
+      wine: {},
+      errors: [],
+      winemakers: [],
+      wineTypes: [],
+      sugars: [],
+      varieties: []
+    };
+  },
+  created() {
+    this.load();
+    this.loadWinemakers();
+    this.loadWineTypes();
+    this.loadSugars();
+    this.loadVarieties();
+  },
+  watch: {
+    $route: "load"
+  },
+  methods: {
+    isNew() {
+      return !this.wine || !Number.isInteger(+this.wine.id);
     },
-    created() {
-      this.load();
-      this.loadWinemakers();
-      this.loadWineTypes();
-      this.loadSugars();
-      this.loadVarieties();
+
+    async load() {
+      this.wine.id = this.$route.params.id;
+
+      if (this.isNew()) this.wine = { name: "", varietyIds: [], volume: 0.75, images: [] };
+      else {
+        this.isLoading = true;
+        this.wine = await this.$http
+          .get("wines/" + this.wine.id)
+          .then(data => data.json())
+          .catch(errorHandler(this));
+      }
+      this.isLoading = false;
     },
-    watch: {
-      '$route': 'load'
+
+    async loadWinemakers() {
+      this.isLoadingWinemakers = true;
+      this.winemakers = await this.$http
+        .get("winemakers")
+        .then(data => data.json())
+        .catch(errorHandler(this));
+      this.isLoadingWinemakers = false;
     },
-    methods: {
-      isNew() {
-        return !this.wine || !Number.isInteger(+this.wine.id);
-      },
 
-      async load() {
-        this.wine.id = this.$route.params.id;
+    async loadWineTypes() {
+      this.wineTypes = await this.$http
+        .get("wine-types")
+        .then(data => data.json())
+        .catch(errorHandler(this));
+    },
 
-        if (this.isNew())
-          this.wine = { name: '', varietyIds: [], volume: 0.75 };
-        else {
-          this.isLoading = true;
-          this.wine = await this.$http.get('wines/' + this.wine.id).then(data => data.json())
-            .catch(errorHandler(this));
-        }
-        this.isLoading = false;
-      },
+    async loadSugars() {
+      this.sugars = await this.$http
+        .get("sugars")
+        .then(data => data.json())
+        .catch(errorHandler(this));
+    },
 
-      async loadWinemakers() {
-        this.isLoadingWinemakers = true;
-        this.winemakers = await this.$http.get('winemakers').then(data => data.json())
-          .catch(errorHandler(this));
-        this.isLoadingWinemakers = false;
-      },
+    async loadVarieties() {
+      this.varieties = await this.$http
+        .get("varieties")
+        .then(data => data.json())
+        .catch(errorHandler(this));
+    },
 
-      async loadWineTypes() {
-        this.wineTypes = await this.$http.get('wine-types').then(data => data.json())
-          .catch(errorHandler(this));
-      },
+    async save() {
+      this.wine.year = +this.wine.year || null;
+      this.wine.price = +this.wine.price || null;
+      this.wine.abv = +this.wine.abv || null;
+      this.wine.volume = +this.wine.volume || null;
+      if (this.wine.varieties) {
+        this.wine.varietyIds = this.wine.varieties.map(v => v.id);
+      }
 
-      async loadSugars() {
-        this.sugars = await this.$http.get('sugars').then(data => data.json())
-          .catch(errorHandler(this));
-      },
-
-      async loadVarieties() {
-        this.varieties = await this.$http.get('varieties').then(data => data.json())
-          .catch(errorHandler(this));
-      },
-
-      async save() {
-        this.wine.year = +this.wine.year || null;
-        this.wine.price = +this.wine.price || null;
-        this.wine.abv = +this.wine.abv || null;
-        this.wine.volume = +this.wine.volume || null;
-        if (this.wine.varieties) {
-          this.wine.varietyIds = this.wine.varieties.map(v => v.id);
-        }
-
-        this.isSaving = true;
-        try {
-          if (this.isNew()) {
-            this.wine = await this.$http.post('wines', this.wine).then(data => data.json());
-          } else {
-            this.wine = await this.$http.put('wines/' + this.wine.id, this.wine).then(data => data.json());
-          }
-          this.$router.go(-1);
-        } catch (e) {
-          errorHandler(this)(e);
-        }
-        this.isSaving = false;
-      },
-
-      addVariety(variety) {
-        if(!this.wine.varieties)
-          this.wine.varieties = [];
-        this.wine.varieties.push(variety);
-
-        const onlyUnique = (v, index, array) => array.findIndex(el => el.id === v.id) === index;
-        this.wine.varieties = this.wine.varieties.filter(onlyUnique);
-
-        this.addVarietyDropdown = false;
-      },
-
-      removeVariety(variety) {
-        if(!this.wine.varieties)
-          return;
-        this.wine.varieties = this.wine.varieties.filter(v => v.id !== variety.id);
-      },
-
-      async remove() {
-        if (!this.isNew()) {
-          await this.$http.delete('wines/' + this.wine.id).catch(errorHandler(this))
+      this.isSaving = true;
+      try {
+        if (this.isNew()) {
+          this.wine = await this.$http
+            .post("wines", this.wine)
+            .then(data => data.json());
+        } else {
+          this.wine = await this.$http
+            .put("wines/" + this.wine.id, this.wine)
+            .then(data => data.json());
         }
         this.$router.go(-1);
+      } catch (e) {
+        errorHandler(this)(e);
       }
+      this.isSaving = false;
+    },
+
+    addVariety(variety) {
+      if (!this.wine.varieties) this.wine.varieties = [];
+      this.wine.varieties.push(variety);
+
+      const onlyUnique = (v, index, array) =>
+        array.findIndex(el => el.id === v.id) === index;
+      this.wine.varieties = this.wine.varieties.filter(onlyUnique);
+
+      this.addVarietyDropdown = false;
+    },
+
+    removeVariety(variety) {
+      if (!this.wine.varieties) return;
+      this.wine.varieties = this.wine.varieties.filter(
+        v => v.id !== variety.id
+      );
+    },
+
+    async remove() {
+      if (!this.isNew()) {
+        await this.$http
+          .delete("wines/" + this.wine.id)
+          .catch(errorHandler(this));
+      }
+      this.$router.go(-1);
     }
-  };
+  }
+};
 </script>
 
 <style scoped>
-  .field.columns {
-    margin-bottom: -12px;
-  }
+.field.columns {
+  margin-bottom: -12px;
+}
 </style>

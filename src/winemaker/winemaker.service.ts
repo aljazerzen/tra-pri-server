@@ -27,12 +27,13 @@ export class WinemakerService {
     winemaker.code = data.code;
     winemaker.placeId = data.placeId;
     winemaker.images = await this.fileService.findMany(data.images.map(i => i.id));
+    winemaker.video = data.video ? await this.fileService.get(data.video.id) : null;
 
     return this.repo.save(winemaker);
   }
 
   async get(id: number) {
-    const winemaker = await this.repo.findOne(id, { relations: ['images'] });
+    const winemaker = await this.repo.findOne(id, { relations: ['images', 'video'] });
     if(!winemaker) throw new NotFoundException('winemaker');
     return winemaker;
   }

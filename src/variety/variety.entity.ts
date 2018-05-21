@@ -1,4 +1,5 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { File } from './../file/file.entity';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn, JoinTable } from 'typeorm';
 import { Wine } from '../wine/wine.entity';
 
 @Entity()
@@ -18,4 +19,7 @@ export class Variety {
 
   @ManyToMany(() => Wine)
   wines: Wine[];
+
+  @ManyToMany(() => File, file => file.varieties) @JoinTable()
+  images: File[];
 }

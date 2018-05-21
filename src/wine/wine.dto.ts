@@ -1,4 +1,5 @@
-import { IsArray, IsDefined, IsInt, IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min } from 'class-validator';
+import { DFile } from './../file/file.dto';
+import { IsArray, IsDefined, IsInt, IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Wine } from './wine.entity';
 import { DWinemaker } from '../winemaker/winemaker.dto';
@@ -11,6 +12,9 @@ export class DWine {
 
   @IsString() @IsDefined() @IsNotEmpty() @MaxLength(100)
   name: string;
+
+  @IsDefined() @ValidateNested({ each: true }) @Type(() => DFile)
+  images: DFile[];
 
   @IsInt() @Min(1000) @Max(3000)
   year: number;
@@ -78,6 +82,10 @@ export class DWine {
       r.sugar = DSugar.create(entity.sugar);
     if(entity.varieties)
       r.varieties = DVariety.createList(entity.varieties);
+    if (entity.images) {
+      r.images = entity.images.map(i => DFile.create(i));
+    }
+  
     return r;
   }
 

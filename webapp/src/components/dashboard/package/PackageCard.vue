@@ -32,40 +32,41 @@
 </template>
 
 <script>
-  import moment from 'moment';
+import moment from "moment";
 
-  moment.locale('sl');
+moment.locale("sl");
 
-  export default {
-    name: 'PackageCard',
-    props: ['pack'],
-    data: () => ({
-      isActivating: false
-    }),
-    methods: {
-      async activate() {
-        const pack = this.$props.pack;
+export default {
+  name: "PackageCard",
+  props: ["pack"],
+  data: () => ({
+    isActivating: false
+  }),
+  methods: {
+    async activate() {
+      const pack = this.$props.pack;
 
-        this.isActivating = true;
-        try {
-          await this.$http.put('packages/' + pack.id);
-          pack.active = true;
-          this.$emit('activated', { packageId: pack.id });
-        } catch (e) {
-        }
-        this.isActivating = false;
-      },
-    },
-    computed: {
-      date: function () {
-        return moment(this.pack.date).calendar();
+      this.isActivating = true;
+      try {
+        await this.$http.put("packages/" + pack.id);
+        pack.active = true;
+        this.$emit("activated", { packageId: pack.id });
+      } catch (e) {
+        console.error(e);
       }
+      this.isActivating = false;
     }
-  };
+  },
+  computed: {
+    date: function() {
+      return moment(this.pack.date).calendar();
+    }
+  }
+};
 </script>
 
 <style scoped>
-  .card {
-    margin-bottom: 1em;
-  }
+.card {
+  margin-bottom: 1em;
+}
 </style>

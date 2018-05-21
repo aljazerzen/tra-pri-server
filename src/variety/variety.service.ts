@@ -1,3 +1,4 @@
+import { FileService } from './../file/file.service';
 import { Component, NotFoundException } from '@nestjs/common';
 import { DVariety } from './variety.dto';
 import { Variety } from './variety.entity';
@@ -8,7 +9,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class VarietyService {
 
   constructor(
-    @InjectRepository(Variety) private repo: Repository<Variety>
+    @InjectRepository(Variety) private repo: Repository<Variety>,
+    private fileService: FileService,
   ) {
   }
 
@@ -21,13 +23,14 @@ export class VarietyService {
     variety.name = data.name;
     variety.description = data.description;
     variety.hasLocalOrigins = data.hasLocalOrigins;
+    variety.images = await this.fileService.findMany(data.images.map(i => i.id));
 
     return this.repo.save(variety);
   }
 
   async get(id: number) {
-    const variety = await this.repo.findOne(id);
-    if(!variety) throw new NotFoundException('variety');
+    const variety = await this.repo.findOne(id, { relations: ['images'] });
+    if (!variety) throw new NotFoundException('variety');
     return variety;
   }
 

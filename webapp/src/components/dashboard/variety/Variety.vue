@@ -24,6 +24,8 @@
       </div>
     </div>
 
+    <ImageBar v-bind:object="variety"/>
+
     <div class="columns">
       <div class="field column">
         <div class="control">
@@ -44,67 +46,75 @@
 </template>
 
 <script>
-  import { errorHandler } from '../../../errorHandler';
+import { errorHandler } from "../../../errorHandler";
+import ImageBar from '../../common/ImageBar';
 
-  export default {
-    name: 'Variety',
-    data() {
-      return {
-        variety: {},
-        map: null,
-        marker: null,
-      };
+export default {
+  name: "Variety",
+  components: { ImageBar },
+  data() {
+    return {
+      variety: {},
+      map: null,
+      marker: null,
+    };
+  },
+  created() {
+    this.load();
+  },
+  watch: {
+    $route: "load"
+  },
+  methods: {
+    isNew() {
+      return !this.variety || !Number.isInteger(+this.variety.id);
     },
-    created() {
-      this.load();
+
+    async load() {
+      this.variety.id = this.$route.params.id;
+
+      if (this.isNew())
+        this.variety = { name: "", description: "", hasLocalOrigins: false };
+      else {
+        this.variety = await this.$http
+          .get("varieties/" + this.variety.id)
+          .then(data => data.json())
+          .catch(errorHandler(this));
+      }
     },
-    watch: {
-      '$route': 'load'
-    },
-    methods: {
-      isNew() {
-        return !this.variety || !Number.isInteger(+this.variety.id);
-      },
 
-      async load() {
-        this.variety.id = this.$route.params.id;
-
-        if (this.isNew())
-          this.variety = { name: '', description: '', hasLocalOrigins: false };
-        else {
-          this.variety = await this.$http.get('varieties/' + this.variety.id).then(data => data.json())
-            .catch(errorHandler(this));
-        }
-      },
-
-      async save() {
-        try {
-          if (this.isNew()) {
-            this.variety = await this.$http.post('varieties', this.variety).then(data => data.json());
-          } else {
-            this.variety = await this.$http.put('varieties/' + this.variety.id, this.variety).then(data => data.json());
-          }
-          this.back();
-        } catch(e) {
-          errorHandler(this)(e);
-        }
-      },
-
-      async remove() {
-        if (!this.isNew()) {
-          await this.$http.delete('varieties/' + this.variety.id).catch(errorHandler(this));
+    async save() {
+      try {
+        if (this.isNew()) {
+          this.variety = await this.$http
+            .post("varieties", this.variety)
+            .then(data => data.json());
+        } else {
+          this.variety = await this.$http
+            .put("varieties/" + this.variety.id, this.variety)
+            .then(data => data.json());
         }
         this.back();
-      },
-
-      back() {
-        if (window.history.length === 1)
-          window.close();
-        else
-          this.$router.go(-1);
+      } catch (e) {
+        errorHandler(this)(e);
       }
+    },
+
+    async remove() {
+      if (!this.isNew()) {
+        await this.$http
+          .delete("varieties/" + this.variety.id)
+          .catch(errorHandler(this));
+      }
+      this.back();
+    },
+
+    back() {
+      if (window.history.length === 1) window.close();
+      else this.$router.go(-1);
     }
-  };
+  }
+};
 </script>
 
 <style scoped>

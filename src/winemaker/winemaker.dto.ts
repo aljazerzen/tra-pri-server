@@ -13,6 +13,9 @@ export class DWinemaker {
   @IsDefined() @ValidateNested({ each: true }) @Type(() => DFile)
   images: DFile[];
 
+  @ValidateNested() @Type(() => DFile)
+  video: DFile;
+
   @IsString() @MaxLength(300)
   website: string;
 
@@ -39,6 +42,9 @@ export class DWinemaker {
     }
     if (entity.images) {
       r.images = entity.images.map(i => DFile.create(i));
+    }
+    if (entity.video) {
+      r.video = DFile.create(entity.video);
     }
     return r;
   }

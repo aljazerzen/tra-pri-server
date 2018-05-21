@@ -1,3 +1,4 @@
+import { FileService } from './../file/file.service';
 import { Component, NotFoundException } from '@nestjs/common';
 import { DWine } from './wine.dto';
 import { Wine } from './wine.entity';
@@ -11,6 +12,7 @@ export class WineService {
   constructor(
     @InjectRepository(Wine) private repo: Repository<Wine>,
     private varietyService: VarietyService,
+    private fileService: FileService,
   ) {
   }
 
@@ -34,12 +36,13 @@ export class WineService {
     wine.typeId = data.typeId;
     wine.sugarId = data.sugarId;
     wine.varieties = data.varietyIds ? await this.varietyService.getMany(data.varietyIds) : [];
+    wine.images = data.images ? await this.fileService.findMany(data.images.map(i => i.id)) : [];
 
     return this.repo.save(wine);
   }
 
   async get(id: number) {
-    const wine = await this.repo.findOne(id, { relations: ['varieties'] });
+    const wine = await this.repo.findOne(id, { relations: ['varieties', 'images'] });
     if (!wine) throw new NotFoundException('wine');
     return wine;
   }
@@ -53,6 +56,7 @@ export class WineService {
   }
 
   listFull() {
-    return this.list(['winemaker', 'winemaker.place', 'winemaker.images', 'varieties', 'sugar', 'type']);
+    return this.list(['winemaker', 'winemaker.video', 'winemaker.place', 'winemaker.images', 'varieties', 'varieties.images',
+      'sugar', 'type', 'images']);
   }
 }

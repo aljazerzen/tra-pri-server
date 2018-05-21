@@ -1,3 +1,4 @@
+import { File } from './../file/file.entity';
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Winemaker } from '../winemaker/winemaker.entity';
 import { WineType } from '../wine-type/wine-type.entity';
@@ -40,6 +41,9 @@ export class Wine {
   sugarId: number;
   @ManyToOne(() => Sugar, sugar => sugar.wines)
   sugar: Sugar;
+
+  @ManyToMany(() => File, file => file.wines) @JoinTable()
+  images: File[];
 
   @ManyToMany(() => Variety) @JoinTable()
   varieties: Variety[];
