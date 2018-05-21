@@ -46,8 +46,7 @@
 </template>
 
 <script>
-import { errorHandler } from "../../../errorHandler";
-import ImageBar from '../../common/ImageBar';
+import ImageBar from "../../common/ImageBar";
 
 export default {
   name: "Variety",
@@ -56,7 +55,7 @@ export default {
     return {
       variety: {},
       map: null,
-      marker: null,
+      marker: null
     };
   },
   created() {
@@ -79,7 +78,7 @@ export default {
         this.variety = await this.$http
           .get("varieties/" + this.variety.id)
           .then(data => data.json())
-          .catch(errorHandler(this));
+          .catch(e => this.$root.$emit('error', e));
       }
     },
 
@@ -96,7 +95,7 @@ export default {
         }
         this.back();
       } catch (e) {
-        errorHandler(this)(e);
+        this.$root.$emit('error', e);
       }
     },
 
@@ -104,7 +103,7 @@ export default {
       if (!this.isNew()) {
         await this.$http
           .delete("varieties/" + this.variety.id)
-          .catch(errorHandler(this));
+          .catch(e => this.$root.$emit('error', e));
       }
       this.back();
     },

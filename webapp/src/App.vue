@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <div class="container">
+      <ErrorNotification ref="errorNotification"/>
       <router-view></router-view>
     </div>
   </div>
@@ -9,9 +10,11 @@
 <script>
   import VueRouter from 'vue-router';
   import routes from './routes';
+  import ErrorNotification from './components/error/ErrorNotification';
 
   export default {
     name: 'app',
+    components: { ErrorNotification },
     router: new VueRouter({ routes })
   };
 </script>

@@ -52,7 +52,7 @@ export default {
         pack.active = true;
         this.$emit("activated", { packageId: pack.id });
       } catch (e) {
-        console.error(e);
+        this.$root.$emit('error', e);
       }
       this.isActivating = false;
     }

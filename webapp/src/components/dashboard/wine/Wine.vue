@@ -6,11 +6,6 @@
       <span class="button is-loading is-white" v-if="isLoading"></span>
     </h1>
 
-    <div class="notification is-danger" v-if="this.errors.length">
-      <button v-on:click="errors = []" class="delete"></button>
-      <div v-for="(error, index) in errors" v-bind:key="index"><b>{{error}}</b></div>
-    </div>
-
     <div class="field">
       <label class="label">Naziv</label>
       <div class="control">
@@ -40,7 +35,7 @@
       </div>
     </div>
 
-    <ImageBar v-bind:object="wine" />
+    <ImageBar v-bind:object="wine"/>
 
     <div class="field columns">
       <div class="field column">
@@ -204,8 +199,7 @@
 </template>
 
 <script>
-import { errorHandler } from "../../../errorHandler";
-import ImageBar from '../../common/ImageBar';
+import ImageBar from "../../common/ImageBar";
 
 export default {
   name: "Wine",
@@ -242,13 +236,14 @@ export default {
     async load() {
       this.wine.id = this.$route.params.id;
 
-      if (this.isNew()) this.wine = { name: "", varietyIds: [], volume: 0.75, images: [] };
+      if (this.isNew())
+        this.wine = { name: "", varietyIds: [], volume: 0.75, images: [] };
       else {
         this.isLoading = true;
         this.wine = await this.$http
           .get("wines/" + this.wine.id)
           .then(data => data.json())
-          .catch(errorHandler(this));
+          .catch(e => this.$root.$emit('error', e));
       }
       this.isLoading = false;
     },
@@ -258,7 +253,7 @@ export default {
       this.winemakers = await this.$http
         .get("winemakers")
         .then(data => data.json())
-        .catch(errorHandler(this));
+        .catch(e => this.$root.$emit('error', e));
       this.isLoadingWinemakers = false;
     },
 
@@ -266,21 +261,21 @@ export default {
       this.wineTypes = await this.$http
         .get("wine-types")
         .then(data => data.json())
-        .catch(errorHandler(this));
+        .catch(e => this.$root.$emit('error', e));
     },
 
     async loadSugars() {
       this.sugars = await this.$http
         .get("sugars")
         .then(data => data.json())
-        .catch(errorHandler(this));
+        .catch(e => this.$root.$emit('error', e));
     },
 
     async loadVarieties() {
       this.varieties = await this.$http
         .get("varieties")
         .then(data => data.json())
-        .catch(errorHandler(this));
+        .catch(e => this.$root.$emit('error', e));
     },
 
     async save() {
@@ -305,7 +300,7 @@ export default {
         }
         this.$router.go(-1);
       } catch (e) {
-        errorHandler(this)(e);
+        this.$root.$emit('error', e);
       }
       this.isSaving = false;
     },
@@ -332,7 +327,7 @@ export default {
       if (!this.isNew()) {
         await this.$http
           .delete("wines/" + this.wine.id)
-          .catch(errorHandler(this));
+          .catch(e => this.$root.$emit('error', e));
       }
       this.$router.go(-1);
     }

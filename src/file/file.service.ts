@@ -105,7 +105,7 @@ export class FileService {
       )
       .andWhere('id NOT IN ' + qb.subQuery()
         .select('"fileId"')
-        .from('wine_package')
+        .from('wine_package', 'wine_package')
         .getQuery()
       )
       .andWhere(`"createdAt" < (current_timestamp - interval '1 day')`)

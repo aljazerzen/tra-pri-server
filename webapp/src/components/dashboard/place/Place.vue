@@ -88,10 +88,14 @@ export default {
     },
 
     async remove() {
-      if (!this.isNew()) {
-        await this.$http.delete("places/" + this.place.id);
+      try {
+        if (!this.isNew()) {
+          await this.$http.delete("places/" + this.place.id);
+        }
+        this.back();
+      } catch (e) {
+        this.$root.$emit('error', e);
       }
-      this.back();
     },
 
     initMaps() {

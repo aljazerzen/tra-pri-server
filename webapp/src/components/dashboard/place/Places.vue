@@ -25,36 +25,37 @@
 </template>
 
 <script>
-  import { errorHandler } from '../../../errorHandler';
-
-  export default {
-    name: 'Places',
-    data() {
-      return {
-        isLoading: true,
-        places: [],
-      };
-    },
-    mounted() {
-      this.load();
-    },
-    methods: {
-      async load() {
-        this.isLoading = true;
-        this.places = await this.$http.get('places').then(data => data.json()).catch(errorHandler(this));
-        this.isLoading = false;
-      }
+export default {
+  name: "Places",
+  data() {
+    return {
+      isLoading: true,
+      places: []
+    };
+  },
+  mounted() {
+    this.load();
+  },
+  methods: {
+    async load() {
+      this.isLoading = true;
+      this.places = await this.$http
+        .get("places")
+        .then(data => data.json())
+        .catch(e => this.$root.$emit('error', e));
+      this.isLoading = false;
     }
-  };
+  }
+};
 </script>
 
 <style scoped>
-  .card {
-    margin-bottom: 10px;
-  }
+.card {
+  margin-bottom: 10px;
+}
 
-  .card:last-child {
-    margin-bottom: 0;
-  }
+.card:last-child {
+  margin-bottom: 0;
+}
 </style>
 

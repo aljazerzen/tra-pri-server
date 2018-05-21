@@ -24,46 +24,46 @@
 </template>
 
 <script>
-  import { errorHandler } from '../errorHandler';
-  import Vue from 'vue';
+import Vue from "vue";
 
-  export default {
-    data() {
-      return {
-        loading: false,
-        errors: [],
-        password: '',
-      };
-    },
-    methods: {
-      async login() {
-        try {
-          this.loading = true;
-          this.errors = [];
+export default {
+  data() {
+    return {
+      loading: false,
+      errors: [],
+      password: ""
+    };
+  },
+  methods: {
+    async login() {
+      try {
+        this.loading = true;
+        this.errors = [];
 
-          await this.$http.get('auth', { headers: { Authorization: this.password } });
+        await this.$http.get("auth", {
+          headers: { Authorization: this.password }
+        });
 
-          this.$localStorage.set('password', this.password);
-          Vue.http.headers.common['Authorization'] = this.password;
-          this.$router.push('/vina');
-
-        } catch (e) {
-          errorHandler(this)(e);
-        }
-        this.loading = false;
+        this.$localStorage.set("password", this.password);
+        Vue.http.headers.common["Authorization"] = this.password;
+        this.$router.push("/vina");
+      } catch (e) {
+        this.$root.$emit('error', e);
       }
+      this.loading = false;
     }
-  };
+  }
+};
 </script>
 
 <style scoped>
-  .field {
-    margin: 7em auto 1em auto;
-    max-width: 300px;
-  }
+.field {
+  margin: 7em auto 1em auto;
+  max-width: 300px;
+}
 
-  .box {
-    padding-top: 6em;
-    padding-bottom: 4em;
-  }
+.box {
+  padding-top: 6em;
+  padding-bottom: 4em;
+}
 </style>

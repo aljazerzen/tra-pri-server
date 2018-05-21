@@ -33,45 +33,53 @@
 </template>
 
 <script>
-  import { errorHandler } from '../../../errorHandler';
-
-  export default {
-    name: 'WineTypes',
-    data: () => ({
-      isLoading: true,
-      newTypeName: '',
-      wineTypes: []
-    }),
-    created() {
-      this.load();
+export default {
+  name: "WineTypes",
+  data: () => ({
+    isLoading: true,
+    newTypeName: "",
+    wineTypes: []
+  }),
+  created() {
+    this.load();
+  },
+  methods: {
+    async load() {
+      this.isLoading = true;
+      this.wineTypes = await this.$http
+        .get("wine-types")
+        .then(data => data.json())
+        .catch(e => this.$root.$emit('error', e));
+      this.isLoading = false;
     },
-    methods: {
-      async load() {
-        this.isLoading = true;
-        this.wineTypes = await this.$http.get('wine-types').then(data => data.json()).catch(errorHandler(this));
-        this.isLoading = false;
-      },
 
-      async add() {
-        let newSugar = await this.$http.post('wine-types', { name: this.newTypeName }).then(data => data.json())
-          .catch(errorHandler(this));
-        this.wineTypes.push(newSugar);
-        this.newTypeName = '';
-      },
+    async add() {
+      let newSugar = await this.$http
+        .post("wine-types", { name: this.newTypeName })
+        .then(data => data.json())
+        .catch(e => this.$root.$emit('error', e));
+      this.wineTypes.push(newSugar);
+      this.newTypeName = "";
+    },
 
-      async update(wineType) {
-        let newSugar = await this.$http.put('wine-types/' + wineType.id, { name: wineType.name })
-          .then(data => data.json())
-          .catch(errorHandler(this));
-        this.wineTypes = this.wineTypes.map(s => s.id === newSugar.id ? newSugar : s);
-      },
+    async update(wineType) {
+      let newSugar = await this.$http
+        .put("wine-types/" + wineType.id, { name: wineType.name })
+        .then(data => data.json())
+        .catch(e => this.$root.$emit('error', e));
+      this.wineTypes = this.wineTypes.map(
+        s => (s.id === newSugar.id ? newSugar : s)
+      );
+    },
 
-      async remove(id) {
-        await this.$http.delete('wine-types/' + id).catch(errorHandler(this));
-        await this.load();
-      }
+    async remove(id) {
+      await this.$http
+        .delete("wine-types/" + id)
+        .catch(e => this.$root.$emit('error', e));
+      await this.load();
     }
-  };
+  }
+};
 </script>
 
 <style scoped>

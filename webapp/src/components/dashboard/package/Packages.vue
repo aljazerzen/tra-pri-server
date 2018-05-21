@@ -22,50 +22,53 @@
 </template>
 
 <script>
-  import { errorHandler } from '../../../errorHandler';
-  import PackageCard from './PackageCard';
+import PackageCard from "./PackageCard";
 
-  export default {
-    name: 'Packages',
-    components: { PackageCard },
-    data() {
-      return {
-        isLoading: true,
-        isCreating: false,
-        hasCreated: false,
-        packages: [],
-        errors: [],
-      };
+export default {
+  name: "Packages",
+  components: { PackageCard },
+  data() {
+    return {
+      isLoading: true,
+      isCreating: false,
+      hasCreated: false,
+      packages: [],
+      errors: []
+    };
+  },
+  mounted() {
+    this.load();
+  },
+  methods: {
+    async load() {
+      this.isLoading = true;
+      this.packages = await this.$http
+        .get("packages")
+        .then(data => data.json())
+        .catch(e => this.$root.$emit('error', e));
+      this.isLoading = false;
     },
-    mounted() {
-      this.load();
+
+    activated(event) {
+      for (let pack of this.packages) pack.active = pack.id === event.packageId;
     },
-    methods: {
-      async load() {
-        this.isLoading = true;
-        this.packages = await this.$http.get('packages').then(data => data.json()).catch(errorHandler(this));
-        this.isLoading = false;
-      },
 
-      activated(event) {
-        for (let pack of this.packages)
-          pack.active = pack.id === event.packageId;
-      },
+    async createPack() {
+      this.isCreating = true;
+      this.errors = [];
 
-      async createPack() {
-        this.isCreating = true;
-        this.errors = [];
-
-        try {
-          const pack = await this.$http.post('packages').then(data => data.json());
-          this.packages.unshift(pack);
-          this.hasCreated = true;
-        } catch(e) {
-          errorHandler(this)(e);
-        }
-
-        this.isCreating = false;
+      try {
+        const pack = await this.$http
+          .post("packages")
+          .then(data => data.json());
+        this.packages.unshift(pack);
+        this.hasCreated = true;
+      } catch (e) {
+        this.$root.$emit('error', e);
       }
+
+      this.isCreating = false;
     }
-  };
+  }
+};
 </script>

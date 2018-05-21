@@ -24,35 +24,36 @@
 </template>
 
 <script>
-  import { errorHandler } from '../../../errorHandler';
-
-  export default {
-    name: 'Winemakers',
-    data() {
-      return {
-        isLoading: true,
-        winemakers: []
-      };
-    },
-    mounted() {
-      this.load();
-    },
-    methods: {
-      async load() {
-        this.isLoading = true;
-        this.winemakers = await this.$http.get('winemakers').then(data => data.json()).catch(errorHandler(this));
-        this.isLoading = false;
-      }
+export default {
+  name: "Winemakers",
+  data() {
+    return {
+      isLoading: true,
+      winemakers: []
+    };
+  },
+  mounted() {
+    this.load();
+  },
+  methods: {
+    async load() {
+      this.isLoading = true;
+      this.winemakers = await this.$http
+        .get("winemakers")
+        .then(data => data.json())
+        .catch(e => this.$root.$emit('error', e));
+      this.isLoading = false;
     }
-  };
+  }
+};
 </script>
 
 <style scoped>
-  .card {
-    margin-bottom: 10px;
-  }
+.card {
+  margin-bottom: 10px;
+}
 
-  .card-header-title .tag {
-    margin-left: 10px;
-  }
+.card-header-title .tag {
+  margin-left: 10px;
+}
 </style>

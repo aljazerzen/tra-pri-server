@@ -90,7 +90,6 @@
 </template>
 
 <script>
-import { errorHandler } from "../../../errorHandler";
 import ImageBar from "../../common/ImageBar";
 import VideoBar from "../../common/VideoBar";
 
@@ -152,7 +151,7 @@ export default {
         }
         this.back();
       } catch (e) {
-        errorHandler(this)(e);
+        this.$root.$emit('error', e);
       }
       this.isSaving = false;
     },
@@ -164,7 +163,7 @@ export default {
         }
         this.back();
       } catch (e) {
-        errorHandler(this)(e);
+        this.$root.$emit('error', e);
       }
     },
 

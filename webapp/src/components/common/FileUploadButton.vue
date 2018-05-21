@@ -10,8 +10,6 @@
 </template>
 
 <script>
-import { errorHandler } from "../../errorHandler";
-
 export default {
   name: "FileUploadButton",
   props: ['route'],
@@ -33,7 +31,7 @@ export default {
 
           this.$emit('file-uploaded', upload);
         } catch (e) {
-          errorHandler(this)(e);
+          this.$root.$emit('error', e);
         }
         this.isUploading = false;
       }

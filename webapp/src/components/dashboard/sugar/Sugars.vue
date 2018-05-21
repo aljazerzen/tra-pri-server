@@ -33,42 +33,48 @@
 </template>
 
 <script>
-  import { errorHandler } from '../../../errorHandler';
-
-  export default {
-    name: 'Sugars',
-    data: () => ({
-      isLoading: true,
-      newSugarName: '',
-      sugars: []
-    }),
-    created() {
-      this.load();
+export default {
+  name: "Sugars",
+  data: () => ({
+    isLoading: true,
+    newSugarName: "",
+    sugars: []
+  }),
+  created() {
+    this.load();
+  },
+  methods: {
+    async load() {
+      this.isLoading = true;
+      this.sugars = await this.$http
+        .get("sugars")
+        .then(data => data.json())
+        .catch(e => this.$root.$emit('error', e));
+      this.isLoading = false;
     },
-    methods: {
-      async load() {
-        this.isLoading = true;
-        this.sugars = await this.$http.get('sugars').then(data => data.json()).catch(errorHandler(this));
-        this.isLoading = false;
-      },
-      async add() {
-        let newSugar = await this.$http.post('sugars', { name: this.newSugarName }).then(data => data.json())
-          .catch(errorHandler(this));
-        this.sugars.push(newSugar);
-        this.newSugarName = '';
-      },
-      async update(sugar) {
-        let newSugar = await this.$http.put('sugars/' + sugar.id, { name: sugar.name }).then(data => data.json())
-          .catch(errorHandler(this));
-        this.sugars = this.sugars.map(s => s.id === newSugar.id ? newSugar : s);
-      },
-      async remove(id) {
-        await this.$http.delete('sugars/' + id)
-          .catch(errorHandler(this));
-        await this.load();
-      }
+    async add() {
+      let newSugar = await this.$http
+        .post("sugars", { name: this.newSugarName })
+        .then(data => data.json())
+        .catch(e => this.$root.$emit('error', e));
+      this.sugars.push(newSugar);
+      this.newSugarName = "";
+    },
+    async update(sugar) {
+      let newSugar = await this.$http
+        .put("sugars/" + sugar.id, { name: sugar.name })
+        .then(data => data.json())
+        .catch(e => this.$root.$emit('error', e));
+      this.sugars = this.sugars.map(s => (s.id === newSugar.id ? newSugar : s));
+    },
+    async remove(id) {
+      await this.$http
+        .delete("sugars/" + id)
+        .catch(e => this.$root.$emit('error', e));
+      await this.load();
     }
-  };
+  }
+};
 </script>
 
 <style scoped>
