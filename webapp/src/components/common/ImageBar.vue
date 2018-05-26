@@ -24,9 +24,11 @@ export default {
   name: "ImageBar",
   components: { FileUploadButton },
   props: ["object"],
+  mounted() {
+    if (!this.object.images) this.object.images = [];
+  },
   methods: {
     addImage(image) {
-      if (!this.object.images) this.object.images = [];
       this.object.images.push(image);
     },
 
