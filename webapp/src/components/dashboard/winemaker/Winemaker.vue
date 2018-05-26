@@ -34,7 +34,7 @@
             <button type="submit" class="button" v-on:click="loadPlaces()">Osveži</button>
           </div>
           <div class="control">
-            <a href="/#/kraji/nov" target="_blank" class="button">Dodaj</a>
+            <a href="#/kraji/nov" target="_blank" class="button">Dodaj</a>
           </div>
         </div>
       </div>

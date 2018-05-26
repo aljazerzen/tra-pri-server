@@ -30,7 +30,7 @@
           <button type="submit" class="button" v-on:click="loadWinemakers()">Osveži</button>
         </div>
         <div class="control">
-          <a href="/vinarji/nov" target="_blank" class="button">Dodaj</a>
+          <a href="#/vinarji/nov" target="_blank" class="button">Dodaj</a>
         </div>
       </div>
     </div>

@@ -35,7 +35,9 @@ export class VarietyService {
   }
 
   async getMany(ids: number[]) {
-    console.log(ids);
+    if(ids.length === 0)
+      return [];
+
     const varieties = await this.repo.createQueryBuilder('variety')
       .where('id IN (:...ids)', { ids })
       .getMany();
