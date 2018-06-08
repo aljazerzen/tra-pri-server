@@ -5,22 +5,16 @@
     </p>
     <ul class="menu-list">
       <li>
-        <router-link to="/kraji">Kraji</router-link>
-      </li>
-      <li>
-        <router-link to="/sladkor">Sladkor</router-link>
-      </li>
-      <li>
-        <router-link to="/sorte">Sorte</router-link>
+        <router-link to="/vina">Vina</router-link>
       </li>
       <li>
         <router-link to="/vinarji">Vinarji</router-link>
       </li>
       <li>
-        <router-link to="/vina">Vina</router-link>
+        <router-link to="/sorte">Sorte</router-link>
       </li>
       <li>
-        <router-link to="/vrste">Vrste</router-link>
+        <router-link to="/kraji">Kraji</router-link>
       </li>
     </ul>
     <p class="menu-label">

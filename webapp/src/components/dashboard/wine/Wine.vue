@@ -41,26 +41,37 @@
       <div class="field column">
         <label class="label">Vrsta</label>
 
-        <div class="control is-expanded">
-          <div class="select is-fullwidth">
-            <select v-model="wine.typeId">
-              <option v-for="wineType in wineTypes" v-bind:key="wineType.id" v-bind:value="wineType.id">
-                {{ wineType.name }}
-              </option>
-            </select>
+        <div class="control field has-addons">
+          <div class="control is-expanded">
+            <div class="select is-fullwidth">
+              <select v-model="wine.typeId">
+                <option v-for="wineType in wineTypes" v-bind:key="wineType.id" v-bind:value="wineType.id">
+                  {{ wineType.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="control">
+            <a href='#/vrste' target="_blank" class="button">Urejaj</a>
           </div>
         </div>
       </div>
       <div class="field column">
         <label class="label">Sladkor</label>
-        <div class="control is-expanded">
-          <div class="select is-fullwidth">
-            <select v-model="wine.sugarId">
-              <option v-for="sugar in sugars" v-bind:key="sugar.id" v-bind:value="sugar.id">
-                {{ sugar.name }}
-              </option>
-            </select>
+        
+        <div class="control field has-addons">
+          <div class="control is-expanded">
+            <div class="select is-fullwidth">
+              <select v-model="wine.sugarId">
+                <option v-for="sugar in sugars" v-bind:key="sugar.id" v-bind:value="sugar.id">
+                  {{ sugar.name }}
+                </option>
+              </select>
+            </div>
           </div>
+          <div class="control">
+              <a href='#/sladkor' target="_blank" class="button">Urejaj</a>
+            </div>
         </div>
       </div>
     </div>
@@ -243,7 +254,7 @@ export default {
         this.wine = await this.$http
           .get("wines/" + this.wine.id)
           .then(data => data.json())
-          .catch(e => this.$root.$emit('error', e));
+          .catch(e => this.$root.$emit("error", e));
       }
       this.isLoading = false;
     },
@@ -253,7 +264,7 @@ export default {
       this.winemakers = await this.$http
         .get("winemakers")
         .then(data => data.json())
-        .catch(e => this.$root.$emit('error', e));
+        .catch(e => this.$root.$emit("error", e));
       this.isLoadingWinemakers = false;
     },
 
@@ -261,21 +272,21 @@ export default {
       this.wineTypes = await this.$http
         .get("wine-types")
         .then(data => data.json())
-        .catch(e => this.$root.$emit('error', e));
+        .catch(e => this.$root.$emit("error", e));
     },
 
     async loadSugars() {
       this.sugars = await this.$http
         .get("sugars")
         .then(data => data.json())
-        .catch(e => this.$root.$emit('error', e));
+        .catch(e => this.$root.$emit("error", e));
     },
 
     async loadVarieties() {
       this.varieties = await this.$http
         .get("varieties")
         .then(data => data.json())
-        .catch(e => this.$root.$emit('error', e));
+        .catch(e => this.$root.$emit("error", e));
     },
 
     async save() {
@@ -300,7 +311,7 @@ export default {
         }
         this.$router.go(-1);
       } catch (e) {
-        this.$root.$emit('error', e);
+        this.$root.$emit("error", e);
       }
       this.isSaving = false;
     },
@@ -327,7 +338,7 @@ export default {
       if (!this.isNew()) {
         await this.$http
           .delete("wines/" + this.wine.id)
-          .catch(e => this.$root.$emit('error', e));
+          .catch(e => this.$root.$emit("error", e));
       }
       this.$router.go(-1);
     }
