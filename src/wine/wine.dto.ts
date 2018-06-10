@@ -6,6 +6,7 @@ import { DWinemaker } from '../winemaker/winemaker.dto';
 import { DWineType } from '../wine-type/wine-type.dto';
 import { DSugar } from '../sugar/sugar.dto';
 import { DVariety } from '../variety/variety.dto';
+import { DLocaleText } from '../locale/locale.dto';
 
 export class DWine {
   id: number;
@@ -19,15 +20,15 @@ export class DWine {
   @IsInt() @Min(1000) @Max(3000)
   year: number;
 
-  @IsString()
-  culinary: string;
-  @IsString()
-  temperature: string;
-  @IsString()
-  features: string;
+  @ValidateNested() @Type(() => DLocaleText)
+  culinary: DLocaleText;
+  @ValidateNested() @Type(() => DLocaleText)
+  temperature: DLocaleText;
+  @ValidateNested() @Type(() => DLocaleText)
+  features: DLocaleText;
 
-  @IsString()
-  awards: string;
+  @ValidateNested() @Type(() => DLocaleText)
+  awards: DLocaleText;
 
   @IsNumber() @Min(0) @Type(() => Number)
   price: number;
@@ -62,10 +63,15 @@ export class DWine {
     r.id = entity.id;
     r.name = entity.name;
     r.year = entity.year;
-    r.culinary = entity.culinary;
-    r.temperature = entity.temperature;
-    r.features = entity.features;
-    r.awards = entity.awards;
+    // r.culinary = { sl: entity.culinary, en: '' };
+    // r.temperature = { sl: entity.temperature, en: '' };
+    // r.features = { sl: entity.features, en: '' };
+    // r.awards = { sl: entity.awards, en: '' };
+    
+    r.culinary = DLocaleText.create(entity.culinary);
+    r.temperature = DLocaleText.create(entity.temperature);
+    r.features = DLocaleText.create(entity.features);
+    r.awards = DLocaleText.create(entity.awards);
     r.price = entity.price;
     r.volume = entity.volume;
     r.abv = entity.abv;

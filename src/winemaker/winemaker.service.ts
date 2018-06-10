@@ -49,8 +49,8 @@ export class WinemakerService {
   list() {
     return this.repo.createQueryBuilder('winemaker')
       .leftJoinAndSelect('winemaker.place', 'place')
-      .orderBy('place.name', 'ASC')
-      .addOrderBy('winemaker.name', 'ASC')
+      .orderBy('place."name"', 'ASC')
+      .addOrderBy('winemaker."nameSl"', 'ASC')
       .getMany();
   }
 }

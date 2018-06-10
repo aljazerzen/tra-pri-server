@@ -82,8 +82,7 @@ export class FileService {
   }
 
   createUrl(key: string) {
-    const port = process.env.API_HOST === 'localhost' ? ':' + process.env.API_PORT : '';
-    return `//${process.env.API_HOST}${port}/uploads/${key}`;
+    return `${process.env.API_URL}/uploads/${key}`;
   }
 
   async remove(files: File[]) {

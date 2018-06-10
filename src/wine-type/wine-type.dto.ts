@@ -1,11 +1,14 @@
-import { IsDefined, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
+
+import { DLocaleString } from '../locale/locale.dto';
 import { WineType } from './wine-type.entity';
 
 export class DWineType {
   id: number;
 
-  @IsString() @IsDefined() @IsNotEmpty() @MaxLength(100)
-  name: string;
+  @ValidateNested() @Type(() => DLocaleString)
+  name: DLocaleString;
 
   static create(entity: WineType) {
     const r = new DWineType();

@@ -1,27 +1,34 @@
 <template>
   <div class="section">
-    <h1 class="title">
-      {{ isNew() ? wine.name || 'Novo vino' : wine.name }}{{ wine.year ? ', ' + wine.year : '' }} {{ wine.code ?
-      `(${wine.code})` : '' }}
-      <span class="button is-loading is-white" v-if="isLoading"></span>
-    </h1>
-
+  
+    <nav class="level">
+      <div class="level-left">
+        <h1 class="title">
+          {{ isNew() ? wine.name || 'Novo vino' : wine.name }}{{ wine.year ? ', ' + wine.year : '' }} {{ wine.code ? `(${wine.code})` : '' }}
+          <span class="button is-loading is-white" v-if="isLoading"></span>
+        </h1>
+      </div>
+      <div class="level-right">
+        <LocalePicker v-bind:locale="locale" />
+      </div>
+    </nav>
+  
     <div class="field">
       <label class="label">Naziv</label>
       <div class="control">
         <input class="input" type="text" v-model="wine.name">
       </div>
     </div>
-
+  
     <div class="field">
       <label class="label">Vinar</label>
-
+  
       <div class="control field has-addons">
         <div class="control is-expanded">
           <div class="select is-fullwidth" v-bind:class="isLoadingWinemakers ? 'is-loading' : ''">
             <select v-model="wine.winemakerId">
               <option v-for="winemaker in winemakers" v-bind:key="winemaker.id" v-bind:value="winemaker.id">
-                {{ winemaker.name }}
+                <LocaleSpan v-bind:object="winemaker.name" v-bind:locale="locale.lang"/>
               </option>
             </select>
           </div>
@@ -34,19 +41,19 @@
         </div>
       </div>
     </div>
-
-    <ImageBar v-bind:object="wine"/>
-
+  
+    <ImageBar v-bind:object="wine" />
+  
     <div class="field columns">
       <div class="field column">
         <label class="label">Vrsta</label>
-
+  
         <div class="control field has-addons">
           <div class="control is-expanded">
             <div class="select is-fullwidth">
               <select v-model="wine.typeId">
                 <option v-for="wineType in wineTypes" v-bind:key="wineType.id" v-bind:value="wineType.id">
-                  {{ wineType.name }}
+                  <LocaleSpan v-bind:object="wineType.name" v-bind:locale="locale.lang"/>
                 </option>
               </select>
             </div>
@@ -58,27 +65,27 @@
       </div>
       <div class="field column">
         <label class="label">Sladkor</label>
-        
+  
         <div class="control field has-addons">
           <div class="control is-expanded">
             <div class="select is-fullwidth">
               <select v-model="wine.sugarId">
                 <option v-for="sugar in sugars" v-bind:key="sugar.id" v-bind:value="sugar.id">
-                  {{ sugar.name }}
+                  <LocaleSpan v-bind:object="sugar.name" v-bind:locale="locale.lang"/>
                 </option>
               </select>
             </div>
           </div>
           <div class="control">
-              <a href='#/sladkor' target="_blank" class="button">Urejaj</a>
-            </div>
+            <a href='#/sladkor' target="_blank" class="button">Urejaj</a>
+          </div>
         </div>
       </div>
     </div>
-
+  
     <div class="field">
       <label class="label">Sorte</label>
-
+  
       <div class="field is-grouped is-grouped-multiline">
         <div class="control" v-for="variety in wine.varieties" v-bind:key="variety.id">
           <div class="tags has-addons">
@@ -86,20 +93,18 @@
             <a class="tag is-medium is-danger is-delete" v-on:click="removeVariety(variety)"></a>
           </div>
         </div>
-
-
+  
+  
         <div class="control">
           <div class="dropdown" v-bind:class="addVarietyDropdown ? 'is-active' : ''">
             <div class="dropdown-trigger">
-              <a class="tag is-primary is-medium" aria-haspopup="true" aria-controls="dropdown-menu"
-                 v-on:click="addVarietyDropdown = !addVarietyDropdown">
+              <a class="tag is-primary is-medium" aria-haspopup="true" aria-controls="dropdown-menu" v-on:click="addVarietyDropdown = !addVarietyDropdown">
                 <span>Dodaj</span>
               </a>
             </div>
             <div class="dropdown-menu" id="dropdown-menu" role="menu">
               <div class="dropdown-content">
-                <a class="dropdown-item" v-for="variety in varieties" v-bind:key="variety.id"
-                   v-on:click="addVariety(variety)">
+                <a class="dropdown-item" v-for="variety in varieties" v-bind:key="variety.id" v-on:click="addVariety(variety)">
                   {{ variety.name }}
                 </a>
               </div>
@@ -107,9 +112,9 @@
           </div>
         </div>
       </div>
-
+  
     </div>
-
+  
     <div class="field columns">
       <div class="field column">
         <label class="label">Letnik</label>
@@ -124,36 +129,37 @@
         </div>
       </div>
     </div>
-
+  
     <div class="field">
       <label class="label">Značilnosti</label>
       <div class="control">
-        <textarea class="textarea" v-model="wine.features"></textarea>
+        <LocaleText v-bind:object="wine.features" v-bind:locale="locale.lang" />
       </div>
     </div>
+  
     <div class="field">
       <label class="label">Nagrade</label>
       <div class="control">
-        <textarea class="textarea" v-model="wine.awards" v-bind:rows="2"></textarea>
+        <LocaleText v-bind:object="wine.awards" v-bind:locale="locale.lang" v-bind:rows="2" />
       </div>
     </div>
-
+  
     <div class="field">
       <label class="label">Kulinarika</label>
       <div class="control">
-        <textarea class="textarea" v-model="wine.culinary" v-bind:rows="2"></textarea>
+        <LocaleText v-bind:object="wine.culinary" v-bind:locale="locale.lang" v-bind:rows="2" />
       </div>
     </div>
-
+  
     <div class="field">
       <label class="label">Priporočena temperatura</label>
       <div class="control">
-        <input class="input" type="text" v-model="wine.temperature">
+        <LocaleText v-bind:object="wine.temperature" v-bind:locale="locale.lang" v-bind:rows="1" />
       </div>
     </div>
-
+  
     <div class="field columns">
-
+  
       <div class="field column">
         <label class="label">Cena</label>
         <div class="control field has-addons">
@@ -165,7 +171,7 @@
           </p>
         </div>
       </div>
-
+  
       <div class="field column">
         <label class="label">Prostornina</label>
         <div class="control field has-addons">
@@ -177,7 +183,7 @@
           </p>
         </div>
       </div>
-
+  
       <div class="field column">
         <label class="label">Alkohol</label>
         <div class="control field has-addons">
@@ -190,7 +196,7 @@
         </div>
       </div>
     </div>
-
+  
     <div class="columns">
       <div class="column field is-grouped">
         <p class="control">
@@ -211,15 +217,26 @@
 
 <script>
 import ImageBar from "../../common/ImageBar";
+import LocaleText from "../../common/LocaleText";
+import LocalePicker from "../../common/LocalePicker";
+import LocaleSpan from "../../common/LocaleSpan";
 
 export default {
   name: "Wine",
-  components: { ImageBar },
+  components: {
+    ImageBar,
+    LocaleText,
+    LocalePicker,
+    LocaleSpan
+  },
   data() {
     return {
       isLoading: true,
       isLoadingWinemakers: true,
       isSaving: false,
+      locale: {
+        lang: "sl"
+      },
       addVarietyDropdown: false,
       wine: {},
       errors: [],
@@ -248,7 +265,12 @@ export default {
       this.wine.id = this.$route.params.id;
 
       if (this.isNew())
-        this.wine = { name: "", varietyIds: [], volume: 0.75, images: [] };
+        this.wine = {
+          name: "",
+          varietyIds: [],
+          volume: 0.75,
+          images: []
+        };
       else {
         this.isLoading = true;
         this.wine = await this.$http

@@ -1,19 +1,21 @@
-import { DFile } from './../file/file.dto';
-import { IsBoolean, IsDefined, IsInt, IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsBoolean, IsDefined, ValidateNested } from 'class-validator';
+
+import { DLocaleString, DLocaleText } from '../locale/locale.dto';
+import { DFile } from './../file/file.dto';
 import { Variety } from './variety.entity';
 
 export class DVariety {
   id: number;
 
-  @IsString() @IsDefined() @IsNotEmpty() @MaxLength(100)
-  name: string;
+  @ValidateNested() @Type(() => DLocaleString)
+  name: DLocaleString;
 
   @IsDefined() @ValidateNested({ each: true }) @Type(() => DFile)
   images: DFile[];
 
-  @IsString()
-  description: string;
+  @ValidateNested() @Type(() => DLocaleText)
+  description: DLocaleText;
 
   @IsBoolean()
   hasLocalOrigins: boolean;

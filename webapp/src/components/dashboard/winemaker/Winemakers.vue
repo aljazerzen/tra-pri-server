@@ -14,7 +14,9 @@
       <router-link :to="{ name: 'winemaker', params: { id: winemaker.id }}">
         <div class="card-header">
           <div class="card-header-title level">
-            <p class="level-left">{{ winemaker.name }}</p>
+            <p class="level-left">
+              <LocaleSpan v-bind:object="winemaker.name" locale='sl'/>
+            </p>
             <p class="level-right " v-if="winemaker.place">{{ winemaker.place.name }}</p>
           </div>
         </div>
@@ -24,8 +26,13 @@
 </template>
 
 <script>
+import LocaleSpan from '../../common/LocaleSpan';
+
 export default {
   name: "Winemakers",
+  components: {
+    LocaleSpan
+  },
   data() {
     return {
       isLoading: true,

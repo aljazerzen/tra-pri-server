@@ -5,16 +5,15 @@
       <div class="level-left">
         <h1 class="title">Sladkor <span class="button is-loading is-white" v-if="isLoading"></span></h1>
       </div>
+      <div class="level-right">
+        <LocalePicker v-bind:locale="locale"/>
+      </div>
     </nav>
 
     <div class="control field has-addons" v-for="sugar in sugars" v-bind:key="sugar.id">
       <div class="control is-expanded">
-        <input class="input" type="text" v-model="sugar.name" v-on:keypress="sugar.isDirty = true"
-               v-bind:class="sugar.isDirty ? 'is-primary' : ''">
+        <LocaleString v-bind:object="sugar.name" v-bind:locale='locale.lang'/>
       </div>
-      <p class="control">
-        <a class="button" v-on:click="update(sugar)">Posodobi</a>
-      </p>
       <p class="control">
         <a class="button" v-on:click="remove(sugar.id)">Odstrani</a>
       </p>
@@ -23,22 +22,32 @@
     <!--<label class="label">Alkohol</label>-->
     <div class="control field has-addons">
       <div class="control is-expanded">
-        <input class="input" type="text" v-model="newSugarName">
+        <LocaleString v-bind:object="newSugarName" v-bind:locale='locale.lang'/>
       </div>
       <p class="control">
-        <a class="button is-primary" v-on:click="add()">Dodaj</a>
+        <a class="button" v-on:click="add()">Dodaj</a>
       </p>
+    </div>
+
+    <div class="control field has-addons">
+      <div class="button is-primary" v-on:click="save()" v-bind:class="isSaving ? 'is-loading' : ''">Shrani</div>
     </div>
   </div>
 </template>
 
 <script>
+import LocalePicker from '../../common/LocalePicker';
+import LocaleString from '../../common/LocaleString';
+
 export default {
   name: "Sugars",
+  components: { LocalePicker, LocaleString },
   data: () => ({
     isLoading: true,
-    newSugarName: "",
-    sugars: []
+    isSaving: false,
+    newSugarName: {},
+    sugars: [],
+    locale: { lang: 'sl' },
   }),
   created() {
     this.load();
@@ -58,7 +67,7 @@ export default {
         .then(data => data.json())
         .catch(e => this.$root.$emit('error', e));
       this.sugars.push(newSugar);
-      this.newSugarName = "";
+      this.newSugarName = {};
     },
     async update(sugar) {
       let newSugar = await this.$http
@@ -72,6 +81,17 @@ export default {
         .delete("sugars/" + id)
         .catch(e => this.$root.$emit('error', e));
       await this.load();
+    },
+    async save() {
+      let promises = [];
+      this.isSaving = true;
+      for(let sugar of this.sugars) {
+        promises.push(
+          this.update(sugar)
+        );
+      }
+      await Promise.all(promises);
+      this.isSaving = false;
     }
   }
 };

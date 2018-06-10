@@ -3,6 +3,7 @@ import { DSugar } from './sugar.dto';
 import { Sugar } from './sugar.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CannotDeleteException } from '../cannot-delete.exception';
 
 @Component()
 export class SugarService {
@@ -29,10 +30,14 @@ export class SugarService {
   }
 
   async remove(sugarId: number) {
-    await this.repo.delete({ id: sugarId });
+    try {
+      await this.repo.delete({ id: sugarId });
+    } catch(e) {
+      throw new CannotDeleteException('sugar');
+    }
   }
 
   async list() {
-    return this.repo.find({});
+    return this.repo.find({ order: { id: 'ASC' } });
   }
 }

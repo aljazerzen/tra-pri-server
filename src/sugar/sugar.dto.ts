@@ -1,16 +1,19 @@
-import { IsDefined, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
+
+import { DLocaleString } from '../locale/locale.dto';
 import { Sugar } from './sugar.entity';
 
 export class DSugar {
   id: number;
 
-  @IsString() @IsDefined() @IsNotEmpty() @MaxLength(100)
-  name: string;
+  @ValidateNested() @Type(() => DLocaleString)
+  name: DLocaleString;
 
   static create(entity: Sugar) {
     const r = new DSugar();
     r.id = entity.id;
-    r.name = entity.name;
+    r.name = DLocaleString.create(entity.name);
     return r;
   }
 

@@ -4,6 +4,7 @@ import { Winemaker } from '../winemaker/winemaker.entity';
 import { WineType } from '../wine-type/wine-type.entity';
 import { Sugar } from '../sugar/sugar.entity';
 import { Variety } from '../variety/variety.entity';
+import { LocaleText } from '../locale/locale.entity';
 
 @Entity()
 export class Wine {
@@ -17,15 +18,15 @@ export class Wine {
   @Column({ nullable: true })
   year: number;
 
-  @Column({ type: 'text', default: '' })
-  culinary: string;
-  @Column({ type: 'text', default: '' })
-  temperature: string;
-  @Column({ type: 'text', default: '' })
-  features: string;
+  @Column(() => LocaleText)
+  culinary: LocaleText;
+  @Column(() => LocaleText)
+  temperature: LocaleText;
+  @Column(() => LocaleText)
+  features: LocaleText;
 
-  @Column({ type: 'text', default: '' })
-  awards: string;
+  @Column(() => LocaleText)
+  awards: LocaleText;
 
   @Column({ nullable: true })
   winemakerId: number;

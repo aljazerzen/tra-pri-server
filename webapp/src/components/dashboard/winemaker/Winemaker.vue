@@ -1,11 +1,18 @@
 <template>
   <div class="section">
-    <h1 class="title">
-      {{ isNew() ? winemaker.name || 'Nov vinar' : winemaker.name }}{{ winemaker.year ? ', ' + winemaker.year : '' }} {{
-      winemaker.code ?
-      `(${winemaker.code})` : '' }}
-      <span class="button is-loading is-white" v-if="isLoading"></span>
-    </h1>
+    <nav class="level">
+      <div class="level-left">  
+        <h1 class="title">
+          <LocaleSpan v-bind:object="isNew() ? winemaker.name || 'Nov vinar' : winemaker.name" v-bind:locale='locale.lang'/>
+          {{ winemaker.code ? `(${winemaker.code})` : '' }}
+          <span class="button is-loading is-white" v-if="isLoading"></span>
+        </h1>
+      </div>
+      <div class="level-right">
+        <LocalePicker v-bind:locale="locale" />
+      </div>
+    </nav>
+  
 
     <div class="notification is-danger" v-if="this.errors.length">
       <button v-on:click="errors = []" class="delete"></button>
@@ -16,7 +23,7 @@
       <div class="field column">
         <label class="label">Naziv</label>
         <div class="control">
-          <input class="input" type="text" v-model="winemaker.name">
+          <LocaleString v-bind:object="winemaker.name" v-bind:locale="locale.lang"/>
         </div>
       </div>
       <div class="field column">
@@ -67,7 +74,7 @@
     <div class="field">
       <label class="label">Zgodba</label>
       <div class="control">
-        <textarea class="textarea" v-model="winemaker.background" v-bind:rows="3"></textarea>
+        <LocaleText v-bind:object="winemaker.background" v-bind:locale="locale.lang"/>
       </div>
     </div>
 
@@ -92,16 +99,21 @@
 <script>
 import ImageBar from "../../common/ImageBar";
 import VideoBar from "../../common/VideoBar";
+import LocaleSpan from "../../common/LocaleSpan";
+import LocalePicker from "../../common/LocalePicker";
+import LocaleString from "../../common/LocaleString";
+import LocaleText from "../../common/LocaleText";
 
 export default {
   name: "Wine",
-  components: { ImageBar, VideoBar },
+  components: { ImageBar, VideoBar, LocaleSpan, LocalePicker, LocaleString, LocaleText },
   data() {
     return {
       isLoading: true,
       isLoadingPlaces: true,
       isSaving: false,
       winemaker: {},
+      locale: { lang: "sl" },
       places: [],
       errors: []
     };
@@ -151,7 +163,7 @@ export default {
         }
         this.back();
       } catch (e) {
-        this.$root.$emit('error', e);
+        this.$root.$emit("error", e);
       }
       this.isSaving = false;
     },
@@ -163,7 +175,7 @@ export default {
         }
         this.back();
       } catch (e) {
-        this.$root.$emit('error', e);
+        this.$root.$emit("error", e);
       }
     },
 

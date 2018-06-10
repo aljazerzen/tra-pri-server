@@ -14,7 +14,7 @@
       <router-link :to="{ name: 'variety', params: { id: variety.id }}">
         <div class="card-header">
           <p class="card-header-title">
-            {{ variety.name }}
+            <LocaleSpan v-bind:object="variety.name" locale='sl'/>
           </p>
           <p class="card-header-icon" v-if="variety.hasLocalOrigins">
             <span class="tag is-dark has-text-weight-bold">Avtohtona</span>
@@ -28,8 +28,11 @@
 </template>
 
 <script>
+import LocaleSpan from '../../common/LocaleSpan';
+
 export default {
   name: "Places",
+  components: { LocaleSpan },
   data() {
     return {
       isLoading: true,

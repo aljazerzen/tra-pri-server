@@ -1,6 +1,8 @@
-import { File } from './../file/file.entity';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn, JoinTable } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+
+import { LocaleText, LocaleString } from '../locale/locale.entity';
 import { Wine } from '../wine/wine.entity';
+import { File } from './../file/file.entity';
 
 @Entity()
 export class Variety {
@@ -8,11 +10,11 @@ export class Variety {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 100 })
-  name: string;
+  @Column(() => LocaleString)
+  name: LocaleString;
 
-  @Column({ type: 'text', default: '' })
-  description: string;
+  @Column(() => LocaleText)
+  description: LocaleText;
 
   @Column({ default: false })
   hasLocalOrigins: boolean;

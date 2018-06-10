@@ -3,12 +3,13 @@ import { Type } from 'class-transformer';
 import { Winemaker } from './winemaker.entity';
 import { DPlace } from '../place/place.dto';
 import { DFile } from '../file/file.dto';
+import { DLocaleString, DLocaleText } from '../locale/locale.dto';
 
 export class DWinemaker {
   id: number;
 
-  @IsString() @IsDefined() @IsNotEmpty() @MaxLength(100)
-  name: string;
+  @ValidateNested() @Type(() => DLocaleString)
+  name: DLocaleString;
 
   @IsDefined() @ValidateNested({ each: true }) @Type(() => DFile)
   images: DFile[];
@@ -19,8 +20,8 @@ export class DWinemaker {
   @IsString() @MaxLength(300)
   website: string;
 
-  @IsString()
-  background: string;
+  @ValidateNested() @Type(() => DLocaleText)
+  background: DLocaleText;
 
   @IsString()
   code: string;

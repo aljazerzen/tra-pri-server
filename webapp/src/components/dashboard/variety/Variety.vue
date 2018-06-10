@@ -1,13 +1,20 @@
 <template>
   <section class="section narrow">
-    <h1 class="title">
-      {{ isNew() ? variety.name || 'Nova sorta' : variety.name }}
-    </h1>
+    <nav class="level">
+      <div class="level-left">
+        <h1 class="title">
+          <LocaleSpan v-bind:object="isNew() ? variety.name || 'Nova sorta' : variety.name" v-bind:locale='locale.lang'/>
+        </h1>
+      </div>
+      <div class="level-right">
+        <LocalePicker v-bind:locale="locale" />
+      </div>
+    </nav>
 
     <div class="field">
       <label class="label">Ime</label>
       <div class="control">
-        <input class="input" type="text" v-model="variety.name">
+        <LocaleString v-bind:object="variety.name" v-bind:locale="locale.lang"/>
       </div>
     </div>
     <div class="field">
@@ -20,7 +27,7 @@
     <div class="field">
       <label class="label">Opis</label>
       <div class="control">
-        <textarea class="textarea" v-model="variety.description"></textarea>
+        <LocaleText v-bind:object="variety.description" v-bind:locale="locale.lang"/>
       </div>
     </div>
 
@@ -47,15 +54,18 @@
 
 <script>
 import ImageBar from "../../common/ImageBar";
+import LocaleSpan from '../../common/LocaleSpan';
+import LocalePicker from '../../common/LocalePicker';
+import LocaleString from '../../common/LocaleString';
+import LocaleText from '../../common/LocaleText';
 
 export default {
   name: "Variety",
-  components: { ImageBar },
+  components: { ImageBar, LocaleSpan, LocalePicker, LocaleString, LocaleText },
   data() {
     return {
       variety: {},
-      map: null,
-      marker: null
+      locale: { lang: 'sl' }
     };
   },
   created() {

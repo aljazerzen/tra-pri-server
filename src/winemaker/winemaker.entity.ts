@@ -2,14 +2,15 @@ import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColum
 import { Place } from '../place/place.entity';
 import { Wine } from '../wine/wine.entity';
 import { File } from '../file/file.entity';
+import { LocaleString, LocaleText } from '../locale/locale.entity';
 
 @Entity()
 export class Winemaker {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 100 })
-  name: string;
+  @Column(() => LocaleString)
+  name: LocaleText;
 
   @Column({ type: 'varchar', length: 300, nullable: true })
   website: string;
@@ -20,8 +21,8 @@ export class Winemaker {
   @ManyToOne(() => File, v => v.winemakerVideo)
   video: File;
 
-  @Column({ type: 'text', default: '' })
-  background: string;
+  @Column(() => LocaleText)
+  background: LocaleText;
 
   @Column({ nullable: true })
   code: string;
