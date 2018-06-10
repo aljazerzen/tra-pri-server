@@ -89,7 +89,9 @@
       <div class="field is-grouped is-grouped-multiline">
         <div class="control" v-for="variety in wine.varieties" v-bind:key="variety.id">
           <div class="tags has-addons">
-            <a class="tag is-medium is-dark">{{ variety.name }}</a>
+            <a class="tag is-medium is-dark">
+              <LocaleSpan v-bind:object="variety.name" v-bind:locale="locale.lang"/>
+            </a>
             <a class="tag is-medium is-danger is-delete" v-on:click="removeVariety(variety)"></a>
           </div>
         </div>
