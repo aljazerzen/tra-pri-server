@@ -4,6 +4,7 @@ import { FILE_TYPE } from './file.constants';
 import { Winemaker } from '../winemaker/winemaker.entity';
 import { WinePackage } from '../package/wine-package.entity';
 import { Variety } from '../variety/variety.entity';
+import { Label } from '../wine/label.entity';
 
 @Entity()
 export class File {
@@ -28,6 +29,9 @@ export class File {
 
   @ManyToMany(() => Wine, v => v.images)
   wines: Wine[];
+
+  @OneToMany(() => Label, label => label.image)
+  label: Label;
 
   @OneToMany(() => Winemaker, v => v.video)
   winemakerVideo: Wine[];

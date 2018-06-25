@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+
+import { AuthGuard } from '../auth/auth.guard';
 import { DWine } from './wine.dto';
 import { WineService } from './wine.service';
-import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('wines')
 @UseGuards(AuthGuard)

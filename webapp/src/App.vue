@@ -36,8 +36,12 @@
   }
 
   .section.narrow {
-    max-width: 700px;
-    margin-right: auto;
-    margin-left: auto;
+    /*max-width: 700px;*/
+    /*margin-right: auto;*/
+    /*margin-left: auto;*/
+  }
+
+  .section.columns {
+    max-width: 100%;
   }
 </style>

@@ -1,12 +1,27 @@
-import { DFile } from './../file/file.dto';
-import { IsArray, IsDefined, IsInt, IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
-import { Wine } from './wine.entity';
-import { DWinemaker } from '../winemaker/winemaker.dto';
-import { DWineType } from '../wine-type/wine-type.dto';
+import { Type, Transform, plainToClass } from 'class-transformer';
+import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsArray,
+  IsDefined,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Max,
+  MaxLength,
+  Min,
+  ValidateNested,
+  ValidateIf,
+} from 'class-validator';
+
+import { DLocaleText } from '../locale/locale.dto';
 import { DSugar } from '../sugar/sugar.dto';
 import { DVariety } from '../variety/variety.dto';
-import { DLocaleText } from '../locale/locale.dto';
+import { DWineType } from '../wine-type/wine-type.dto';
+import { DFile } from './../file/file.dto';
+import { Wine } from './wine.entity';
+import { DWinemaker } from '../winemaker/winemaker.dto';
 
 export class DWine {
   id: number;
@@ -67,7 +82,7 @@ export class DWine {
     // r.temperature = { sl: entity.temperature, en: '' };
     // r.features = { sl: entity.features, en: '' };
     // r.awards = { sl: entity.awards, en: '' };
-    
+
     r.culinary = DLocaleText.create(entity.culinary);
     r.temperature = DLocaleText.create(entity.temperature);
     r.features = DLocaleText.create(entity.features);
@@ -80,22 +95,88 @@ export class DWine {
     r.typeId = entity.typeId;
     r.sugarId = entity.sugarId;
 
-    if(entity.winemaker)
+    if (entity.winemaker)
       r.winemaker = DWinemaker.create(entity.winemaker);
-    if(entity.type)
+    if (entity.type)
       r.type = DWineType.create(entity.type);
-    if(entity.sugar)
+    if (entity.sugar)
       r.sugar = DSugar.create(entity.sugar);
-    if(entity.varieties)
+    if (entity.varieties)
       r.varieties = DVariety.createList(entity.varieties);
     if (entity.images) {
       r.images = entity.images.map(i => DFile.create(i));
     }
-  
+
     return r;
   }
 
   static createList(entities: Wine[]) {
     return entities.map(e => DWine.create(e));
+  }
+}
+
+export class DWineLabelSummary {
+  id: number;
+  name: string;
+  year: number;
+  labelImageCount: number;
+  hasLabelImageCoordinates: boolean;
+
+  winemaker: DWinemaker;
+
+  static create(entity: Wine) {
+    const r = new DWineLabelSummary();
+    r.id = entity.id;
+    r.name = entity.name;
+    r.year = entity.year;
+    r.labelImageCount = entity.labels.length;
+    
+    const firstLabel = entity.labels.find(l => l.index == 0);
+    r.hasLabelImageCoordinates = firstLabel && firstLabel.coordinates !== null;
+
+    if (entity.winemaker)
+      r.winemaker = DWinemaker.create(entity.winemaker);
+
+    return r;
+  }
+
+  static createList(entities: Wine[]) {
+    return entities.map(e => DWineLabelSummary.create(e));
+  }
+}
+
+export class DWineLabels {
+  id: number;
+  name: string;
+  year: number;
+  winemaker: DWinemaker;
+
+  @IsDefined() // @ValidateNested({ each: true }) @Type(() => DFile)  
+  labels: DFile[];
+  @ValidateNested() @Type(() => DFile)
+  labelImageCoordinates: DFile;
+  @IsArray() @ArrayMinSize(12) @ArrayMaxSize(12)
+  coordinates: number[];
+
+  static create(entity: Wine) {
+    const r = new DWineLabels();
+    r.id = entity.id;
+    r.name = entity.name;
+    r.year = entity.year;
+    if (entity.winemaker)
+      r.winemaker = DWinemaker.create(entity.winemaker);
+
+    console.log(entity.labels);
+    r.labels = [];
+    for (let i = 0; i < 10; i++) {
+      const label = entity.labels.find(l => l && l.index === i);
+      r.labels[i] = label ? DFile.create(label.image) : null;
+
+      if (i === 0) {
+        r.coordinates = label ? label.coordinates : null;
+      }
+    }
+
+    return r;
   }
 }

@@ -21,7 +21,12 @@
       Sistem
     </p>
     <ul class="menu-list">
-      <li><router-link to="/paketi">Vsebinski paketi</router-link></li>
+      <li>
+        <router-link to="/etikete">Etikete</router-link>
+      </li>
+      <li>
+        <router-link to="/paketi">Vsebinski paketi</router-link>
+      </li>
       <li><a>Statistika</a></li>
       <li><a v-on:click="logout()">Odjava</a></li>
     </ul>

@@ -11,7 +11,7 @@
           <a class="is-danger is-medium delete" v-on:click="removeImage(image)"></a>
         </div>
 
-        <FileUploadButton class="control" v-bind:route="'image'" v-on:file-uploaded="addImage"/>
+        <FileUploadButton class="control" route="image" v-on:file-uploaded="addImage" caption="Dodaj"/>
       </div>
     </div>
 

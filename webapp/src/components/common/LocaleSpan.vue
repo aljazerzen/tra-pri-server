@@ -1,7 +1,5 @@
 <template>
-  <span v-if="object">
-    {{ locale == 'sl' ? object.sl || object.en : object.en || object.sl }}
-  </span>
+  <span v-if="object">{{ locale == 'sl' ? object.sl || object.en : object.en || object.sl }}</span>
 </template>
 
 <script>

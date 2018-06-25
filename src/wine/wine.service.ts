@@ -1,16 +1,19 @@
-import { FileService } from './../file/file.service';
 import { Component, NotFoundException } from '@nestjs/common';
-import { DWine } from './wine.dto';
-import { Wine } from './wine.entity';
-import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
 import { VarietyService } from '../variety/variety.service';
+import { Label } from '../wine/label.entity';
+import { FileService } from './../file/file.service';
+import { DWine, DWineLabels } from './wine.dto';
+import { Wine } from './wine.entity';
 
 @Component()
 export class WineService {
 
   constructor(
     @InjectRepository(Wine) private repo: Repository<Wine>,
+    @InjectRepository(Label) private labelRepo: Repository<Label>,
     private varietyService: VarietyService,
     private fileService: FileService,
   ) {
@@ -41,8 +44,34 @@ export class WineService {
     return this.repo.save(wine);
   }
 
-  async get(id: number) {
-    const wine = await this.repo.findOne(id, { relations: ['varieties', 'images'] });
+  async updateLableImages(wine: Wine, data: DWineLabels) {
+
+    const images = await this.fileService.findMany(data.labels.filter(l => !!l).map(l => l.id));
+
+    await this.labelRepo.delete({ wineId: wine.id });
+
+    wine.labels = await Promise.all(
+      data.labels.map(async (labelData, index) => {
+        if (!labelData) return null;
+
+        const label = new Label();
+        label.index = index;
+        label.image = images.find(i => i.id === labelData.id);
+        label.wine = wine;
+
+        if (index === 0 && data.coordinates) {
+          label.coordinates = data.coordinates;
+        }
+
+        await this.labelRepo.save(label);
+        return label;
+      }));
+
+    return wine;
+  }
+
+  async get(id: number, relations = ['varieties', 'images']) {
+    const wine = await this.repo.findOne(id, { relations });
     if (!wine) throw new NotFoundException('wine');
     return wine;
   }
