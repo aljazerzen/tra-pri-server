@@ -15,7 +15,7 @@
         <div class="card-header">
           <div class="card-header-title level">
             <p class="level-left">
-              <LocaleSpan v-bind:object="winemaker.name" locale='sl'/>
+              <LocaleSpan v-bind:object="winemaker.name" locale='sl' :defaultToSl="true"/>
             </p>
             <p class="level-right " v-if="winemaker.place">{{ winemaker.place.name }}</p>
           </div>

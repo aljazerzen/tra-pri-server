@@ -3,27 +3,30 @@
     <nav class="level">
       <div class="level-left">  
         <h1 class="title">
-          <LocaleSpan v-bind:object="isNew() && !winemaker.name[locale.lang] ? { sl: 'Nov vinar', en: 'New winemaker'} : winemaker.name" v-bind:locale='locale.lang'/>
+          <LocaleSpan 
+            :object="isNew() && !winemaker.name[locale.lang] ? { sl: 'Nov vinar', en: 'New winemaker'} : winemaker.name" 
+            :locale='locale.lang'
+            :defaultToSl="true"/>
           {{ winemaker.code ? `(${winemaker.code})` : '' }}
           <span class="button is-loading is-white" v-if="isLoading"></span>
         </h1>
       </div>
       <div class="level-right">
-        <LocalePicker v-bind:locale="locale" />
+        <LocalePicker :locale="locale" />
       </div>
     </nav>
   
 
     <div class="notification is-danger" v-if="this.errors.length">
       <button v-on:click="errors = []" class="delete"></button>
-      <div v-for="(error, index) in errors" v-bind:key="index"><b>{{error}}</b></div>
+      <div v-for="(error, index) in errors" :key="index"><b>{{error}}</b></div>
     </div>
 
     <div class="field columns">
       <div class="field column">
         <label class="label">Naziv</label>
         <div class="control">
-          <LocaleString v-bind:object="winemaker.name" v-bind:locale="locale.lang"/>
+          <LocaleString :object="winemaker.name" :locale="locale.lang" :defaultToSl="true"/>
         </div>
       </div>
       <div class="field column">
@@ -31,9 +34,9 @@
 
         <div class="control field has-addons">
           <div class="control is-expanded">
-            <div class="select is-fullwidth" v-bind:class="isLoadingPlaces ? 'is-loading' : ''">
+            <div class="select is-fullwidth" :class="isLoadingPlaces ? 'is-loading' : ''">
               <select v-model="winemaker.placeId">
-                <option v-for="place in places" v-bind:key="place.id" v-bind:value="place.id">{{ place.name }}</option>
+                <option v-for="place in places" :key="place.id" :value="place.id">{{ place.name }}</option>
               </select>
             </div>
           </div>
@@ -55,7 +58,7 @@
             <input class="input" type="text" v-model="winemaker.website">
           </div>
           <div class="control">
-            <a class="button" v-bind:href="winemaker.website" target="_blank">Odpri</a>
+            <a class="button" :href="winemaker.website" target="_blank">Odpri</a>
           </div>
         </div>
       </div>
@@ -67,14 +70,14 @@
       </div>
     </div>
 
-    <ImageBar v-bind:object="winemaker"/>
+    <ImageBar :object="winemaker"/>
     
-    <VideoBar v-bind:object="winemaker"/>
+    <VideoBar :object="winemaker"/>
 
     <div class="field">
       <label class="label">Zgodba</label>
       <div class="control">
-        <LocaleText v-bind:object="winemaker.background" v-bind:locale="locale.lang"/>
+        <LocaleText :object="winemaker.background" :locale="locale.lang"/>
       </div>
     </div>
 
@@ -89,7 +92,7 @@
           <a v-on:click="remove()" class="button is-danger">Izbrisi</a>
         </p>
         <p class="control">
-          <a v-on:click="save()" class="button is-primary" v-bind:class="isSaving ? 'is-loading' : ''">Shrani</a>
+          <a v-on:click="save()" class="button is-primary" :class="isSaving ? 'is-loading' : ''">Shrani</a>
         </p>
       </div>
     </div>

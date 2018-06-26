@@ -11,13 +11,15 @@ import * as path from 'path';
 // noinspection ES6UnusedImports
 import { Repository } from 'typeorm';
 
+const defaultToSl = (locale: { sl: string, en: string }) => ({ sl: locale.sl, en: locale.en || locale.sl });
+
 @Component()
 export class PackageService {
 
   constructor(
     private wineService: WineService,
     private fileService: FileService,
-    @InjectRepository(WinePackage) private repo : Repository<WinePackage>
+    @InjectRepository(WinePackage) private repo: Repository<WinePackage>
   ) {
   }
 
@@ -26,13 +28,13 @@ export class PackageService {
   }
 
   async setActive(packageId: number) {
-    if(0 <= packageId)
+    if (0 <= packageId)
       await this.repo.query(`UPDATE wine_package SET active = (id = ${+packageId})`);
   }
 
   async getActive() {
     const pack = await this.repo.findOne({ where: { active: true }, relations: ['file'] });
-    if(!pack) throw new NotFoundException('active package', 'NO_ACTIVE_PACKAGE');
+    if (!pack) throw new NotFoundException('active package', 'NO_ACTIVE_PACKAGE');
     return pack;
   }
 
@@ -55,11 +57,11 @@ export class PackageService {
   }
 
   simplify(wines: Wine[]) {
-    const images: { name: string, file: File}[] = [];
+    const images: { name: string, file: File }[] = [];
 
     const useImage = (file: File) => {
       const existing = images.find(im => im.file.id == file.id);
-      if(existing)
+      if (existing)
         return existing.name;
 
       const name = '' + images.length + path.extname(file.key);
@@ -81,17 +83,17 @@ export class PackageService {
       temperature: wine.temperature,
       type: wine.type.name,
       varieties: (wine.varieties || []).map(variety => ({
-        name: variety.name,
+        name: defaultToSl(variety.name),
         description: variety.description,
         hasLocalOrigins: variety.hasLocalOrigins,
         images: (variety.images || []).map(useImage),
       })),
       volume: +wine.volume,
       winemaker: {
-        name: wine.winemaker.name,
+        name: defaultToSl(wine.winemaker.name),
         website: wine.winemaker.website,
         images: (wine.winemaker.images || []).map(useImage),
-        video: (wine.winemaker.video || { url: null}).url,
+        video: (wine.winemaker.video || { url: null }).url,
         background: wine.winemaker.background,
         code: wine.winemaker.code,
         place: wine.winemaker.place,
@@ -103,13 +105,13 @@ export class PackageService {
     return { data: { wines: mappedWines }, images };
   }
 
-  async compress(jsonData, images: { name: string, file: File}[], name: string) {
+  async compress(jsonData, images: { name: string, file: File }[], name: string) {
 
     const archive = archiver('zip', { zlib: { level: 9 } });
     const { stream: output, file } = await this.fileService.createWriteStream('.zip', FILE_TYPE.PACKAGE, name);
 
     // good practice to catch warnings (ie stat failures and other non-blocking errors)
-    archive.on('warning', function(err) {
+    archive.on('warning', function (err) {
       if (err.code === 'ENOENT') {
         console.log(err);
       } else {
@@ -119,7 +121,7 @@ export class PackageService {
     });
 
     // good practice to catch this error explicitly
-    archive.on('error', function(err) {
+    archive.on('error', function (err) {
       throw err;
     });
 
@@ -131,12 +133,12 @@ export class PackageService {
     archive.append(buffer, { name: 'package.json' });
 
     // images/
-    for(let image of images) {
+    for (let image of images) {
       archive.append(this.fileService.readStream(image.file), { name: 'images/' + image.name });
     }
 
     const size = new Promise<number>(resolve =>
-      output.on('close', function() {
+      output.on('close', function () {
         resolve(archive.pointer());
       })
     );

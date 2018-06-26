@@ -3,7 +3,7 @@
     <nav class="level">
       <div class="level-left">
         <h1 class="title">
-          <LocaleSpan v-bind:object="isNew() ? variety.name || 'Nova sorta' : variety.name" v-bind:locale='locale.lang'/>
+          <LocaleSpan v-bind:object="isNew() ? variety.name || 'Nova sorta' : variety.name" v-bind:locale='locale.lang' :defaultToSl="true"/>
         </h1>
       </div>
       <div class="level-right">
@@ -14,7 +14,7 @@
     <div class="field">
       <label class="label">Ime</label>
       <div class="control">
-        <LocaleString v-bind:object="variety.name" v-bind:locale="locale.lang"/>
+        <LocaleString v-bind:object="variety.name" v-bind:locale="locale.lang" :defaultToSl="true"/>
       </div>
     </div>
     <div class="field">

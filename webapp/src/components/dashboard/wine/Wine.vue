@@ -28,7 +28,7 @@
           <div class="select is-fullwidth" :class="isLoadingWinemakers ? 'is-loading' : ''">
             <select v-model="wine.winemakerId">
               <option v-for="winemaker in winemakers" :key="winemaker.id" :value="winemaker.id">
-                <LocaleSpan :object="winemaker.name" :locale="locale.lang"/>
+                <LocaleSpan :object="winemaker.name" :locale="locale.lang" :defaultToSl="true"/>
               </option>
             </select>
           </div>
@@ -90,7 +90,7 @@
         <div class="control" v-for="variety in wine.varieties" :key="variety.id">
           <div class="tags has-addons">
             <a class="tag is-medium is-dark">
-              <LocaleSpan :object="variety.name" :locale="locale.lang"/>
+              <LocaleSpan :object="variety.name" :locale="locale.lang" :defaultToSl="true"/>
             </a>
             <a class="tag is-medium is-danger is-delete" @click="removeVariety(variety)"></a>
           </div>
@@ -107,7 +107,7 @@
             <div class="dropdown-menu" id="dropdown-menu" role="menu">
               <div class="dropdown-content">
                 <a class="dropdown-item" v-for="variety in varieties" :key="variety.id" @click="addVariety(variety)">
-                  <LocaleSpan :object="variety.name" :lang="locale.lang"/>
+                  <LocaleSpan :object="variety.name" :lang="locale.lang" :defaultToSl="true"/>
                 </a>
               </div>
             </div>
