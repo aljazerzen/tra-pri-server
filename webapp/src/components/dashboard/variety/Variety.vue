@@ -54,10 +54,10 @@
 
 <script>
 import ImageBar from "../../common/ImageBar";
-import LocaleSpan from '../../common/LocaleSpan';
-import LocalePicker from '../../common/LocalePicker';
-import LocaleString from '../../common/LocaleString';
-import LocaleText from '../../common/LocaleText';
+import LocaleSpan from "../../common/LocaleSpan";
+import LocalePicker from "../../common/LocalePicker";
+import LocaleString from "../../common/LocaleString";
+import LocaleText from "../../common/LocaleText";
 
 export default {
   name: "Variety",
@@ -65,7 +65,7 @@ export default {
   data() {
     return {
       variety: {},
-      locale: { lang: 'sl' }
+      locale: { lang: "sl" }
     };
   },
   created() {
@@ -83,12 +83,17 @@ export default {
       this.variety.id = this.$route.params.id;
 
       if (this.isNew())
-        this.variety = { name: "", description: "", hasLocalOrigins: false };
+        this.variety = {
+          name: { sl: "", en: "" },
+          description: { sl: "", en: "" },
+          images: [],
+          hasLocalOrigins: false
+        };
       else {
         this.variety = await this.$http
           .get("varieties/" + this.variety.id)
           .then(data => data.json())
-          .catch(e => this.$root.$emit('error', e));
+          .catch(e => this.$root.$emit("error", e));
       }
     },
 
@@ -105,7 +110,7 @@ export default {
         }
         this.back();
       } catch (e) {
-        this.$root.$emit('error', e);
+        this.$root.$emit("error", e);
       }
     },
 
@@ -113,7 +118,7 @@ export default {
       if (!this.isNew()) {
         await this.$http
           .delete("varieties/" + this.variety.id)
-          .catch(e => this.$root.$emit('error', e));
+          .catch(e => this.$root.$emit("error", e));
       }
       this.back();
     },

@@ -3,7 +3,7 @@
     <nav class="level">
       <div class="level-left">  
         <h1 class="title">
-          <LocaleSpan v-bind:object="isNew() ? winemaker.name || 'Nov vinar' : winemaker.name" v-bind:locale='locale.lang'/>
+          <LocaleSpan v-bind:object="isNew() && !winemaker.name[locale.lang] ? { sl: 'Nov vinar', en: 'New winemaker'} : winemaker.name" v-bind:locale='locale.lang'/>
           {{ winemaker.code ? `(${winemaker.code})` : '' }}
           <span class="button is-loading is-white" v-if="isLoading"></span>
         </h1>
@@ -106,7 +106,14 @@ import LocaleText from "../../common/LocaleText";
 
 export default {
   name: "Wine",
-  components: { ImageBar, VideoBar, LocaleSpan, LocalePicker, LocaleString, LocaleText },
+  components: {
+    ImageBar,
+    VideoBar,
+    LocaleSpan,
+    LocalePicker,
+    LocaleString,
+    LocaleText
+  },
   data() {
     return {
       isLoading: true,
@@ -133,8 +140,9 @@ export default {
     async load() {
       this.winemaker.id = this.$route.params.id;
 
-      if (this.isNew()) this.winemaker = { name: "" };
-      else {
+      if (this.isNew()) {
+        this.winemaker = { name: { sl: "", en: "" }, images: [], video: null };
+      } else {
         this.isLoading = true;
         this.winemaker = await this.$http
           .get("winemakers/" + this.winemaker.id)

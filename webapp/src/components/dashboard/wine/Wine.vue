@@ -9,7 +9,7 @@
         </h1>
       </div>
       <div class="level-right">
-        <LocalePicker v-bind:locale="locale" />
+        <LocalePicker :locale="locale" />
       </div>
     </nav>
   
@@ -25,16 +25,16 @@
   
       <div class="control field has-addons">
         <div class="control is-expanded">
-          <div class="select is-fullwidth" v-bind:class="isLoadingWinemakers ? 'is-loading' : ''">
+          <div class="select is-fullwidth" :class="isLoadingWinemakers ? 'is-loading' : ''">
             <select v-model="wine.winemakerId">
-              <option v-for="winemaker in winemakers" v-bind:key="winemaker.id" v-bind:value="winemaker.id">
-                <LocaleSpan v-bind:object="winemaker.name" v-bind:locale="locale.lang"/>
+              <option v-for="winemaker in winemakers" :key="winemaker.id" :value="winemaker.id">
+                <LocaleSpan :object="winemaker.name" :locale="locale.lang"/>
               </option>
             </select>
           </div>
         </div>
         <div class="control">
-          <button type="submit" class="button" v-on:click="loadWinemakers()">Osveži</button>
+          <button type="submit" class="button" @click="loadWinemakers()">Osveži</button>
         </div>
         <div class="control">
           <a href="#/vinarji/nov" target="_blank" class="button">Dodaj</a>
@@ -42,7 +42,7 @@
       </div>
     </div>
   
-    <ImageBar v-bind:object="wine" />
+    <ImageBar :object="wine" />
   
     <div class="field columns">
       <div class="field column">
@@ -52,8 +52,8 @@
           <div class="control is-expanded">
             <div class="select is-fullwidth">
               <select v-model="wine.typeId">
-                <option v-for="wineType in wineTypes" v-bind:key="wineType.id" v-bind:value="wineType.id">
-                  <LocaleSpan v-bind:object="wineType.name" v-bind:locale="locale.lang"/>
+                <option v-for="wineType in wineTypes" :key="wineType.id" :value="wineType.id">
+                  <LocaleSpan :object="wineType.name" :locale="locale.lang"/>
                 </option>
               </select>
             </div>
@@ -70,8 +70,8 @@
           <div class="control is-expanded">
             <div class="select is-fullwidth">
               <select v-model="wine.sugarId">
-                <option v-for="sugar in sugars" v-bind:key="sugar.id" v-bind:value="sugar.id">
-                  <LocaleSpan v-bind:object="sugar.name" v-bind:locale="locale.lang"/>
+                <option v-for="sugar in sugars" :key="sugar.id" :value="sugar.id">
+                  <LocaleSpan :object="sugar.name" :locale="locale.lang"/>
                 </option>
               </select>
             </div>
@@ -87,27 +87,27 @@
       <label class="label">Sorte</label>
   
       <div class="field is-grouped is-grouped-multiline">
-        <div class="control" v-for="variety in wine.varieties" v-bind:key="variety.id">
+        <div class="control" v-for="variety in wine.varieties" :key="variety.id">
           <div class="tags has-addons">
             <a class="tag is-medium is-dark">
-              <LocaleSpan v-bind:object="variety.name" v-bind:locale="locale.lang"/>
+              <LocaleSpan :object="variety.name" :locale="locale.lang"/>
             </a>
-            <a class="tag is-medium is-danger is-delete" v-on:click="removeVariety(variety)"></a>
+            <a class="tag is-medium is-danger is-delete" @click="removeVariety(variety)"></a>
           </div>
         </div>
   
   
         <div class="control">
-          <div class="dropdown" v-bind:class="addVarietyDropdown ? 'is-active' : ''">
+          <div class="dropdown" :class="addVarietyDropdown ? 'is-active' : ''">
             <div class="dropdown-trigger">
-              <a class="tag is-primary is-medium" aria-haspopup="true" aria-controls="dropdown-menu" v-on:click="addVarietyDropdown = !addVarietyDropdown">
+              <a class="tag is-primary is-medium" aria-haspopup="true" aria-controls="dropdown-menu" @click="addVarietyDropdown = !addVarietyDropdown">
                 <span>Dodaj</span>
               </a>
             </div>
             <div class="dropdown-menu" id="dropdown-menu" role="menu">
               <div class="dropdown-content">
-                <a class="dropdown-item" v-for="variety in varieties" v-bind:key="variety.id" v-on:click="addVariety(variety)">
-                  {{ variety.name }}
+                <a class="dropdown-item" v-for="variety in varieties" :key="variety.id" @click="addVariety(variety)">
+                  <LocaleSpan :object="variety.name" :lang="locale.lang"/>
                 </a>
               </div>
             </div>
@@ -135,28 +135,28 @@
     <div class="field">
       <label class="label">Značilnosti</label>
       <div class="control">
-        <LocaleText v-bind:object="wine.features" v-bind:locale="locale.lang" />
+        <LocaleText :object="wine.features" :locale="locale.lang" />
       </div>
     </div>
   
     <div class="field">
       <label class="label">Nagrade</label>
       <div class="control">
-        <LocaleText v-bind:object="wine.awards" v-bind:locale="locale.lang" v-bind:rows="2" />
+        <LocaleText :object="wine.awards" :locale="locale.lang" :rows="2" />
       </div>
     </div>
   
     <div class="field">
       <label class="label">Kulinarika</label>
       <div class="control">
-        <LocaleText v-bind:object="wine.culinary" v-bind:locale="locale.lang" v-bind:rows="2" />
+        <LocaleText :object="wine.culinary" :locale="locale.lang" :rows="2" />
       </div>
     </div>
   
     <div class="field">
       <label class="label">Priporočena temperatura</label>
       <div class="control">
-        <LocaleText v-bind:object="wine.temperature" v-bind:locale="locale.lang" v-bind:rows="1" />
+        <LocaleText :object="wine.temperature" :locale="locale.lang" :rows="1" />
       </div>
     </div>
   
@@ -202,15 +202,15 @@
     <div class="columns">
       <div class="column field is-grouped">
         <p class="control">
-          <a v-on:click="$router.go(-1)" class="button">Nazaj</a>
+          <a @click="$router.go(-1)" class="button">Nazaj</a>
         </p>
       </div>
       <div class="column field is-grouped is-grouped-right">
         <p class="control">
-          <a v-on:click="remove()" class="button is-danger">Izbrisi</a>
+          <a @click="remove()" class="button is-danger">Izbrisi</a>
         </p>
         <p class="control">
-          <a v-on:click="save()" class="button is-primary" v-bind:class="isSaving ? 'is-loading' : ''">Shrani</a>
+          <a @click="save()" class="button is-primary" :class="isSaving ? 'is-loading' : ''">Shrani</a>
         </p>
       </div>
     </div>
@@ -271,7 +271,11 @@ export default {
           name: "",
           varietyIds: [],
           volume: 0.75,
-          images: []
+          images: [],
+          features: { sl: "", en: "" },
+          awards: { sl: "", en: "" },
+          culinary: { sl: "", en: "" },
+          temperature: { sl: "", en: "" },
         };
       else {
         this.isLoading = true;
