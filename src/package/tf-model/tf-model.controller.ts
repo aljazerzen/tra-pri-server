@@ -1,9 +1,11 @@
-import { Controller, Delete, Get, Post, Res } from '@nestjs/common';
+import { Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 
+import { AuthGuard } from '../../auth/auth.guard';
 import { TFModelService } from './tf-model.service';
 
 @Controller('tf-models')
+@UseGuards(AuthGuard)
 export class TFModelController {
 
   constructor(
@@ -17,14 +19,8 @@ export class TFModelController {
   }
   
   @Post()
-  async createNew() {
-    this.tfModelService.generate();
+  createNew() {
+    return this.tfModelService.start();
   }
-
-  @Delete()
-  async stopGeneration() {
-    this.tfModelService.stop();
-  }
-
 
 }

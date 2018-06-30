@@ -21,10 +21,10 @@
       </div>
       <div class="add-buttons">
         <div>
-          <CaptureImageButton route="image" v-on:file-uploaded="setImage"/>
+          <CaptureImageButton route="label" v-on:file-uploaded="setImage"/>
         </div>
         <div>
-          <FileUploadButton route="image" caption="Naloži" v-on:file-uploaded="setImage"/>
+          <FileUploadButton route="label" caption="Naloži" v-on:file-uploaded="setImage"/>
         </div>
       </div>
     </div>
@@ -70,7 +70,7 @@ export default {
 
       try {
         const upload = await this.$http
-          .post('image', formData)
+          .post('label', formData)
           .then(data => data.json());
 
         if(!this.image)

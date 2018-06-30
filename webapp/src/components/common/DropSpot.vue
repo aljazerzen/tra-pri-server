@@ -45,7 +45,7 @@ export default {
 
       try {
         const upload = await this.$http
-          .post("image", formData)
+          .post("label", formData)
           .then(data => data.json());
 
         this.$emit("file-uploaded", upload);

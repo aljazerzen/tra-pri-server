@@ -1,18 +1,19 @@
-import Places from './components/dashboard/place/Places';
+import Dashboard from './components/dashboard/Dashboard';
+import Model from './components/dashboard/model/Model';
+import Packages from './components/dashboard/package/Packages';
 import Place from './components/dashboard/place/Place';
+import Places from './components/dashboard/place/Places';
 import Sugars from './components/dashboard/sugar/Sugars';
-import Wines from './components/dashboard/wine/Wines';
-import Wine from './components/dashboard/wine/Wine';
-import Winemakers from './components/dashboard/winemaker/Winemakers';
-import Winemaker from './components/dashboard/winemaker/Winemaker';
-import WineTypes from './components/dashboard/wine-type/WineTypes';
 import Varieties from './components/dashboard/variety/Varieties';
 import Variety from './components/dashboard/variety/Variety';
-import Dashboard from './components/dashboard/Dashboard';
-import Packages from './components/dashboard/package/Packages';
-import Login from './components/Login';
-import WinesLabels from './components/dashboard/wine-label/WinesLabels';
 import WineLabels from './components/dashboard/wine-label/WineLabels';
+import WinesLabels from './components/dashboard/wine-label/WinesLabels';
+import WineTypes from './components/dashboard/wine-type/WineTypes';
+import Wine from './components/dashboard/wine/Wine';
+import Wines from './components/dashboard/wine/Wines';
+import Winemaker from './components/dashboard/winemaker/Winemaker';
+import Winemakers from './components/dashboard/winemaker/Winemakers';
+import Login from './components/Login';
 
 export default [
   {
@@ -31,6 +32,7 @@ export default [
       { path: '/paketi', component: Packages },
       { path: '/etikete', component: WinesLabels },
       { path: '/etikete/:id', name: 'wine-label', component: WineLabels },
+      { path: '/modeli', component: Model },
     ]
   },
   { path: '/login', component: Login },

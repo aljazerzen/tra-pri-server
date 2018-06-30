@@ -52,19 +52,25 @@ export class FileService {
     return file;
   }
 
-  async saveUpload(upload, type: FILE_TYPE) {
+  async saveUpload(upload, type: FILE_TYPE, resize?: { width: number, height: number }) {
     if (!upload)
       throw new BadRequestException('file missing', 'FILE_MISSING');
 
     const extension = this.isAllowedExtension(upload.originalname, type);
 
-    const stream = type === FILE_TYPE.IMAGE ? this.removeEXIF(upload.buffer) : this.toStream(upload.buffer);
+    const stream = resize
+      ? this.resize(upload.buffer, resize)
+      : (type === FILE_TYPE.IMAGE ? this.removeEXIF(upload.buffer) : this.toStream(upload.buffer));
 
     return this.save(stream, extension, type);
   }
 
   removeEXIF(buffer: Buffer) {
     return sharp(buffer).rotate();
+  }
+
+  resize(buffer: Buffer, size: { width: number, height: number }) {
+    return sharp(buffer).resize(size.width, size.height).max().rotate();
   }
 
   async save(stream: Readable, extension: string, type: FILE_TYPE, key?: string) {
@@ -79,6 +85,15 @@ export class FileService {
         .pipe(fs.createWriteStream(this.getPath(file)))
         .on('finish', resolve);
     });
+    return file;
+  }
+
+  async importLocalFile(type: FILE_TYPE, current_path: string, new_filename: string) {
+    const file = new File();
+    file.type = type;
+    file.path = current_path;
+
+    await this.move(file, path.resolve(FileService.UPLOAD_PATH, new_filename));
     return file;
   }
 
@@ -123,7 +138,7 @@ export class FileService {
       fs.rename(this.getPath(file), newPath, resolve)
     );
 
-    file.path = newPath;
+    file.path = path.relative(FileService.UPLOAD_PATH, newPath);
     file.url = this.createUrl(file.path);
     await this.repo.save(file);
   }
@@ -141,31 +156,37 @@ export class FileService {
       .where('id NOT IN ' + qb.subQuery()
         .select('DISTINCT "fileId"')
         .from('winemaker_images_file', 'winemaker_images')
+        .where('"fileId" IS NOT NULL')
         .getQuery()
       )
       .andWhere('id NOT IN ' + qb.subQuery()
         .select('"videoId"')
         .from('winemaker', 'winemaker')
+        .where('"videoId" IS NOT NULL')
         .getQuery()
       )
       .andWhere('id NOT IN ' + qb.subQuery()
         .select('DISTINCT "fileId"')
         .from('variety_images_file', 'variety_images')
+        .where('"fileId" IS NOT NULL')
         .getQuery()
       )
       .andWhere('id NOT IN ' + qb.subQuery()
         .select('DISTINCT "fileId"')
         .from('wine_images_file', 'wine_images')
+        .where('"fileId" IS NOT NULL')
         .getQuery()
       )
       .andWhere('id NOT IN ' + qb.subQuery()
         .select('"fileId"')
         .from('wine_package', 'wine_package')
+        .where('"fileId" IS NOT NULL')
         .getQuery()
       )
       .andWhere('id NOT IN ' + qb.subQuery()
         .select('"imageId"')
         .from('label', 'label')
+        .where('"imageId" IS NOT NULL')
         .getQuery()
       )
       .andWhere(`"createdAt" < (current_timestamp - interval '1 day')`)

@@ -19,7 +19,7 @@ export class File {
   @Column()
   path: string;
 
-  @Column()
+  @Column({ nullable: true })
   url: string;
 
   @ManyToMany(() => Winemaker, wm => wm.images)

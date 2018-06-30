@@ -1,11 +1,12 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { createHttpExceptionBody } from '@nestjs/common/utils/http-exception-body.util';
-import { ChildProcess, spawn } from 'child_process';
+import { spawn } from 'child_process';
+import { Response } from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as rimraf from 'rimraf';
-import { Transform, Writable } from 'stream';
 
+import { FILE_TYPE } from '../../file/file.constants';
 import { FileService } from '../../file/file.service';
 import { Label } from '../../wine/label.entity';
 import { WineService } from '../../wine/wine.service';
@@ -20,13 +21,6 @@ export class TFModelService {
   }
 
   generating = false;
-  childProcess: ChildProcess;
-  bus: Transform = new Transform({
-    transform(data, encodeing, callback) {
-      this.push(data);
-      callback();
-    }
-  });
 
   pad(number: number) {
     return ('0'.repeat(5) + number).substr(-5);
@@ -36,15 +30,21 @@ export class TFModelService {
     return this.pad(labelNumber) + path.extname(label.image.path)
   }
 
-  async generate() {
-    if(this.generating)
+  start() {
+    if (this.generating)
       throw new HttpException(createHttpExceptionBody('generation already in progress', 'GENERATION_IN_PROGRESS', 400), 400);
+    this.generate();
+  }
+
+  private async generate() {
     this.generating = true;
+
+    const log = fs.createWriteStream(process.env.ML_DATA_PATH + '/log.txt', 'utf-8');
 
     // get all wines
     const wines = await this.wineService.list(['labels', 'labels.image']);
 
-    this.bus.write('...setting up label image symlink directory structure\n');
+    log.write('...setting up label image symlink directory structure\n');
 
     // create fresh data dir
     await new Promise(resolve =>
@@ -56,35 +56,35 @@ export class TFModelService {
 
     // create sym links to image files for each label
     const classes = [];
-    let classNumber = 1;
     for (let wine of wines) {
 
-      await new Promise(resolve =>
-        fs.mkdir(process.env.ML_DATA_PATH + '/' + classNumber, resolve)
-      );
+      if (wine.labels.length > 0 && wine.labels.find(l => l.index === 0)) {
 
-      let labelNumber = 1;
-      for (let label of wine.labels) {
-        if (label) {
-          let labelFilename = process.env.ML_DATA_PATH + '/' + classNumber + '/' + this.labelName(labelNumber++, label);
+        await new Promise(resolve =>
+          fs.mkdir(process.env.ML_DATA_PATH + '/' + wine.id, resolve)
+        );
 
-          await this.fileService.createSymLink(label.image, labelFilename);
+        let labelNumber = 1;
+        for (let label of wine.labels) {
+          if (label) {
+            let labelFilename = process.env.ML_DATA_PATH + '/' + wine.id + '/' + this.labelName(labelNumber++, label);
 
-          if (label.index === 0) {
-            classes.push({
-              folder: '' + classNumber,
-              labelFilename,
-              labelCoordinates: label.coordinates
-            });
+            await this.fileService.createSymLink(label.image, labelFilename);
+
+            if (label.index === 0) {
+              classes.push({
+                folder: '' + wine.id,
+                labelFilename,
+                labelCoordinates: label.coordinates
+              });
+            }
           }
         }
       }
-
-      classNumber++;
     }
 
     // prepare JSON file
-    this.bus.write('...preparing JSON config file\n')
+    log.write('...preparing JSON config file\n')
 
     const config = {
       config: {
@@ -101,39 +101,51 @@ export class TFModelService {
     await new Promise((resolve, reject) =>
       fs.writeFile(process.env.ML_SCRIPT_PATH + '/config.json', configJSON, err => err ? reject(err) : resolve())
     );
-    this.bus.write(configJSON + '\n');
+    log.write(configJSON + '\n');
 
-    this.bus.write('...starting \'generate_model.py\'\n')
+    log.write('...starting \'generate_model.py\'\n')
 
     // enable python venv and run generate_model.py script
-    this.childProcess = spawn(`source ${process.env.ML_PYTHON_VENV_PATH}/bin/activate && python3 generate_model.py`, [], { 
+    const childProcess = spawn(`source ${process.env.ML_PYTHON_VENV_PATH}/bin/activate && python3 generate_model.py`, [], {
       shell: 'bash',
       cwd: process.env.ML_SCRIPT_PATH
     });
 
-    this.childProcess.stdout.pipe(this.bus, { end: false });
-    this.childProcess.stderr.on('data', data => this.bus.write(data.toString().split('\n').map(s => '###' + s).join('\n')));
+    childProcess.stdout.on('data', data => log.write(data));
+    childProcess.stderr.on('data', data => log.write(data.toString().split('\n').map(s => '###' + s).join('\n')));
 
     // wait for finish
     await new Promise(resolve =>
-      this.childProcess.on('close', () => {
-        this.bus.write(`\n...script exited\n`)
+      childProcess.on('close', () => {
+        log.write(`\n...script exited\n`)
         resolve();
       })
     );
-    this.childProcess = null;
 
+    // import model file in the file database
+    try {
+      const modelPath = process.env.ML_DATA_PATH + '/model.pb';
+
+      await new Promise((resolve, reject) => fs.stat(modelPath, err => err ? reject(err) : resolve()));
+
+      await this.fileService.importLocalFile(FILE_TYPE.MODEL, modelPath, new Date().toISOString().split('.')[0] + '.pb');
+
+      log.write(`\n...model.pb imported into file database\n`)
+    } catch (e) {
+      // script failed - model.pb does not exist
+      log.write(`\n...model.pb does not exist - not imported\n`)
+    }
+
+    log.write(`\n...finished\n`)
+    log.end();
     this.generating = false;
   }
 
-  async stop() {
-    if(this.childProcess) {
-      this.childProcess.kill('SIGKILL');
-    }
-  }
-
-  async attach(output: Writable) {
-    this.bus.pipe(output);
+  async attach(res: Response) {
+    res.sendFile(process.env.ML_DATA_PATH + '/log.txt', (err) => {
+      if(err)
+        res.send('No logs');
+    });
   }
 
 }

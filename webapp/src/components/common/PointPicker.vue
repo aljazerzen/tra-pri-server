@@ -4,7 +4,7 @@
       style="pointer-events: all;"
       @mousedown="dragStart"
       @mousemove="dragMove"
-      @mouseup="dragging = null"></canvas>
+      @mouseup="dragEnd"></canvas>
   </div>
 </template>
 
@@ -14,18 +14,19 @@ export default {
   props: ["width", "height", "points"],
   data: () => ({
     ctx: null,
-    dragging: null
+    dragging: null,
+    default: false,
   }),
   mounted() {
     this.ctx = this.$refs.canvas.getContext("2d");
 
-    this.$watch("width", () => this.setPoints([]));
-    if (this.$refs.canvas) this.setPoints([]);
+    this.$watch("width", () => this.reset());
+    if (this.$refs.canvas) this.reset();
   },
   methods: {
-    setPoints(points) {
-      if (!points || points.length < 6) {
-        points = [
+    reset() {
+      if (this.default || !this.points || this.points.length < 6) {
+        let points = [
           { x: 0.1, y: 0.3 },
           { x: 0.5, y: 0.25 },
           { x: 0.9, y: 0.3 },
@@ -33,9 +34,10 @@ export default {
           { x: 0.5, y: 0.75 },
           { x: 0.1, y: 0.7 }
         ].map(a => ({ x: this.width * a.x, y: this.height * a.y }));
-      }
+        this.default = true;
 
-      this.$emit("points-set", points);
+        this.$emit("points-set", points);
+      }
       this.$nextTick(this.redraw);
     },
     dragStart(event) {
@@ -51,8 +53,13 @@ export default {
           this.width * event.offsetX / this.$refs.canvas.clientWidth;
         this.dragging.y =
           this.height * event.offsetY / this.$refs.canvas.clientHeight;
+        this.default = false;
         this.redraw();
       }
+    },
+    dragEnd() {
+      this.dragging = null;
+      this.$emit("points-set", this.points);
     },
     redraw() {
       this.ctx.clearRect(
