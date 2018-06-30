@@ -1,11 +1,12 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
 import { FileService } from './../file/file.service';
-import { Component, NotFoundException } from '@nestjs/common';
 import { DVariety } from './variety.dto';
 import { Variety } from './variety.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 
-@Component()
+@Injectable()
 export class VarietyService {
 
   constructor(

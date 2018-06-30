@@ -1,4 +1,4 @@
-import { Component, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -8,7 +8,7 @@ import { FileService } from './../file/file.service';
 import { DWine, DWineLabels } from './wine.dto';
 import { Wine } from './wine.entity';
 
-@Component()
+@Injectable()
 export class WineService {
 
   constructor(
@@ -44,7 +44,7 @@ export class WineService {
     return this.repo.save(wine);
   }
 
-  async updateLableImages(wine: Wine, data: DWineLabels) {
+  async updateLabelImages(wine: Wine, data: DWineLabels) {
 
     const images = await this.fileService.findMany(data.labels.filter(l => !!l).map(l => l.id));
 
@@ -65,7 +65,8 @@ export class WineService {
 
         await this.labelRepo.save(label);
         return label;
-      }));
+      })
+    );
 
     return wine;
   }

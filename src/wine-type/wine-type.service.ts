@@ -1,10 +1,11 @@
-import { Component, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
 import { DWineType } from './wine-type.dto';
 import { WineType } from './wine-type.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 
-@Component()
+@Injectable()
 export class WineTypeService {
 
   constructor(

@@ -1,11 +1,12 @@
-import { File } from './../file/file.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { Winemaker } from '../winemaker/winemaker.entity';
-import { WineType } from '../wine-type/wine-type.entity';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+
+import { LocaleText } from '../locale/locale.entity';
 import { Sugar } from '../sugar/sugar.entity';
 import { Variety } from '../variety/variety.entity';
-import { LocaleText } from '../locale/locale.entity';
+import { WineType } from '../wine-type/wine-type.entity';
 import { Label } from '../wine/label.entity';
+import { Winemaker } from '../winemaker/winemaker.entity';
+import { File } from './../file/file.entity';
 
 @Entity()
 export class Wine {
@@ -61,4 +62,8 @@ export class Wine {
 
   @OneToMany(() => Label, label => label.wine)
   labels: Label[];
+
+  // sequential number of class used in machine learning model generation for this wine 
+  @Column({ nullable: true })
+  classNumber: number; 
 }

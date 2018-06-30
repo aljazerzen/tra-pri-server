@@ -1,11 +1,12 @@
-import { Component, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { CannotDeleteException } from '../cannot-delete.exception';
 import { DSugar } from './sugar.dto';
 import { Sugar } from './sugar.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CannotDeleteException } from '../cannot-delete.exception';
 
-@Component()
+@Injectable()
 export class SugarService {
 
   constructor(

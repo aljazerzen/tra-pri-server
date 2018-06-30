@@ -1,4 +1,4 @@
-import { Type, Transform, plainToClass } from 'class-transformer';
+import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
   ArrayMinSize,
@@ -12,16 +12,15 @@ import {
   MaxLength,
   Min,
   ValidateNested,
-  ValidateIf,
 } from 'class-validator';
 
 import { DLocaleText } from '../locale/locale.dto';
 import { DSugar } from '../sugar/sugar.dto';
 import { DVariety } from '../variety/variety.dto';
 import { DWineType } from '../wine-type/wine-type.dto';
+import { DWinemaker } from '../winemaker/winemaker.dto';
 import { DFile } from './../file/file.dto';
 import { Wine } from './wine.entity';
-import { DWinemaker } from '../winemaker/winemaker.dto';
 
 export class DWine {
   id: number;
@@ -166,7 +165,6 @@ export class DWineLabels {
     if (entity.winemaker)
       r.winemaker = DWinemaker.create(entity.winemaker);
 
-    console.log(entity.labels);
     r.labels = [];
     for (let i = 0; i < 10; i++) {
       const label = entity.labels.find(l => l && l.index === i);

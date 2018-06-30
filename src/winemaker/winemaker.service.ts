@@ -1,12 +1,13 @@
-import { Component, NotFoundException } from '@nestjs/common';
-import { DWinemaker } from './winemaker.dto';
-import { Winemaker } from './winemaker.entity';
-import { Repository } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
 import { CannotDeleteException } from '../cannot-delete.exception';
 import { FileService } from '../file/file.service';
+import { DWinemaker } from './winemaker.dto';
+import { Winemaker } from './winemaker.entity';
 
-@Component()
+@Injectable()
 export class WinemakerService {
 
   constructor(

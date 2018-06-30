@@ -1,19 +1,20 @@
-import { Component, NotFoundException } from '@nestjs/common';
-import { WineService } from '../wine/wine.service';
-import { FileService } from '../file/file.service';
-import { FILE_TYPE } from '../file/file.constants';
-import { WinePackage } from './wine-package.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Wine } from '../wine/wine.entity';
 import * as archiver from 'archiver';
-import { File } from '../file/file.entity';
 import * as path from 'path';
-// noinspection ES6UnusedImports
 import { Repository } from 'typeorm';
 
+import { FILE_TYPE } from '../file/file.constants';
+import { File } from '../file/file.entity';
+import { FileService } from '../file/file.service';
+import { Wine } from '../wine/wine.entity';
+import { WineService } from '../wine/wine.service';
+import { WinePackage } from './wine-package.entity';
+
+// noinspection ES6UnusedImports
 const defaultToSl = (locale: { sl: string, en: string }) => ({ sl: locale.sl, en: locale.en || locale.sl });
 
-@Component()
+@Injectable()
 export class PackageService {
 
   constructor(
@@ -64,7 +65,7 @@ export class PackageService {
       if (existing)
         return existing.name;
 
-      const name = '' + images.length + path.extname(file.key);
+      const name = '' + images.length + path.extname(file.path);
       images.push({ name, file });
       return name;
     };
@@ -108,7 +109,6 @@ export class PackageService {
   async compress(jsonData, images: { name: string, file: File }[], name: string) {
 
     const archive = archiver('zip', { zlib: { level: 9 } });
-    const { stream: output, file } = await this.fileService.createWriteStream('.zip', FILE_TYPE.PACKAGE, name);
 
     // good practice to catch warnings (ie stat failures and other non-blocking errors)
     archive.on('warning', function (err) {
@@ -126,7 +126,7 @@ export class PackageService {
     });
 
     // pipe archive data to the file
-    archive.pipe(output);
+    const filePromise = this.fileService.save(archive, '.zip', FILE_TYPE.PACKAGE, name);
 
     // package.json
     const buffer = Buffer.from(JSON.stringify(jsonData));
@@ -137,13 +137,10 @@ export class PackageService {
       archive.append(this.fileService.readStream(image.file), { name: 'images/' + image.name });
     }
 
-    const size = new Promise<number>(resolve =>
-      output.on('close', function () {
-        resolve(archive.pointer());
-      })
-    );
-
     archive.finalize();
-    return { file, size: await size };
+
+    const file = await filePromise;
+    const size = archive.pointer();
+    return { file, size };
   }
 }

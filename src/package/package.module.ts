@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { FileModule } from '../file/file.module';
 import { WineModule } from '../wine/wine.module';
 import { PackageController } from './package.controller';
 import { PackageService } from './package.service';
-import { FileModule } from '../file/file.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TFModelController } from './tf-model/tf-model.controller';
+import { TFModelService } from './tf-model/tf-model.service';
 import { WinePackage } from './wine-package.entity';
 
 @Module({
@@ -12,11 +15,13 @@ import { WinePackage } from './wine-package.entity';
     WineModule,
     FileModule,
   ],
-  components: [
+  providers: [
     PackageService,
+    TFModelService,
   ],
   controllers: [
-    PackageController
+    PackageController,
+    TFModelController,
   ]
 })
 export class PackageModule {

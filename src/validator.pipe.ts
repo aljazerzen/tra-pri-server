@@ -1,8 +1,8 @@
-import { validate } from 'class-validator';
-import { ArgumentMetadata, BadRequestException, Pipe, PipeTransform } from '@nestjs/common';
+import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
 
-@Pipe()
+@Injectable()
 export class ValidatorPipe implements PipeTransform<any> {
   public async transform(value: any, metadata: ArgumentMetadata): Promise<any> {
     const { metatype } = metadata;
@@ -11,7 +11,6 @@ export class ValidatorPipe implements PipeTransform<any> {
     }
 
     const object = plainToClass(metatype, value);
-    console.log(object);
     const errors = await validate(object, { skipMissingProperties: true, whitelist: true });
     if (errors.length > 0) {
       throw new BadRequestException(this.extractErrorMessages(errors), 'VALIDATION_ERROR');
