@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as sharp from 'sharp';
 import { Readable } from 'stream';
 import { Repository } from 'typeorm';
 
@@ -57,7 +58,13 @@ export class FileService {
 
     const extension = this.isAllowedExtension(upload.originalname, type);
 
-    return this.save(this.toStream(upload.buffer), extension, type);
+    const stream = type === FILE_TYPE.IMAGE ? this.removeEXIF(upload.buffer) : this.toStream(upload.buffer);
+
+    return this.save(stream, extension, type);
+  }
+
+  removeEXIF(buffer: Buffer) {
+    return sharp(buffer).rotate();
   }
 
   async save(stream: Readable, extension: string, type: FILE_TYPE, key?: string) {

@@ -166,12 +166,13 @@ export class DWineLabels {
       r.winemaker = DWinemaker.create(entity.winemaker);
 
     r.labels = [];
-    for (let i = 0; i < 10; i++) {
-      const label = entity.labels.find(l => l && l.index === i);
-      r.labels[i] = label ? DFile.create(label.image) : null;
+    for (const label of entity.labels) {
+      if(label) {
+        r.labels[label.index] = DFile.create(label.image);
 
-      if (i === 0) {
-        r.coordinates = label ? label.coordinates : null;
+        if (label.index === 0) {
+          r.coordinates = label ? label.coordinates : null;
+        }
       }
     }
 
