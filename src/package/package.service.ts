@@ -1,16 +1,17 @@
 import { Component, NotFoundException } from '@nestjs/common';
-import { WineService } from '../wine/wine.service';
-import { FileService } from '../file/file.service';
-import { FILE_TYPE } from '../file/file.constants';
-import { WinePackage } from './wine-package.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Wine } from '../wine/wine.entity';
 import * as archiver from 'archiver';
-import { File } from '../file/file.entity';
 import * as path from 'path';
-// noinspection ES6UnusedImports
 import { Repository } from 'typeorm';
 
+import { FILE_TYPE } from '../file/file.constants';
+import { File } from '../file/file.entity';
+import { FileService } from '../file/file.service';
+import { Wine } from '../wine/wine.entity';
+import { WineService } from '../wine/wine.service';
+import { WinePackage } from './wine-package.entity';
+
+// noinspection ES6UnusedImports
 const defaultToSl = (locale: { sl: string, en: string }) => ({ sl: locale.sl, en: locale.en || locale.sl });
 
 @Component()
@@ -79,9 +80,9 @@ export class PackageService {
       name: wine.name,
       images: (wine.images || []).map(useImage),
       price: +wine.price,
-      sugar: wine.sugar.name,
+      sugar: wine.sugar ? wine.sugar.name : '',
       temperature: wine.temperature,
-      type: wine.type.name,
+      type: wine.type ? wine.type.name : '',
       varieties: (wine.varieties || []).map(variety => ({
         name: defaultToSl(variety.name),
         description: variety.description,
