@@ -45,22 +45,20 @@
       </div>
     </div>
 
-    <div class="card" v-for="wine in displayed" v-bind:key="wine.id">
-      <router-link :to="{ name: 'wine', params: { id: wine.id }}">
-        <div class="card-header">
-          <div class="card-header-title level">
-            <p class="level-left">
-              <i class="has-text-grey">
-                <LocaleSpan v-bind:object="wine.winemaker.name" v-if="wine.winemaker" locale='sl'/>: 
-              </i> {{ wine.name }}
-            </p>
-            <p class="level-right " v-if="wine.code">
-              <span v-if="wine.year" class="tag is-light">{{ wine.year}}</span>
-              {{ wine.code }}
-            </p>
-          </div>
+    <div class="card" v-for="wine in displayed" v-bind:key="wine.id" v-focus="selected" tabindex="0">
+      <a class="card-header" @click="navigateToWine(wine)">
+        <div class="card-header-title level">
+          <p class="level-left">
+            <i class="has-text-grey">
+              <LocaleSpan v-bind:object="wine.winemaker.name" v-if="wine.winemaker" locale='sl'/>: 
+            </i> {{ wine.name }}
+          </p>
+          <p class="level-right " v-if="wine.code">
+            <span v-if="wine.year" class="tag is-light">{{ wine.year}}</span>
+            {{ wine.code }}
+          </p>
         </div>
-      </router-link>
+      </a>
     </div>
   </div>
 </template>
@@ -73,11 +71,22 @@ export default {
   components: {
     LocaleSpan
   },
+  directives: {
+    focus: {
+      update(el, binding, vnode) {
+        if (vnode.key === binding.value) {
+          vnode.context.$nextTick(() => el.focus());
+          el.scrollIntoView();
+        }
+      }
+    }
+  },
   data() {
     return {
       isLoading: true,
       search: "",
       sort: "name",
+      selected: null,
       wines: [],
       displayed: []
     };
@@ -85,17 +94,26 @@ export default {
   mounted() {
     this.load();
     this.search = this.$route.query.search;
+    this.sort = this.$route.query.sort;
+    this.selected = +this.$route.query.selected;
   },
   watch: {
     $route() {
       this.sortAndFilter();
+      this.selected = this.$route.query ? +this.$route.query.selected : null;
     }
   },
   methods: {
+    async navigateToWine(wine) {
+      this.selected = wine.id;
+      this.updateQuery();
+
+      this.$router.push({ name: "wine", params: { id: wine.id } });
+    },
     async updateQuery() {
       this.$router.replace({
         path: this.$route.path,
-        query: { search: this.search, sort: this.sort }
+        query: { search: this.search, sort: this.sort, selected: this.selected || undefined }
       });
     },
     async load() {
@@ -121,14 +139,24 @@ export default {
 
       const orders = {
         name: (a, b) => a.name.localeCompare(b.name),
-        winemaker: (a, b) => a.winemaker.name.sl.localeCompare(b.winemaker.name.sl),
+        winemaker: (a, b) =>
+          a.winemaker.name.sl.localeCompare(b.winemaker.name.sl),
         code: (a, b) => a.code.localeCompare(b.code),
-        year: (a, b) => b.year - a.year,
+        year: (a, b) => b.year - a.year
       };
 
-      const sorted = filtered.sort(orders[this.$route.query ? this.$route.query.sort || 'name' : 'name']);
+      const sorted = filtered.sort(
+        orders[this.$route.query ? this.$route.query.sort || "name" : "name"]
+      );
 
       this.displayed = sorted;
+      
+      // trigger focus
+      const selected = this.selected;
+      this.selected = null;
+      this.$nextTick(() => {
+        this.selected = selected;
+      });
     }
   }
 };
