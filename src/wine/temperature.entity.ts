@@ -2,10 +2,10 @@ import { Column } from 'typeorm';
 
 export class Temperature {
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: 'double precision', nullable: true })
   from: number;
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: 'double precision', nullable: true })
   to: number;
 
 }

@@ -18,6 +18,7 @@ export class FileService {
   static ALLOWED_EXTENSIONS = {
     [FILE_TYPE.IMAGE]: ['.png', '.jpg', '.jpeg'],
     [FILE_TYPE.VIDEO]: ['.mp4', '.webm'],
+    [FILE_TYPE.MODEL]: ['.pb'],
   };
 
   constructor(
@@ -52,7 +53,7 @@ export class FileService {
     return file;
   }
 
-  async saveUpload(upload, type: FILE_TYPE, resize?: { width: number, height: number }) {
+  async saveUpload(upload, type: FILE_TYPE, resize?: { width: number, height: number }, filename?: string) {
     if (!upload)
       throw new BadRequestException('file missing', 'FILE_MISSING');
 
@@ -62,7 +63,7 @@ export class FileService {
       ? this.resize(upload.buffer, resize)
       : (type === FILE_TYPE.IMAGE ? this.removeEXIF(upload.buffer) : this.toStream(upload.buffer));
 
-    return this.save(stream, extension, type);
+    return this.save(stream, type, extension, filename);
   }
 
   removeEXIF(buffer: Buffer) {
@@ -73,10 +74,10 @@ export class FileService {
     return sharp(buffer).resize(size.width, size.height).max().rotate();
   }
 
-  async save(stream: Readable, extension: string, type: FILE_TYPE, key?: string) {
+  async save(stream: Readable, type: FILE_TYPE, extension?: string, path?: string) {
     const file = new File();
     file.type = type;
-    file.path = key ? key + extension : this.createKey(extension);
+    file.path = path || this.createKey(extension);
     file.url = this.createUrl(file.path);
     await this.repo.save(file);
 
@@ -147,6 +148,11 @@ export class FileService {
     await new Promise(resolve =>
       fs.symlink(this.getPath(file), path, resolve)
     );
+  }
+
+  async getLastOfType(type: FILE_TYPE) {
+    const model = await this.repo.findOne({ where: { type }, order: { createdAt: 'DESC' } });
+    return model;
   }
 
   getUnused() {

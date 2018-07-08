@@ -1,5 +1,6 @@
 import Dashboard from './components/dashboard/Dashboard';
-import Model from './components/dashboard/model/Model';
+import GenerateModel from './components/dashboard/model/GenerateModel';
+import ManualModel from './components/dashboard/model/ManualModel';
 import Packages from './components/dashboard/package/Packages';
 import Place from './components/dashboard/place/Place';
 import Places from './components/dashboard/place/Places';
@@ -32,7 +33,9 @@ export default [
       { path: '/paketi', component: Packages },
       { path: '/etikete', component: WinesLabels },
       { path: '/etikete/:id', name: 'wine-label', component: WineLabels },
-      { path: '/modeli', component: Model },
+      { path: '/model/generacija', component: GenerateModel },
+      { path: '/model/rocno', component: ManualModel },
+      
     ]
   },
   { path: '/login', component: Login },

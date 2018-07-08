@@ -25,7 +25,7 @@ export class PackageService {
   }
 
   list() {
-    return this.repo.find({ relations: ['file'], order: { date: 'DESC' } });
+    return this.repo.find({ relations: ['file', 'model'], order: { date: 'DESC' } });
   }
 
   async setActive(packageId: number) {
@@ -34,19 +34,21 @@ export class PackageService {
   }
 
   async getActive() {
-    const pack = await this.repo.findOne({ where: { active: true }, relations: ['file'] });
+    const pack = await this.repo.findOne({ where: { active: true }, relations: ['file', 'model'] });
     if (!pack) throw new NotFoundException('active package', 'NO_ACTIVE_PACKAGE');
     return pack;
   }
 
   async createPackage() {
     const wines = await this.wineService.listFull();
-    const { data, images } = this.simplify(wines);
+    const currentModel = await this.fileService.getLastOfType(FILE_TYPE.MODEL);
+    const { data, images } = this.simplify(wines, currentModel);
 
     const pack = new WinePackage();
     pack.wineCount = data.wines.length;
     pack.date = new Date();
     pack.size = 0;
+    pack.model = currentModel;
     await this.repo.save(pack);
 
     const { file, size } = await this.compress(data, images, 'paket_v' + pack.id);
@@ -57,7 +59,7 @@ export class PackageService {
     return pack;
   }
 
-  simplify(wines: Wine[]) {
+  simplify(wines: Wine[], model: File) {
     const images: { name: string, file: File }[] = [];
 
     const useImage = (file: File) => {
@@ -101,9 +103,10 @@ export class PackageService {
         wines: wine.winemaker.wines,
       },
       year: wine.year || null,
+      classNumber: wine.classNumber,
     }));
 
-    return { data: { wines: mappedWines }, images };
+    return { data: { wines: mappedWines, model: model.url }, images };
   }
 
   async compress(jsonData, images: { name: string, file: File }[], name: string) {
@@ -126,7 +129,7 @@ export class PackageService {
     });
 
     // pipe archive data to the file
-    const filePromise = this.fileService.save(archive, '.zip', FILE_TYPE.PACKAGE, name);
+    const filePromise = this.fileService.save(archive, FILE_TYPE.PACKAGE, name + '.zip');
 
     // package.json
     const buffer = Buffer.from(JSON.stringify(jsonData));

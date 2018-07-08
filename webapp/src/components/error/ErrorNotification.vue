@@ -18,6 +18,11 @@ export default {
   },
   methods: {
     handleError(e) {
+      if(!e)
+        return [];
+      if(typeof e === 'string')
+        return [e];
+
       switch (e.status) {
         case 0:
           return ["Strežnik nedosegljiv."];

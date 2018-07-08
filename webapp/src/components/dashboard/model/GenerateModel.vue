@@ -1,30 +1,46 @@
 <template>
+  
   <section class="section">
 
     <nav class="level">
       <div class="level-left">  
         <h1 class="title">
-          Generiranje modela <span class="tag" v-if="connected">Connected</span>
+          Generiranje modela
         </h1>
       </div>
-      <div class="level-right">
-        <div class="button" @click=load style="margin-right: 10px">Osveži</div>
-        <div class="button is-primary" @click=start>Start</div>
-      </div>
+      Trenutno ne deluje. Ne uporabljaj
     </nav>
 
-    <pre id="terminal" ref="terminal">
-      <div v-for="(line, index) in lines" :key="index" :style="line.style" >{{line.text}}</div>
-    </pre>
+    <section class="black-box">
+
+      <div class="level">
+        <div class="level-left">
+          <span class="tag is-success" v-if="connected">Connected</span>
+        </div>
+        <div class="level-right">
+          <div class="field is-grouped">
+            <div class="button is-small is-outlined is-light" @click=load style="margin-right: 10px">
+              <span class="icon is-small"><i class="fas fa-sync"></i></span>
+            </div>
+            <div class="button is-small is-outlined is-primary" @click=start>Start</div>
+          </div>
+        </div>
+      </div>
+
+      <pre ref="terminal">
+        <div v-for="(line, index) in lines" :key="index" :style="line.style" >{{line.text}}</div>
+      </pre>
+
+    </section>
 
   </section>
 </template>
 <script>
 export default {
-  name: "Model",
+  name: "GenerateModel",
   data: () => ({
     lines: [],
-    connected: false,
+    connected: false
   }),
   mounted() {
     this.load();
@@ -55,7 +71,7 @@ export default {
       };
       req.onload = () => {
         this.connected = false;
-      }
+      };
 
       req.send();
     },
@@ -85,17 +101,25 @@ export default {
 };
 </script>
 
-<style>
-pre {
+<style scoped>
+section.black-box {
+  color: #eee;
   background-color: #444;
   border-radius: 8px;
-  padding: 0 2em;
-
-  color: #eee;
+  padding: 0 1em;
+  max-height: 80vh;
+  min-height: 500px;
+}
+.black-box .level {
+  margin-bottom: -1em;
+  padding-top: 1em;
+}
+pre {
+  color: inherit;
+  background: none;
+  padding: 0;
   font-size: 12px;
   white-space: pre-wrap;
   font-weight: bold;
-  max-height: 80vh;
-  min-height: 500px;
 }
 </style>

@@ -10,8 +10,8 @@
   "author": "aljazerzen",
   "license": "ISC",
   "dependencies": {
-    "@nestjs/common": "^5.0.1",
-    "@nestjs/core": "^5.0.1",
+    "@nestjs/common": "^5.1.0",
+    "@nestjs/core": "^5.1.0",
     "@nestjs/typeorm": "^5.0.2",
     "archiver": "^2.1.1",
     "class-transformer": "^0.1.9",

@@ -22,7 +22,9 @@
       </div>
 
       <div class="content">
-        Vsebuje {{ pack.wineCount }} vin.
+        Vsebuje <b>{{ pack.wineCount }} vin</b>.
+        <span v-if="pack.model">Model je bil ustvarjen <b>{{ modelCreatedAt }}</b></span>
+        <span v-else>Nima modela.</span>
         <br>
         <time><i>Ustvarjeno: {{ date }}</i></time>
       </div>
@@ -60,7 +62,10 @@ export default {
   computed: {
     date: function() {
       return moment(this.pack.date).calendar();
-    }
+    },
+    modelCreatedAt: function() {
+      return moment(this.pack.model.createdAt).calendar();
+    },
   }
 };
 </script>

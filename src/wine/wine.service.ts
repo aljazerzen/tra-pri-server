@@ -89,4 +89,8 @@ export class WineService {
     return this.list(['winemaker', 'winemaker.video', 'winemaker.place', 'winemaker.images', 'varieties', 'varieties.images',
       'sugar', 'type', 'images']);
   }
+
+  async saveAll(wines: Wine[]) {
+    await this.repo.save(wines);
+  }
 }

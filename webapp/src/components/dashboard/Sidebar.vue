@@ -18,15 +18,23 @@
       </li>
     </ul>
     <p class="menu-label">
-      Sistem
+      Prepoznavanje
     </p>
     <ul class="menu-list">
       <li>
         <router-link to="/etikete">Etikete</router-link>
       </li>
       <li>
-        <router-link to="/modeli">Model</router-link>
+        <router-link to="/model/generacija">Generiranje</router-link>
       </li>
+      <li>
+        <router-link to="/model/rocno">Ročno učenje</router-link>
+      </li>
+    </ul>
+    <p class="menu-label">
+      Sistem
+    </p>
+    <ul class="menu-list">
       <li>
         <router-link to="/paketi">Vsebinski paketi</router-link>
       </li>
@@ -37,16 +45,16 @@
 </template>
 
 <script>
-  import Vue from 'vue';
+import Vue from "vue";
 
-  export default {
-    name: 'Sidebar',
-    methods: {
-      logout() {
-        this.$localStorage.remove('password');
-        Vue.http.headers.common['Authorization'] = undefined;
-        this.$router.push('/login');
-      }
+export default {
+  name: "Sidebar",
+  methods: {
+    logout() {
+      this.$localStorage.remove("password");
+      Vue.http.headers.common["Authorization"] = undefined;
+      this.$router.push("/login");
     }
-  };
+  }
+};
 </script>

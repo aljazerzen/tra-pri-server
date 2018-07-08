@@ -1,3 +1,4 @@
+import { DFile } from '../file/file.dto';
 import { WinePackage } from './wine-package.entity';
 
 const mags = ' KMGTPEZY';
@@ -17,6 +18,7 @@ export class DPackage {
   size: number;
   sizeHuman: string;
   active: boolean;
+  model: DFile;
 
   static create(entity: WinePackage) {
     const r = new DPackage();
@@ -27,6 +29,7 @@ export class DPackage {
     r.size = entity.size;
     r.sizeHuman = humanSize(entity.size, 2);
     r.active = entity.active;
+    r.model = entity.model ? DFile.create(entity.model) : null;
     return r;
   }
 
