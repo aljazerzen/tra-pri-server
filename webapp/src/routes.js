@@ -22,7 +22,7 @@ export default [
       { path: '/sladkor', component: Sugars },
       { path: '/kraji', component: Places },
       { path: '/kraji/:id', name: 'place', component: Place },
-      { path: '/vina', component: Wines },
+      { path: '/vina', name: 'wines', component: Wines },
       { path: '/vina/:id', name: 'wine', component: Wine },
       { path: '/vinarji', component: Winemakers },
       { path: '/vinarji/:id', name: 'winemaker', component: Winemaker },
