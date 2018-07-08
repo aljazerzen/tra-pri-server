@@ -93,8 +93,8 @@ export default {
   },
   mounted() {
     this.load();
-    this.search = this.$route.query.search;
-    this.sort = this.$route.query.sort;
+    this.search = this.$route.query.search || null;
+    this.sort = this.$route.query.sort || 'name';
     this.selected = +this.$route.query.selected;
   },
   watch: {
