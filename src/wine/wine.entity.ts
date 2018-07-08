@@ -7,6 +7,7 @@ import { WineType } from '../wine-type/wine-type.entity';
 import { Label } from '../wine/label.entity';
 import { Winemaker } from '../winemaker/winemaker.entity';
 import { File } from './../file/file.entity';
+import { Temperature } from './temperature.entity';
 
 @Entity()
 export class Wine {
@@ -23,9 +24,10 @@ export class Wine {
   @Column(() => LocaleText)
   culinary: LocaleText;
   @Column(() => LocaleText)
-  temperature: LocaleText;
-  @Column(() => LocaleText)
   features: LocaleText;
+
+  @Column(() => Temperature)
+  temperature: Temperature;
 
   @Column(() => LocaleText)
   awards: LocaleText;

@@ -22,6 +22,13 @@ import { DWinemaker } from '../winemaker/winemaker.dto';
 import { DFile } from './../file/file.dto';
 import { Wine } from './wine.entity';
 
+export class DTemperature {
+  @IsNumber()
+  from: number;
+  @IsNumber()
+  to: number;
+}
+
 export class DWine {
   id: number;
 
@@ -37,12 +44,12 @@ export class DWine {
   @ValidateNested() @Type(() => DLocaleText)
   culinary: DLocaleText;
   @ValidateNested() @Type(() => DLocaleText)
-  temperature: DLocaleText;
-  @ValidateNested() @Type(() => DLocaleText)
   features: DLocaleText;
-
   @ValidateNested() @Type(() => DLocaleText)
   awards: DLocaleText;
+
+  @ValidateNested() @Type(() => DTemperature) @IsDefined()
+  temperature: DTemperature;
 
   @IsNumber() @Min(0) @Type(() => Number)
   price: number;
@@ -83,7 +90,7 @@ export class DWine {
     // r.awards = { sl: entity.awards, en: '' };
 
     r.culinary = DLocaleText.create(entity.culinary);
-    r.temperature = DLocaleText.create(entity.temperature);
+    r.temperature = entity.temperature;
     r.features = DLocaleText.create(entity.features);
     r.awards = DLocaleText.create(entity.awards);
     r.price = entity.price;
@@ -129,7 +136,7 @@ export class DWineLabelSummary {
     r.name = entity.name;
     r.year = entity.year;
     r.labelImageCount = entity.labels.length;
-    
+
     const firstLabel = entity.labels.find(l => l.index == 0);
     r.hasLabelImageCoordinates = firstLabel && firstLabel.coordinates !== null;
 
@@ -167,7 +174,7 @@ export class DWineLabels {
 
     r.labels = [];
     for (const label of entity.labels) {
-      if(label) {
+      if (label) {
         r.labels[label.index] = DFile.create(label.image);
 
         if (label.index === 0) {

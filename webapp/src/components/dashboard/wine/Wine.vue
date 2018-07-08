@@ -153,10 +153,27 @@
       </div>
     </div>
   
-    <div class="field">
+  <div class="field">
       <label class="label">Priporočena temperatura</label>
-      <div class="control">
-        <LocaleText :object="wine.temperature" :locale="locale.lang" :rows="1" />
+      <div class="control field has-addons" v-if="wine.temperature">
+        <p class="control">
+          <a class="button is-static">od</a>
+        </p>
+        <div class="control is-expanded">
+          <input class="input" type="number" v-model="wine.temperature.from" step="1">
+        </div>
+        <p class="control">
+          <a class="button is-static">℃</a>
+        </p>
+        <p class="control">
+          <a class="button is-static">do</a>
+        </p>
+        <div class="control is-expanded">
+          <input class="input" type="number" v-model="wine.temperature.to" step="1">
+        </div>
+        <p class="control">
+          <a class="button is-static">℃</a>
+        </p>
       </div>
     </div>
   
@@ -275,7 +292,7 @@ export default {
           features: { sl: "", en: "" },
           awards: { sl: "", en: "" },
           culinary: { sl: "", en: "" },
-          temperature: { sl: "", en: "" },
+          temperature: null
         };
       else {
         this.isLoading = true;
@@ -322,6 +339,10 @@ export default {
       this.wine.price = +this.wine.price || null;
       this.wine.abv = +this.wine.abv || null;
       this.wine.volume = +this.wine.volume || null;
+      if(this.wine.temperature) {
+        this.wine.temperature.from = this.wine.temperature.from == null ? null : +this.wine.temperature.from;
+        this.wine.temperature.to = this.wine.temperature.to == null ? null : +this.wine.temperature.to;
+      }
       if (this.wine.varieties) {
         this.wine.varietyIds = this.wine.varieties.map(v => v.id);
       }
