@@ -1,13 +1,16 @@
-import { BadRequestException, Component, NotFoundException } from '@nestjs/common';
-import { File } from './file.entity';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as crypto from 'crypto';
-import { FILE_TYPE } from './file.constants';
-import { InjectRepository } from '@nestjs/typeorm';
+import * as sharp from 'sharp';
+import { Readable } from 'stream';
 import { Repository } from 'typeorm';
 
-@Component()
+import { FILE_TYPE } from './file.constants';
+import { File } from './file.entity';
+
+@Injectable()
 export class FileService {
 
   static UPLOAD_PATH = 'public/uploads';
@@ -20,6 +23,14 @@ export class FileService {
   constructor(
     @InjectRepository(File) private repo: Repository<File>,
   ) {
+  }
+
+  toStream(buffer: Buffer) {
+    const r = new Readable();
+    r._read = () => { };
+    r.push(buffer);
+    r.push(null);
+    return r;
   }
 
   async findMany(ids: number[]): Promise<File[]> {
@@ -41,30 +52,53 @@ export class FileService {
     return file;
   }
 
-  async saveUpload(upload, type: FILE_TYPE) {
+  async saveUpload(upload, type: FILE_TYPE, resize?: { width: number, height: number }) {
     if (!upload)
       throw new BadRequestException('file missing', 'FILE_MISSING');
 
     const extension = this.isAllowedExtension(upload.originalname, type);
 
-    const { stream, file } = await this.createWriteStream(extension, type);
-    await new Promise(resolve => stream.write(upload.buffer, resolve));
+    const stream = resize
+      ? this.resize(upload.buffer, resize)
+      : (type === FILE_TYPE.IMAGE ? this.removeEXIF(upload.buffer) : this.toStream(upload.buffer));
+
+    return this.save(stream, extension, type);
+  }
+
+  removeEXIF(buffer: Buffer) {
+    return sharp(buffer).rotate();
+  }
+
+  resize(buffer: Buffer, size: { width: number, height: number }) {
+    return sharp(buffer).resize(size.width, size.height).max().rotate();
+  }
+
+  async save(stream: Readable, extension: string, type: FILE_TYPE, key?: string) {
+    const file = new File();
+    file.type = type;
+    file.path = key ? key + extension : this.createKey(extension);
+    file.url = this.createUrl(file.path);
+    await this.repo.save(file);
+
+    await new Promise(resolve => {
+      stream
+        .pipe(fs.createWriteStream(this.getPath(file)))
+        .on('finish', resolve);
+    });
     return file;
   }
 
-  async createWriteStream(extension: string, type: FILE_TYPE, key?: string) {
+  async importLocalFile(type: FILE_TYPE, current_path: string, new_filename: string) {
     const file = new File();
     file.type = type;
-    file.key = key ? key + extension : this.createKey(extension);
-    file.url = this.createUrl(file.key);
-    await this.repo.save(file);
+    file.path = current_path;
 
-    const stream = fs.createWriteStream(path.resolve(FileService.UPLOAD_PATH, file.key));
-    return { stream, file };
+    await this.move(file, path.resolve(FileService.UPLOAD_PATH, new_filename));
+    return file;
   }
 
   readStream(file: File) {
-    return fs.createReadStream(path.resolve(FileService.UPLOAD_PATH, file.key));
+    return fs.createReadStream(this.getPath(file));
   }
 
   isAllowedExtension(filename: string, type: FILE_TYPE) {
@@ -82,15 +116,37 @@ export class FileService {
   }
 
   createUrl(key: string) {
+    if (path.isAbsolute(key))
+      return null;
     return `${process.env.API_URL}/uploads/${key}`;
+  }
+
+  getPath(file: File) {
+    return path.resolve(FileService.UPLOAD_PATH, file.path);
   }
 
   async remove(files: File[]) {
     for (let file of files) {
-      await new Promise(resolve => fs.unlink(path.resolve(FileService.UPLOAD_PATH, file.key), resolve));
+      await new Promise(resolve => fs.unlink(this.getPath(file), resolve));
     }
 
     await this.repo.remove(files);
+  }
+
+  async move(file: File, newPath?: string) {
+    await new Promise(resolve =>
+      fs.rename(this.getPath(file), newPath, resolve)
+    );
+
+    file.path = path.relative(FileService.UPLOAD_PATH, newPath);
+    file.url = this.createUrl(file.path);
+    await this.repo.save(file);
+  }
+
+  async createSymLink(file: File, path: string) {
+    await new Promise(resolve =>
+      fs.symlink(this.getPath(file), path, resolve)
+    );
   }
 
   getUnused() {
@@ -100,11 +156,37 @@ export class FileService {
       .where('id NOT IN ' + qb.subQuery()
         .select('DISTINCT "fileId"')
         .from('winemaker_images_file', 'winemaker_images')
+        .where('"fileId" IS NOT NULL')
+        .getQuery()
+      )
+      .andWhere('id NOT IN ' + qb.subQuery()
+        .select('"videoId"')
+        .from('winemaker', 'winemaker')
+        .where('"videoId" IS NOT NULL')
+        .getQuery()
+      )
+      .andWhere('id NOT IN ' + qb.subQuery()
+        .select('DISTINCT "fileId"')
+        .from('variety_images_file', 'variety_images')
+        .where('"fileId" IS NOT NULL')
+        .getQuery()
+      )
+      .andWhere('id NOT IN ' + qb.subQuery()
+        .select('DISTINCT "fileId"')
+        .from('wine_images_file', 'wine_images')
+        .where('"fileId" IS NOT NULL')
         .getQuery()
       )
       .andWhere('id NOT IN ' + qb.subQuery()
         .select('"fileId"')
         .from('wine_package', 'wine_package')
+        .where('"fileId" IS NOT NULL')
+        .getQuery()
+      )
+      .andWhere('id NOT IN ' + qb.subQuery()
+        .select('"imageId"')
+        .from('label', 'label')
+        .where('"imageId" IS NOT NULL')
         .getQuery()
       )
       .andWhere(`"createdAt" < (current_timestamp - interval '1 day')`)

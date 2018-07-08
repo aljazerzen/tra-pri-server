@@ -72,7 +72,7 @@
   }
 
   .card-header-title .level-left i {
-    margin-right: 10px;
+    margin-right: 3px;
   }
 
   .a {

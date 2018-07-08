@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
-import { SugarController } from './sugar.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { SugarController } from './sugar.controller';
 import { Sugar } from './sugar.entity';
 import { SugarService } from './sugar.service';
 
 @Module({
-  modules: [TypeOrmModule.forFeature([Sugar])],
+  imports: [TypeOrmModule.forFeature([Sugar])],
   controllers: [SugarController],
-  components: [SugarService],
+  providers: [SugarService],
 })
 export class SugarModule {
 }

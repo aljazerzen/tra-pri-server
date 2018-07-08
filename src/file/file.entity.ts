@@ -1,10 +1,11 @@
-import { Wine } from './../wine/wine.entity';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn, CreateDateColumn, OneToOne, ManyToOne, OneToMany } from 'typeorm';
-import { FILE_TYPE } from './file.constants';
-import { Winemaker } from '../winemaker/winemaker.entity';
+import { Column, CreateDateColumn, Entity, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+
 import { WinePackage } from '../package/wine-package.entity';
 import { Variety } from '../variety/variety.entity';
 import { Label } from '../wine/label.entity';
+import { Winemaker } from '../winemaker/winemaker.entity';
+import { Wine } from './../wine/wine.entity';
+import { FILE_TYPE } from './file.constants';
 
 @Entity()
 export class File {
@@ -16,9 +17,9 @@ export class File {
   type: FILE_TYPE;
 
   @Column()
-  key: string;
+  path: string;
 
-  @Column()
+  @Column({ nullable: true })
   url: string;
 
   @ManyToMany(() => Winemaker, wm => wm.images)

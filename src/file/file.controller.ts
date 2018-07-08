@@ -1,17 +1,9 @@
-import {
-  Controller,
-  FileInterceptor,
-  Post,
-  Delete,
-  UploadedFile,
-  UseGuards,
-  UseInterceptors,
-  Get
-} from '@nestjs/common';
-import { FileService } from './file.service';
+import { Controller, Delete, FileInterceptor, Get, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+
+import { AuthGuard } from '../auth/auth.guard';
 import { FILE_TYPE } from './file.constants';
 import { DFile } from './file.dto';
-import { AuthGuard } from '../auth/auth.guard';
+import { FileService } from './file.service';
 
 @Controller()
 @UseGuards(AuthGuard)
@@ -26,6 +18,13 @@ export class FileController {
   @UseInterceptors(FileInterceptor('file'))
   async upload(@UploadedFile() upload) {
     const entity = await this.fileService.saveUpload(upload, FILE_TYPE.IMAGE);
+    return DFile.create(entity);
+  }
+
+  @Post('label')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadLabel(@UploadedFile() upload) {
+    const entity = await this.fileService.saveUpload(upload, FILE_TYPE.IMAGE, { width: 500, height: 500 });
     return DFile.create(entity);
   }
 

@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
-import { WineTypeController } from './wine-type.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { WineTypeController } from './wine-type.controller';
 import { WineType } from './wine-type.entity';
 import { WineTypeService } from './wine-type.service';
 
 @Module({
-  modules: [TypeOrmModule.forFeature([WineType])],
+  imports: [TypeOrmModule.forFeature([WineType])],
   controllers: [WineTypeController],
-  components: [WineTypeService],
+  providers: [WineTypeService],
 })
 export class WineTypeModule {
 }

@@ -1,10 +1,11 @@
-import { Component, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
 import { DPlace } from './place.dto';
 import { Place } from './place.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 
-@Component()
+@Injectable()
 export class PlaceService {
 
   constructor(

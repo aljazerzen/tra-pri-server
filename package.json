@@ -1,7 +1,7 @@
 {
   "name": "tra-pri-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "web server powering CMS for tra-pri project",
   "main": "dist/main.js",
   "scripts": {
     "serve": "nodemon",
@@ -10,27 +10,28 @@
   "author": "aljazerzen",
   "license": "ISC",
   "dependencies": {
-    "@nestjs/common": "^4.6.6",
-    "@nestjs/core": "^4.6.6",
-    "@nestjs/testing": "^4.6.6",
-    "@nestjs/typeorm": "^2.0.0",
-    "@types/archiver": "^2.1.1",
+    "@nestjs/common": "^5.0.1",
+    "@nestjs/core": "^5.0.1",
+    "@nestjs/typeorm": "^5.0.2",
     "archiver": "^2.1.1",
     "class-transformer": "^0.1.9",
     "class-validator": "^0.8.5",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
-    "nodemon": "^1.17.3",
-    "pg": "^7.4.2",
-    "reflect-metadata": "^0.1.10",
-    "rxjs": "^5.4.2",
-    "typeorm": "^0.2.4",
-    "typescript": "^2.8.3"
+    "nodemon": "^1.17.5",
+    "pg": "^7.4.3",
+    "reflect-metadata": "^0.1.12",
+    "rimraf": "^2.6.2",
+    "rxjs": "^6.2.1",
+    "sharp": "^0.20.5",
+    "typeorm": "^0.2.7",
+    "typescript": "^2.9.2"
   },
   "devDependencies": {
-    "@types/express": "^4.0.39",
-    "@types/multer": "^1.3.6",
-    "@types/node": "^9.3.0",
+    "@types/archiver": "^2.1.1",
+    "@types/express": "^4.16.0",
+    "@types/multer": "^1.3.7",
+    "@types/node": "^9.6.22",
     "ts-node": "^4.1.0"
   }
 }

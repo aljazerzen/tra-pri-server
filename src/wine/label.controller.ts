@@ -28,7 +28,7 @@ export class LabelController {
   @Put(':wineId')
   async update(@Body() data: DWineLabels, @Param('wineId', new ParseIntPipe()) wineId: number) {
     let wine = await this.service.get(wineId, ['winemaker', 'labels', 'labels.image']);
-    wine = await this.service.updateLableImages(wine, data);
+    wine = await this.service.updateLabelImages(wine, data);
     return DWineLabels.create(wine);
   }
 }

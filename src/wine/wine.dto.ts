@@ -1,4 +1,4 @@
-import { Type, Transform, plainToClass } from 'class-transformer';
+import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
   ArrayMinSize,
@@ -12,16 +12,22 @@ import {
   MaxLength,
   Min,
   ValidateNested,
-  ValidateIf,
 } from 'class-validator';
 
 import { DLocaleText } from '../locale/locale.dto';
 import { DSugar } from '../sugar/sugar.dto';
 import { DVariety } from '../variety/variety.dto';
 import { DWineType } from '../wine-type/wine-type.dto';
+import { DWinemaker } from '../winemaker/winemaker.dto';
 import { DFile } from './../file/file.dto';
 import { Wine } from './wine.entity';
-import { DWinemaker } from '../winemaker/winemaker.dto';
+
+export class DTemperature {
+  @IsNumber()
+  from: number;
+  @IsNumber()
+  to: number;
+}
 
 export class DWine {
   id: number;
@@ -38,12 +44,12 @@ export class DWine {
   @ValidateNested() @Type(() => DLocaleText)
   culinary: DLocaleText;
   @ValidateNested() @Type(() => DLocaleText)
-  temperature: DLocaleText;
-  @ValidateNested() @Type(() => DLocaleText)
   features: DLocaleText;
-
   @ValidateNested() @Type(() => DLocaleText)
   awards: DLocaleText;
+
+  @ValidateNested() @Type(() => DTemperature) @IsDefined()
+  temperature: DTemperature;
 
   @IsNumber() @Min(0) @Type(() => Number)
   price: number;
@@ -84,7 +90,7 @@ export class DWine {
     // r.awards = { sl: entity.awards, en: '' };
 
     r.culinary = DLocaleText.create(entity.culinary);
-    r.temperature = DLocaleText.create(entity.temperature);
+    r.temperature = entity.temperature;
     r.features = DLocaleText.create(entity.features);
     r.awards = DLocaleText.create(entity.awards);
     r.price = entity.price;
@@ -130,7 +136,7 @@ export class DWineLabelSummary {
     r.name = entity.name;
     r.year = entity.year;
     r.labelImageCount = entity.labels.length;
-    
+
     const firstLabel = entity.labels.find(l => l.index == 0);
     r.hasLabelImageCoordinates = firstLabel && firstLabel.coordinates !== null;
 
@@ -166,14 +172,14 @@ export class DWineLabels {
     if (entity.winemaker)
       r.winemaker = DWinemaker.create(entity.winemaker);
 
-    console.log(entity.labels);
     r.labels = [];
-    for (let i = 0; i < 10; i++) {
-      const label = entity.labels.find(l => l && l.index === i);
-      r.labels[i] = label ? DFile.create(label.image) : null;
+    for (const label of entity.labels) {
+      if (label) {
+        r.labels[label.index] = DFile.create(label.image);
 
-      if (i === 0) {
-        r.coordinates = label ? label.coordinates : null;
+        if (label.index === 0) {
+          r.coordinates = label ? label.coordinates : null;
+        }
       }
     }
 
