@@ -45,7 +45,7 @@
       </div>
     </div>
 
-    <div class="card" v-for="wine in displayed" v-bind:key="wine.id" v-focus="selected" tabindex="0">
+    <div class="card" v-for="wine in displayed" v-bind:key="wine.id" :ref="'card' + wine.id" tabindex="0">
       <a class="card-header" @click="navigateToWine(wine)">
         <div class="card-header-title level">
           <p class="level-left">
@@ -71,16 +71,6 @@ export default {
   components: {
     LocaleSpan
   },
-  directives: {
-    focus: {
-      update(el, binding, vnode) {
-        if (vnode.key === binding.value) {
-          vnode.context.$nextTick(() => el.focus());
-          el.scrollIntoView();
-        }
-      }
-    }
-  },
   data() {
     return {
       isLoading: true,
@@ -94,7 +84,7 @@ export default {
   mounted() {
     this.load();
     this.search = this.$route.query.search || null;
-    this.sort = this.$route.query.sort || 'name';
+    this.sort = this.$route.query.sort || "name";
     this.selected = +this.$route.query.selected;
   },
   watch: {
@@ -113,7 +103,11 @@ export default {
     async updateQuery() {
       this.$router.replace({
         path: this.$route.path,
-        query: { search: this.search, sort: this.sort, selected: this.selected || undefined }
+        query: {
+          search: this.search,
+          sort: this.sort,
+          selected: this.selected || undefined
+        }
       });
     },
     async load() {
@@ -150,13 +144,12 @@ export default {
       );
 
       this.displayed = sorted;
-      
-      // trigger focus
-      const selected = this.selected;
-      this.selected = null;
-      this.$nextTick(() => {
-        this.selected = selected;
-      });
+
+      if (this.selected) {
+        this.$nextTick(() => {
+          this.$refs["card" + this.selected][0].focus();
+        });
+      }
     }
   }
 };
