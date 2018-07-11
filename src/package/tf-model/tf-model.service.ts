@@ -38,18 +38,21 @@ export class TFModelService {
     this.generate();
   }
 
-  async prepareModelInput() {
-
-    // get all wines
-    const wines = await this.wineService.list(['labels', 'labels.image']);;
-
-    // create fresh data dir
+  async refreshDataDir() {
     await new Promise(resolve =>
       rimraf(process.env.ML_DATA_PATH, resolve)
     );
     await new Promise(resolve =>
       fs.mkdir(process.env.ML_DATA_PATH, resolve)
     );
+  }
+
+  async prepareModelInput() {
+
+    // get all wines
+    const wines = await this.wineService.list(['labels', 'labels.image']);;
+
+    await this.refreshDataDir();
 
     // create sym links to image files for each label
     const classes = [];
@@ -66,7 +69,7 @@ export class TFModelService {
           if (label) {
             let labelFilename = process.env.ML_DATA_PATH + '/' + wine.id + '/' + this.labelName(labelNumber++, label);
 
-            await this.fileService.createSymLink(label.image, labelFilename);
+            await this.fileService.createLink(label.image, labelFilename);
 
             if (label.index === 0) {
               classes.push({
@@ -99,7 +102,7 @@ export class TFModelService {
 
   }
 
-  zipModelInput(stream: Response) {
+  async zipModelInput(stream: Response) {
 
     const archive = archiver('zip', { zlib: { level: 9 } });
 
@@ -123,9 +126,14 @@ export class TFModelService {
     archive.directory(process.env.ML_DATA_PATH, false);
     archive.file(process.env.ML_SCRIPT_PATH + '/config.json', { name: 'config.json' });
 
+    let promise = new Promise(resolve => archive.on('finish', resolve));
+
     archive.pipe(stream);
 
     archive.finalize();
+
+    await promise;
+    await this.refreshDataDir();
   }
 
   async loadLabelMap(labelMapFile: Buffer) {

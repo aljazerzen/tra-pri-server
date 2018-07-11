@@ -144,9 +144,9 @@ export class FileService {
     await this.repo.save(file);
   }
 
-  async createSymLink(file: File, path: string) {
+  async createLink(file: File, path: string) {
     await new Promise(resolve =>
-      fs.symlink(this.getPath(file), path, resolve)
+      fs.link(this.getPath(file), path, resolve)
     );
   }
 
