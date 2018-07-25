@@ -45,7 +45,7 @@
       </div>
     </div>
 
-    <WineList :wines=displayed @wine-click=navigateToWine />
+    <WineList :wines=displayed @wine-click=navigateToWine ref=winelist />
   </div>
 </template>
 
@@ -133,7 +133,7 @@ export default {
 
       if (this.selected) {
         this.$nextTick(() => {
-          this.$refs["card" + this.selected][0].focus();
+          this.$refs.winelist.$refs["card" + this.selected][0].focus();
         });
       }
     }
