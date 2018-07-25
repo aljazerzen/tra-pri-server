@@ -33,8 +33,8 @@ export class WinemakerService {
     return this.repo.save(winemaker);
   }
 
-  async get(id: number) {
-    const winemaker = await this.repo.findOne(id, { relations: ['images', 'video'] });
+  async get(id: number, relations: string[] = ['images', 'video']) {
+    const winemaker = await this.repo.findOne(id, { relations });
     if(!winemaker) throw new NotFoundException('winemaker');
     return winemaker;
   }

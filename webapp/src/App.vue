@@ -47,4 +47,9 @@ $fullhd: 1000px;
 .section.columns {
   max-width: 100%;
 }
+@media print {
+  .noprint {
+    display: none;
+  }
+}
 </style>

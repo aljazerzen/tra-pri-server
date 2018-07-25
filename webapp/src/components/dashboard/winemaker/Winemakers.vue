@@ -14,10 +14,15 @@
       <router-link :to="{ name: 'winemaker', params: { id: winemaker.id }}">
         <div class="card-header">
           <div class="card-header-title level">
-            <p class="level-left">
+            <div class="level-left">
               <LocaleSpan v-bind:object="winemaker.name" locale='sl' :defaultToSl="true"/>
-            </p>
-            <p class="level-right " v-if="winemaker.place">{{ winemaker.place.name }}</p>
+              <p class="has-text-grey" style="margin-left: 0" v-if="winemaker.place">, {{ winemaker.place.name }}</p>
+            </div>
+            <div class="level-right">
+              <router-link class="button" :to="{ name: 'winemaker-edit', params: { id: winemaker.id }}">
+                <span class="icon is-small"><i class="fas fa-edit"></i></span>
+              </router-link>
+            </div>
           </div>
         </div>
       </router-link>
@@ -26,7 +31,7 @@
 </template>
 
 <script>
-import LocaleSpan from '../../common/LocaleSpan';
+import LocaleSpan from "../../common/LocaleSpan";
 
 export default {
   name: "Winemakers",
@@ -48,7 +53,7 @@ export default {
       this.winemakers = await this.$http
         .get("winemakers")
         .then(data => data.json())
-        .catch(e => this.$root.$emit('error', e));
+        .catch(e => this.$root.$emit("error", e));
       this.isLoading = false;
     }
   }

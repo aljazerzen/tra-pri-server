@@ -11,7 +11,7 @@
     </nav>
 
     <div class="level">
-    
+      
       <div class="level-left control has-icons-left">
         <div class="select">
           <select v-model="sort" @change="updateQuery()">
@@ -45,31 +45,17 @@
       </div>
     </div>
 
-    <div class="card" v-for="wine in displayed" v-bind:key="wine.id" :ref="'card' + wine.id" tabindex="0">
-      <a class="card-header" @click="navigateToWine(wine)">
-        <div class="card-header-title level">
-          <p class="level-left">
-            <i class="has-text-grey">
-              <LocaleSpan v-bind:object="wine.winemaker.name" v-if="wine.winemaker" locale='sl'/>: 
-            </i> {{ wine.name }}
-          </p>
-          <p class="level-right " v-if="wine.code">
-            <span v-if="wine.year" class="tag is-light">{{ wine.year}}</span>
-            {{ wine.code }}
-          </p>
-        </div>
-      </a>
-    </div>
+    <WineList :wines=displayed @wine-click=navigateToWine />
   </div>
 </template>
 
 <script>
-import LocaleSpan from "../../common/LocaleSpan";
+import WineList from "./WineList";
 
 export default {
   name: "Wines",
   components: {
-    LocaleSpan
+    WineList
   },
   data() {
     return {
@@ -154,21 +140,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.card {
-  margin-bottom: 10px;
-}
-
-.card-header-title .tag {
-  margin-right: 10px;
-}
-
-.card-header-title .level-left i {
-  margin-right: 10px;
-}
-
-.a {
-  color: black;
-}
-</style>

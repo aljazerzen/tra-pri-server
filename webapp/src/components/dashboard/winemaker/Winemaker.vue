@@ -3,99 +3,61 @@
     <nav class="level">
       <div class="level-left">  
         <h1 class="title">
-          <LocaleSpan 
-            :object="isNew() && !winemaker.name[locale.lang] ? { sl: 'Nov vinar', en: 'New winemaker'} : winemaker.name" 
-            :locale='locale.lang'
-            :defaultToSl="true"/>
-          {{ winemaker.code ? `(${winemaker.code})` : '' }}
-          <span class="button is-loading is-white" v-if="isLoading"></span>
+          <span v-if=winemaker>
+            <LocaleSpan :object=winemaker.name :locale='locale.lang' :defaultToSl="true"/>
+            {{ winemaker.code ? `(${winemaker.code})` : '' }}
+            <span class="button is-loading is-white" v-if="isLoading"></span>
+          </span>
         </h1>
       </div>
-      <div class="level-right">
+      <div class="level-right noprint">
+        <router-link class="button is-white" :to="{ name: 'winemaker-edit', params: { id: winemaker.id }}">
+          <span class="icon is-small"><i class="fas fa-edit"></i></span>
+        </router-link>
+        <a href="javascript:window.print()" class="button is-white" style="margin-right: 0.5em">
+          <span class="icon is-small"><i class="fas fa-print"></i></span>
+        </a>
         <LocalePicker :locale="locale" />
       </div>
     </nav>
   
+    <div v-if=winemaker>
+      <div style="margin-top: -2em"><i class="is-size-5" v-if=winemaker.place>{{ winemaker.place.name }}</i></div>
+      
+      <br>
+      
+      <b>Zgodba: </b><locale-span :object=winemaker.background :locale=locale.lang />
+      <br><br>
 
-    <div class="notification is-danger" v-if="this.errors.length">
-      <button v-on:click="errors = []" class="delete"></button>
-      <div v-for="(error, index) in errors" :key="index"><b>{{error}}</b></div>
+      <b>Spletna stran: </b><a :href=winemaker.website target=_blank>{{ winemaker.website }}</a>
+      <br><br>
+
+      <div class="columns is-mobile is-multiline">
+        
+        <div class="column is-half" v-for="image in winemaker.images" :key=image.id>
+          <figure class="image ">
+            <img :src=image.url>
+          </figure>
+        </div>
+        
+        <div class="column is-half">
+          <figure class="image" v-if="winemaker.video">
+            <video controls>
+              <source :src=winemaker.video.url>
+              Vaš brskalnik ne podpira predvajanja videoposnetkov.
+            </video>
+          </figure>  
+        </div>
+
+      </div>
+      <br>
     </div>
 
-    <div class="field columns">
-      <div class="field column">
-        <label class="label">Naziv</label>
-        <div class="control">
-          <LocaleString :object="winemaker.name" :locale="locale.lang" :defaultToSl="true"/>
-        </div>
-      </div>
-      <div class="field column">
-        <label class="label">Kraj</label>
 
-        <div class="control field has-addons">
-          <div class="control is-expanded">
-            <div class="select is-fullwidth" :class="isLoadingPlaces ? 'is-loading' : ''">
-              <select v-model="winemaker.placeId">
-                <option v-for="place in places" :key="place.id" :value="place.id">{{ place.name }}</option>
-              </select>
-            </div>
-          </div>
-          <div class="control">
-            <button type="submit" class="button" v-on:click="loadPlaces()">Osveži</button>
-          </div>
-          <div class="control">
-            <a href="#/kraji/nov" target="_blank" class="button">Dodaj</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="columns">
-      <div class="field column">
-        <label class="label">Spletna stran</label>
-        <div class="field control has-addons">
-          <div class="control is-expanded">
-            <input class="input" type="text" v-model="winemaker.website">
-          </div>
-          <div class="control">
-            <a class="button" :href="winemaker.website" target="_blank">Odpri</a>
-          </div>
-        </div>
-      </div>
-      <div class="field column">
-        <label class="label">Šifra</label>
-        <div class="control">
-          <input class="input" type="text" v-model="winemaker.code">
-        </div>
-      </div>
-    </div>
-
-    <ImageBar :object="winemaker"/>
+    <h2 class="is-size-4">Vina</h2>
     
-    <VideoBar :object="winemaker"/>
+    <WineList :wines=winemaker.wines @wine-click="$router.push({ name: 'wine', params: { id: $event.id } })" />
 
-    <div class="field">
-      <label class="label">Zgodba</label>
-      <div class="control">
-        <LocaleText :object="winemaker.background" :locale="locale.lang"/>
-      </div>
-    </div>
-
-    <div class="columns">
-      <div class="column field is-grouped">
-        <p class="control">
-          <a v-on:click="back()" class="button">Nazaj</a>
-        </p>
-      </div>
-      <div class="column field is-grouped is-grouped-right">
-        <p class="control">
-          <a v-on:click="remove()" class="button is-danger">Izbrisi</a>
-        </p>
-        <p class="control">
-          <a v-on:click="save()" class="button is-primary" :class="isSaving ? 'is-loading' : ''">Shrani</a>
-        </p>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -106,6 +68,7 @@ import LocaleSpan from "../../common/LocaleSpan";
 import LocalePicker from "../../common/LocalePicker";
 import LocaleString from "../../common/LocaleString";
 import LocaleText from "../../common/LocaleText";
+import WineList from "../wine/WineList";
 
 export default {
   name: "Wine",
@@ -115,84 +78,34 @@ export default {
     LocaleSpan,
     LocalePicker,
     LocaleString,
-    LocaleText
+    LocaleText,
+    WineList
   },
   data() {
     return {
       isLoading: true,
-      isLoadingPlaces: true,
-      isSaving: false,
+      isLoadingWines: true,
       winemaker: {},
-      locale: { lang: "sl" },
-      places: [],
-      errors: []
+      locale: { lang: "sl" }
     };
   },
   created() {
     this.load();
-    this.loadPlaces();
   },
   watch: {
     $route: "load"
   },
   methods: {
-    isNew() {
-      return !this.winemaker || !Number.isInteger(+this.winemaker.id);
-    },
-
     async load() {
-      this.winemaker.id = this.$route.params.id;
+      const id = this.$route.params.id;
 
-      if (this.isNew()) {
-        this.winemaker = { name: { sl: "", en: "" }, images: [], video: null };
-      } else {
-        this.isLoading = true;
-        this.winemaker = await this.$http
-          .get("winemakers/" + this.winemaker.id)
-          .then(data => data.json());
-      }
+      this.isLoading = true;
+      this.winemaker = await this.$http
+        .get(`winemakers/${id}/full`)
+        .then(data => data.json())
+        .catch(e => this.$root.$emit("error", e));
+      // this.winemaker.wines.forEach(w => w.winemaker = this.winemaker);
       this.isLoading = false;
-    },
-
-    async loadPlaces() {
-      this.isLoadingPlaces = true;
-      this.places = await this.$http.get("places").then(data => data.json());
-      this.isLoadingPlaces = false;
-    },
-
-    async save() {
-      this.isSaving = true;
-      try {
-        if (this.isNew()) {
-          this.winemaker = await this.$http
-            .post("winemakers", this.winemaker)
-            .then(data => data.json());
-        } else {
-          this.winemaker = await this.$http
-            .put("winemakers/" + this.winemaker.id, this.winemaker)
-            .then(data => data.json());
-        }
-        this.back();
-      } catch (e) {
-        this.$root.$emit("error", e);
-      }
-      this.isSaving = false;
-    },
-
-    async remove() {
-      try {
-        if (!this.isNew()) {
-          await this.$http.delete("winemakers/" + this.winemaker.id);
-        }
-        this.back();
-      } catch (e) {
-        this.$root.$emit("error", e);
-      }
-    },
-
-    back() {
-      if (window.history.length === 1) window.close();
-      else this.$router.go(-1);
     }
   }
 };
@@ -201,5 +114,12 @@ export default {
 <style scoped>
 .field.columns {
   margin-bottom: 0;
+}
+figure.image {
+  border-radius: 8px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 0 6px #999;
+  background-color: black;
 }
 </style>

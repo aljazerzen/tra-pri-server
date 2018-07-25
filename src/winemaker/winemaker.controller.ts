@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+
+import { AuthGuard } from '../auth/auth.guard';
 import { DWinemaker } from './winemaker.dto';
 import { WinemakerService } from './winemaker.service';
-import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('winemakers')
 @UseGuards(AuthGuard)
@@ -27,6 +28,12 @@ export class WinemakerController {
   @Get(':winemakerId')
   async get(@Param('winemakerId', new ParseIntPipe()) winemakerId: number) {
     let winemaker = await this.service.get(winemakerId);
+    return DWinemaker.create(winemaker);
+  }
+
+  @Get(':winemakerId/full')
+  async getWines(@Param('winemakerId', new ParseIntPipe()) winemakerId: number) {
+    const winemaker = await this.service.get(winemakerId, ['wines', 'place', 'images', 'video']);
     return DWinemaker.create(winemaker);
   }
 

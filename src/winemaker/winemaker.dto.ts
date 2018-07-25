@@ -1,9 +1,11 @@
-import { IsDefined, IsInt, IsNotEmpty, IsString, MaxLength, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { Winemaker } from './winemaker.entity';
-import { DPlace } from '../place/place.dto';
+import { IsDefined, IsInt, IsString, MaxLength, ValidateNested } from 'class-validator';
+
 import { DFile } from '../file/file.dto';
 import { DLocaleString, DLocaleText } from '../locale/locale.dto';
+import { DPlace } from '../place/place.dto';
+import { DWine } from '../wine/wine.dto';
+import { Winemaker } from './winemaker.entity';
 
 export class DWinemaker {
   id: number;
@@ -30,6 +32,8 @@ export class DWinemaker {
   placeId: number;
   place: DPlace;
 
+  wines: DWine[];
+
   static create(entity: Winemaker) {
     const r = new DWinemaker();
     r.id = entity.id;
@@ -46,6 +50,9 @@ export class DWinemaker {
     }
     if (entity.video) {
       r.video = DFile.create(entity.video);
+    }
+    if (entity.wines) {
+      r.wines = entity.wines.map(DWine.create);
     }
     return r;
   }

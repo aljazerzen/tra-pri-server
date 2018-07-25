@@ -1,5 +1,5 @@
 <template>
-  <aside class="menu is-fullheight section column is-narrow">
+  <aside class="noprint menu is-fullheight section column is-narrow">
     <p class="menu-label">
       Vsebine
     </p>
@@ -15,6 +15,12 @@
       </li>
       <li>
         <router-link to="/kraji">Kraji</router-link>
+      </li>
+      <li>
+        <router-link to="/sladkor">Sladkor</router-link>
+      </li>
+      <li>
+        <router-link to="/vrste">Vrste</router-link>
       </li>
     </ul>
     <p class="menu-label">

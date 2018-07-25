@@ -13,6 +13,7 @@ import WineTypes from './components/dashboard/wine-type/WineTypes';
 import Wine from './components/dashboard/wine/Wine';
 import Wines from './components/dashboard/wine/Wines';
 import Winemaker from './components/dashboard/winemaker/Winemaker';
+import WinemakerEdit from './components/dashboard/winemaker/WinemakerEdit';
 import Winemakers from './components/dashboard/winemaker/Winemakers';
 import Login from './components/Login';
 
@@ -27,6 +28,7 @@ export default [
       { path: '/vina/:id', name: 'wine', component: Wine },
       { path: '/vinarji', component: Winemakers },
       { path: '/vinarji/:id', name: 'winemaker', component: Winemaker },
+      { path: '/vinarji/:id/urejaj', name: 'winemaker-edit', component: WinemakerEdit },
       { path: '/vrste', component: WineTypes },
       { path: '/sorte', component: Varieties },
       { path: '/sorte/:id', name: 'variety', component: Variety },
