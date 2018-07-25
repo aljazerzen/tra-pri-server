@@ -35,7 +35,7 @@
       <div class="columns is-mobile is-multiline">
         
         <div class="column is-half" v-for="image in winemaker.images" :key=image.id>
-          <figure class="image ">
+          <figure class="image" @click="modalImage=null; $nextTick(() => modalImage = image.url)">
             <img :src=image.url>
           </figure>
         </div>
@@ -58,6 +58,7 @@
     
     <WineList :wines=winemaker.wines @wine-click="$router.push({ name: 'wine', params: { id: $event.id } })" />
 
+    <ImageModal :src=modalImage />
   </div>
 </template>
 
@@ -68,6 +69,7 @@ import LocaleSpan from "../../common/LocaleSpan";
 import LocalePicker from "../../common/LocalePicker";
 import LocaleString from "../../common/LocaleString";
 import LocaleText from "../../common/LocaleText";
+import ImageModal from "../../common/ImageModal";
 import WineList from "../wine/WineList";
 
 export default {
@@ -79,14 +81,16 @@ export default {
     LocalePicker,
     LocaleString,
     LocaleText,
-    WineList
+    WineList,
+    ImageModal
   },
   data() {
     return {
       isLoading: true,
       isLoadingWines: true,
       winemaker: {},
-      locale: { lang: "sl" }
+      locale: { lang: "sl" },
+      modalImage: null,
     };
   },
   created() {

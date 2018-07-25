@@ -19,7 +19,10 @@
               <p class="has-text-grey" style="margin-left: 0" v-if="winemaker.place">, {{ winemaker.place.name }}</p>
             </div>
             <div class="level-right">
-              <router-link class="button" :to="{ name: 'winemaker-edit', params: { id: winemaker.id }}">
+              <router-link class="button is-white" :to="{ name: 'winemaker', params: { id: winemaker.id }}">
+                <span class="icon is-small"><i class="fas fa-info"></i></span>
+              </router-link>
+              <router-link class="button is-white" :to="{ name: 'winemaker-edit', params: { id: winemaker.id }}">
                 <span class="icon is-small"><i class="fas fa-edit"></i></span>
               </router-link>
             </div>
