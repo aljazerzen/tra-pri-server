@@ -110,18 +110,18 @@ export default {
       const filtered = (this.wines || []).filter(w =>
         searchTerms.every(
           term =>
-            w.name.toLowerCase().includes(term) ||
-            w.winemaker.name.sl.toLowerCase().includes(term) ||
-            w.winemaker.name.en.toLowerCase().includes(term) ||
-            w.code.toLowerCase().includes(term)
+            (w.name || "").toLowerCase().includes(term) ||
+            (w.winemaker.name.sl || "").toLowerCase().includes(term) ||
+            (w.winemaker.name.en || "").toLowerCase().includes(term) ||
+            (w.code || "").toLowerCase().includes(term)
         )
       );
 
       const orders = {
-        name: (a, b) => a.name.localeCompare(b.name),
+        name: (a, b) => (a.name || "").localeCompare(b.name || ""),
         winemaker: (a, b) =>
-          a.winemaker.name.sl.localeCompare(b.winemaker.name.sl),
-        code: (a, b) => a.code.localeCompare(b.code),
+          (a.winemaker.name.sl || "").localeCompare(b.winemaker.name.sl || ""),
+        code: (a, b) => (a.code || "").localeCompare(b.code || ""),
         year: (a, b) => b.year - a.year
       };
 

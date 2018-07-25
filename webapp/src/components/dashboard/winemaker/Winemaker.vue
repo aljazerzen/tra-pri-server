@@ -10,7 +10,7 @@
           </span>
         </h1>
       </div>
-      <div class="level-right noprint">
+      <div class="level-right noprint" v-if=winemaker.id>
         <router-link class="button is-white" :to="{ name: 'winemaker-edit', params: { id: winemaker.id }}">
           <span class="icon is-small"><i class="fas fa-edit"></i></span>
         </router-link>
