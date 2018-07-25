@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FileModule } from '../file/file.module';
 import { WineModule } from '../wine/wine.module';
+import { WinemakerModule } from '../winemaker/winemaker.module';
 import { PackageController } from './package.controller';
 import { PackageService } from './package.service';
 import { TFModelController } from './tf-model/tf-model.controller';
@@ -14,6 +15,7 @@ import { WinePackage } from './wine-package.entity';
     TypeOrmModule.forFeature([WinePackage]),
     WineModule,
     FileModule,
+    WinemakerModule
   ],
   providers: [
     PackageService,

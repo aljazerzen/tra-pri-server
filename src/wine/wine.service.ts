@@ -93,4 +93,8 @@ export class WineService {
   async saveAll(wines: Wine[]) {
     await this.repo.save(wines);
   }
+
+  async getCount() {
+    return this.repo.count();
+  }
 }

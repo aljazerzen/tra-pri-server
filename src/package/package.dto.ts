@@ -1,4 +1,5 @@
 import { DFile } from '../file/file.dto';
+import { File } from '../file/file.entity';
 import { WinePackage } from './wine-package.entity';
 
 const mags = ' KMGTPEZY';
@@ -35,5 +36,18 @@ export class DPackage {
 
   static createList(packs: WinePackage[]) {
     return packs.map(pack => DPackage.create(pack));
+  }
+}
+
+export class DReadyResources {
+  model: DFile;
+
+  constructor(
+    public wineCount: number,
+    public winemakerCount: number,
+    public fileCount: number,
+    model: File,
+  ) {
+    this.model = DFile.create(model);
   }
 }

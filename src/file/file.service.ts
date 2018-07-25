@@ -198,4 +198,35 @@ export class FileService {
       .andWhere(`"createdAt" < (current_timestamp - interval '1 day')`)
       .getMany();
   }
+
+  getUsedForContentCount() {
+    const qb = this.repo.createQueryBuilder('file');
+
+    return qb
+      .where('id IN ' + qb.subQuery()
+        .select('DISTINCT "fileId"')
+        .from('winemaker_images_file', 'winemaker_images')
+        .where('"fileId" IS NOT NULL')
+        .getQuery()
+      )
+      .orWhere('id IN ' + qb.subQuery()
+        .select('"videoId"')
+        .from('winemaker', 'winemaker')
+        .where('"videoId" IS NOT NULL')
+        .getQuery()
+      )
+      .orWhere('id IN ' + qb.subQuery()
+        .select('DISTINCT "fileId"')
+        .from('variety_images_file', 'variety_images')
+        .where('"fileId" IS NOT NULL')
+        .getQuery()
+      )
+      .orWhere('id IN ' + qb.subQuery()
+        .select('DISTINCT "fileId"')
+        .from('wine_images_file', 'wine_images')
+        .where('"fileId" IS NOT NULL')
+        .getQuery()
+      )
+      .getCount();
+  }
 }

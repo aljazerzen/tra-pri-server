@@ -54,4 +54,8 @@ export class WinemakerService {
       .addOrderBy('winemaker."nameSl"', 'ASC')
       .getMany();
   }
+
+  async getCount() {
+    return this.repo.count();
+  }
 }

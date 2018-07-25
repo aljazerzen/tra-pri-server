@@ -10,6 +10,7 @@ import { WinemakerService } from './winemaker.service';
   imports: [TypeOrmModule.forFeature([Winemaker]), FileModule],
   controllers: [WinemakerController],
   providers: [WinemakerService],
+  exports: [WinemakerService],
 })
 export class WinemakerModule {
 }

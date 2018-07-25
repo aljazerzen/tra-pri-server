@@ -6,11 +6,26 @@
         <h1 class="title">Vsebinski paketi <span class="button is-loading is-white" v-if="isLoading"></span></h1>
       </div>
       <div class="level-right">
-        <a v-on:click="createPack()" class="button is-large is-primary" v-bind:class="isCreating ? 'is-loading' : ''">
-          Ustvari novega
-        </a>
+      
       </div>
     </nav>
+
+    <div class='box has-background-info has-text-white columns' v-if="readyResources">
+      <div class="column">
+        <b>
+          Nov paket bo vseboval {{ readyResources.wineCount }} vin, 
+          {{ readyResources.winemakerCount }} vinarjev in
+          {{ readyResources.fileCount }} slik ali videoposnetkov<br>
+          <br>
+          Model ustvarjen: {{ readyResourcesModelCreatedAt }} 
+        </b>
+      </div>
+      <div class="column">
+        <a v-on:click="createPack()" class="button is-pulled-right is-white" v-bind:class="isCreating ? 'is-loading' : ''">
+          Zapakiraj novega
+        </a>
+      </div>
+    </div> 
 
     <div class="notification is-danger" v-if="this.errors.length">
       <button v-on:click="errors = []" class="delete"></button>
@@ -23,6 +38,9 @@
 
 <script>
 import PackageCard from "./PackageCard";
+import moment from "moment";
+
+moment.locale("sl");
 
 export default {
   name: "Packages",
@@ -33,7 +51,8 @@ export default {
       isCreating: false,
       hasCreated: false,
       packages: [],
-      errors: []
+      errors: [],
+      readyResources: {}
     };
   },
   mounted() {
@@ -45,7 +64,11 @@ export default {
       this.packages = await this.$http
         .get("packages")
         .then(data => data.json())
-        .catch(e => this.$root.$emit('error', e));
+        .catch(e => this.$root.$emit("error", e));
+      this.readyResources = await this.$http
+        .get("packages/ready")
+        .then(data => data.json())
+        .catch(e => this.$root.$emit("error", e));
       this.isLoading = false;
     },
 
@@ -64,11 +87,16 @@ export default {
         this.packages.unshift(pack);
         this.hasCreated = true;
       } catch (e) {
-        this.$root.$emit('error', e);
+        this.$root.$emit("error", e);
       }
 
       this.isCreating = false;
     }
+  },
+  computed: {
+    readyResourcesModelCreatedAt: function() {
+      return this.readyResources ? moment(this.readyResources.model.createdAt).calendar() : null;
+    },
   }
 };
 </script>
