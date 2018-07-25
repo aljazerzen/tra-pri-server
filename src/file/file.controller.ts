@@ -24,7 +24,7 @@ export class FileController {
   @Post('label')
   @UseInterceptors(FileInterceptor('file'))
   async uploadLabel(@UploadedFile() upload) {
-    const entity = await this.fileService.saveUpload(upload, FILE_TYPE.IMAGE, { width: 500, height: 500 });
+    const entity = await this.fileService.saveUpload(upload, FILE_TYPE.IMAGE, { width: 600, height: 600 });
     return DFile.create(entity);
   }
 
