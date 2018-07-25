@@ -292,7 +292,7 @@ export default {
           features: { sl: "", en: "" },
           awards: { sl: "", en: "" },
           culinary: { sl: "", en: "" },
-          temperature: null
+          temperature: {}
         };
       else {
         this.isLoading = true;
