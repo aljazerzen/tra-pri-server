@@ -25,12 +25,11 @@
       <div style="margin-top: -2em"><i class="is-size-5" v-if=winemaker.place>{{ winemaker.place.name }}</i></div>
       
       <br>
-      
-      <b>Zgodba: </b><locale-span :object=winemaker.background :locale=locale.lang />
-      <br><br>
+      <p class="para"><b>Zgodba: </b><locale-span :object=winemaker.background :locale=locale.lang /></p>
+      <br>
 
-      <b>Spletna stran: </b><a :href=winemaker.website target=_blank>{{ winemaker.website }}</a>
-      <br><br>
+      <p class="para"><b>Spletna stran: </b><a :href=winemaker.website target=_blank>{{ winemaker.website }}</a></p>
+      <br>
 
       <div class="columns is-mobile is-multiline">
         
@@ -53,10 +52,9 @@
       <br>
     </div>
 
-
     <h2 class="is-size-4">Vina</h2>
     
-    <WineList :wines=winemaker.wines @wine-click="$router.push({ name: 'wine', params: { id: $event.id } })" />
+    <WineList class="winemaker-wines" :wines=winemaker.wines @wine-click="$router.push({ name: 'wine', params: { id: $event.id } })" />
 
     <ImageModal :src=modalImage />
   </div>
@@ -125,5 +123,30 @@ figure.image {
   overflow: hidden;
   box-shadow: 0 0 6px #999;
   background-color: black;
+}
+@media print {
+  h2 {
+    margin-top: -1em;
+  }
+  .para {
+    margin-top: -1em;
+    margin-bottom: -0.5em;
+  }
+}
+</style>
+
+<style>
+@media print {
+  .winemaker-wines .card {
+    width: fit-content;
+    box-shadow: none;
+    display: inline-block;
+  }
+  .winemaker-wines .card-header {
+    box-shadow: none;
+  }
+  .winemaker-wines .wine-code {
+    display: none;
+  }
 }
 </style>

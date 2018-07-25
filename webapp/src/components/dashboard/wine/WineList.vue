@@ -10,7 +10,7 @@
           </p>
           <p class="level-right " v-if="wine.code">
             <span v-if="wine.year" class="tag is-light">{{ wine.year}}</span>
-            {{ wine.code }}
+            <span class="wine-code"> {{ wine.code }}</span>
           </p>
         </div>
       </a>
@@ -24,7 +24,7 @@ import LocaleSpan from "../../common/LocaleSpan";
 export default {
   name: "WineList",
   components: { LocaleSpan },
-  props: ['wines']
+  props: ["wines"]
 };
 </script>
 
