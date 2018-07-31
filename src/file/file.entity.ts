@@ -43,6 +43,9 @@ export class File {
   @OneToOne(() => WinePackage, pack => pack.model)
   winePackageModel: WinePackage;
 
+  @OneToOne(() => WinePackage, pack => pack.json)
+  winePackageJson: WinePackage;
+
   @CreateDateColumn()
   createdAt: Date
 }

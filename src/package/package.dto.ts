@@ -20,6 +20,7 @@ export class DPackage {
   sizeHuman: string;
   active: boolean;
   model: DFile;
+  json: DFile;
 
   static create(entity: WinePackage) {
     const r = new DPackage();
@@ -31,6 +32,7 @@ export class DPackage {
     r.sizeHuman = humanSize(entity.size, 2);
     r.active = entity.active;
     r.model = entity.model ? DFile.create(entity.model) : null;
+    r.json = entity.json ? DFile.create(entity.json) : null;
     return r;
   }
 

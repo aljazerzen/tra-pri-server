@@ -24,4 +24,7 @@ export class WinePackage {
 
   @OneToOne(() => File, file => file.winePackageModel) @JoinColumn()
   model: File;
+
+  @OneToOne(() => File, file => file.winePackageJson) @JoinColumn()
+  json: File;
 }

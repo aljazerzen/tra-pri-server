@@ -25,7 +25,7 @@ export class PackageService {
   }
 
   list() {
-    return this.repo.find({ relations: ['file', 'model'], order: { date: 'DESC' } });
+    return this.repo.find({ relations: ['file', 'model', 'json'], order: { date: 'DESC' } });
   }
 
   async setActive(packageId: number) {
@@ -34,7 +34,7 @@ export class PackageService {
   }
 
   async getActive() {
-    const pack = await this.repo.findOne({ where: { active: true }, relations: ['file', 'model'] });
+    const pack = await this.repo.findOne({ where: { active: true }, relations: ['file', 'model', 'json'] });
     if (!pack) throw new NotFoundException('active package', 'NO_ACTIVE_PACKAGE');
     return pack;
   }
@@ -51,7 +51,12 @@ export class PackageService {
     pack.model = currentModel;
     await this.repo.save(pack);
 
-    const { file, size } = await this.compress(data, images, 'paket_v' + pack.id);
+    const jsonFileBuffer = Buffer.from(JSON.stringify(data));
+
+    pack.json = await this.fileService.save(this.fileService.toStream(jsonFileBuffer), FILE_TYPE.JSON, '.json');
+
+    const { file, size } = await this.compress(jsonFileBuffer, images, 'paket_v' + pack.id);
+
 
     pack.size = size;
     pack.file = file;
@@ -109,7 +114,7 @@ export class PackageService {
     return { data: { wines: mappedWines, model: model.url }, images };
   }
 
-  async compress(jsonData, images: { name: string, file: File }[], name: string) {
+  async compress(jsonFile: Buffer, images: { name: string, file: File }[], name: string) {
 
     const archive = archiver('zip', { zlib: { level: 9 } });
 
@@ -132,8 +137,7 @@ export class PackageService {
     const filePromise = this.fileService.save(archive, FILE_TYPE.PACKAGE, name + '.zip');
 
     // package.json
-    const buffer = Buffer.from(JSON.stringify(jsonData));
-    archive.append(buffer, { name: 'package.json' });
+    archive.append(jsonFile, { name: 'package.json' });
 
     // images/
     for (let image of images) {
