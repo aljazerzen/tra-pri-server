@@ -44,7 +44,6 @@
       <li>
         <router-link to="/paketi">Vsebinski paketi</router-link>
       </li>
-      <li><a>Statistika</a></li>
       <li><a v-on:click="logout()">Odjava</a></li>
     </ul>
   </aside>
