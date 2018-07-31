@@ -5,8 +5,8 @@
 
     <div class="field image-inline">
       <div class="control" v-for="image in object.images" v-bind:key="image.id">
-        <figure class="image is-128x128" @click="modalImage = null; $nextTick(() => modalImage = image.url)">
-          <img v-bind:src="image.url">
+        <figure class="image is-128x128" @click="modalImage = null; $nextTick(() => modalImage = image.url)" >
+          <img v-bind:src="image.url" >
         </figure>
         <a class="is-danger is-medium delete" v-on:click="removeImage(image)"></a>
       </div>
@@ -28,7 +28,7 @@ export default {
   components: { FileUploadButton, ImageModal },
   props: ["object"],
   data: () => ({
-    modalImage: null,
+    modalImage: null
   }),
   mounted() {
     if (!this.object.images) this.object.images = [];
@@ -46,22 +46,28 @@ export default {
 </script>
 
 <style scoped>
+.image-inline > .control {
+  position: relative;
+  display: inline-block;
+  margin-right: 1em;
+  vertical-align: text-top;
+}
 
-  .image-inline>.control {
-    position: relative;
-    display: inline-block;
-    margin-right: 1em;
-    vertical-align: text-top;
-  }
+.image-inline .delete {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
 
-  .image-inline .delete {
-    position: absolute;
-    right: 5px;
-    top: 5px;
-  }
+.image-inline .image {
+  overflow: hidden;
+  height: 150px;
+  width: 150px;
+}
 
-  .image-inline .image {
-    overflow: hidden;
-  }
-
+.image-inline .image img {
+  margin: 0 auto;
+  height: 150px;
+  width: auto;
+}
 </style>
