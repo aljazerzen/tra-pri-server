@@ -35,7 +35,7 @@ export class WinemakerService {
 
   async get(id: number, relations: string[] = ['images', 'video']) {
     const winemaker = await this.repo.findOne(id, { relations });
-    if(!winemaker) throw new NotFoundException('winemaker');
+    if (!winemaker) throw new NotFoundException('winemaker');
     return winemaker;
   }
 
@@ -47,12 +47,8 @@ export class WinemakerService {
     }
   }
 
-  list() {
-    return this.repo.createQueryBuilder('winemaker')
-      .leftJoinAndSelect('winemaker.place', 'place')
-      .orderBy('place."name"', 'ASC')
-      .addOrderBy('winemaker."nameSl"', 'ASC')
-      .getMany();
+  list(relations: string[] = ['images', 'video']) {
+    return this.repo.find({ relations, order: { 'id': 'ASC' } })
   }
 
   async getCount() {

@@ -19,6 +19,12 @@ export class WinemakerController {
     return DWinemaker.createList(winemakers);
   }
 
+  @Get('full')
+  async listFull() {
+    const winemakers = await this.service.list(['wines', 'wines.type', 'wines.sugar', 'wines.varieties', 'wines.images', 'place', 'images', 'video']);
+    return DWinemaker.createList(winemakers);
+  }
+
   @Post()
   async create(@Body() data: DWinemaker) {
     let winemaker = await this.service.create(data);
@@ -28,12 +34,6 @@ export class WinemakerController {
   @Get(':winemakerId')
   async get(@Param('winemakerId', new ParseIntPipe()) winemakerId: number) {
     let winemaker = await this.service.get(winemakerId);
-    return DWinemaker.create(winemaker);
-  }
-
-  @Get(':winemakerId/full')
-  async getWines(@Param('winemakerId', new ParseIntPipe()) winemakerId: number) {
-    const winemaker = await this.service.get(winemakerId, ['wines', 'place', 'images', 'video']);
     return DWinemaker.create(winemaker);
   }
 

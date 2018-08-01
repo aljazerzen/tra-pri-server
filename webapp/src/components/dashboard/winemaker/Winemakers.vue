@@ -6,6 +6,7 @@
         <h1 class="title">Vinarji <span class="button is-loading is-white" v-if="isLoading"></span></h1>
       </div>
       <div class="level-right">
+        <router-link to="/vinarji/povzetek" class="button">Povzetek</router-link>
         <router-link to="/vinarji/nov" class="button is-primary">Dodaj</router-link>
       </div>
     </nav>
@@ -45,21 +46,16 @@
     </div>
 
     <div class="card" v-for="winemaker in displayed" v-bind:key="winemaker.id">
-      <router-link :to="{ name: 'winemaker', params: { id: winemaker.id }}">
+      <router-link :to="{ name: 'winemaker-edit', params: { id: winemaker.id }}">
         <div class="card-header">
           <div class="card-header-title level">
             <div class="level-left">
               <LocaleSpan v-bind:object="winemaker.name" locale='sl' :defaultToSl="true"/>
               <p class="has-text-grey" style="margin-left: 0" v-if="winemaker.place">
-                , {{ winemaker.place.name }} <span v-if=winemaker.code>- {{ winemaker.code }}</span></p>
+                , {{ winemaker.place.name }} </p>
             </div>
             <div class="level-right">
-              <router-link class="button is-white" :to="{ name: 'winemaker', params: { id: winemaker.id }}">
-                <span class="icon is-small"><i class="fas fa-info"></i></span>
-              </router-link>
-              <router-link class="button is-white" :to="{ name: 'winemaker-edit', params: { id: winemaker.id }}">
-                <span class="icon is-small"><i class="fas fa-edit"></i></span>
-              </router-link>
+              <span v-if=winemaker.code>- {{ winemaker.code }}</span>
             </div>
           </div>
         </div>
