@@ -6,7 +6,7 @@
         <h1 class="title">Vinarji <span class="button is-loading is-white" v-if="isLoading"></span></h1>
       </div>
       <div class="level-right">
-        <router-link to="/vinarji/povzetek" class="button">Povzetek</router-link>
+        <router-link to="/vinarji/povzetek" class="button" style="margin-right: 1em">Povzetek</router-link>
         <router-link to="/vinarji/nov" class="button is-primary">Dodaj</router-link>
       </div>
     </nav>
