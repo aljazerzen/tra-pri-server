@@ -85,9 +85,16 @@ export class WineService {
     return this.repo.find({ order: { winemakerId: 'ASC', name: 'ASC' }, relations });
   }
 
-  listFull() {
-    return this.list(['winemaker', 'winemaker.video', 'winemaker.place', 'winemaker.images', 'varieties', 'varieties.images',
-      'sugar', 'type', 'images']);
+  listNotHidden(relations: string[] = []) {
+    return this.repo.find({
+      where: { hidden: false }, order: { winemakerId: 'ASC', name: 'ASC' }, relations
+    });
+  }
+
+  listFullNotHidden() {
+    return this.listNotHidden([
+      'winemaker', 'winemaker.video', 'winemaker.place', 'winemaker.images', 'varieties', 'varieties.images', 'sugar', 'type', 'images'
+    ]);
   }
 
   async saveAll(wines: Wine[]) {
@@ -96,5 +103,10 @@ export class WineService {
 
   async getCount() {
     return this.repo.count();
+  }
+
+  async toggleHidden(wine: Wine) {
+    wine.hidden = !wine.hidden;
+    await this.repo.save(wine);
   }
 }

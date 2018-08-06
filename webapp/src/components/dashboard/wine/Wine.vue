@@ -6,6 +6,7 @@
         <h1 class="title">
           {{ isNew() ? wine.name || 'Novo vino' : wine.name }}{{ wine.year ? ', ' + wine.year : '' }} {{ wine.code ? `(${wine.code})` : '' }}
           <span class="button is-loading is-white" v-if="isLoading"></span>
+          <span v-if="wine.hidden" class="tag is-danger">Skrito</span>
         </h1>
       </div>
       <div class="level-right">
@@ -13,6 +14,44 @@
       </div>
     </nav>
   
+    <div class="columns">
+      <div class="column field is-grouped">
+        <p class="control">
+          <a @click="$router.go(-1)" class="button">
+            <span class="icon is-small">
+              <i class="fas fa-arrow-left"></i>
+            </span>
+          </a>
+        </p>
+      </div>
+      <div class="column field is-grouped is-grouped-right">
+        <div class="control">
+          <div class="button" @click.stop="toggleHidden(wine)">
+            <span class="icon is-small">
+              <i class="fas" :class="{ 'fa-eye-slash': !wine.hidden, 'fa-eye': wine.hidden }"></i>
+            </span>
+            <span>{{ wine.hidden ? 'Pokaži' : 'Skrij' }}</span>
+          </div>
+        </div>
+        <p class="control">
+          <a @click="remove()" class="button is-danger">
+            <span class="icon is-small">
+              <i class="fas fa-trash-alt"></i>
+            </span>
+            <span>Izbrisi</span>
+          </a>
+        </p>
+        <p class="control">
+          <a @click="save()" class="button is-primary" :class="isSaving ? 'is-loading' : ''">
+            <span class="icon is-small">
+              <i class="fas fa-save"></i>
+            </span>
+            <span>Shrani</span>
+          </a>
+        </p>
+      </div>
+    </div>
+
     <div class="field">
       <label class="label">Naziv</label>
       <div class="control">
@@ -215,22 +254,6 @@
         </div>
       </div>
     </div>
-  
-    <div class="columns">
-      <div class="column field is-grouped">
-        <p class="control">
-          <a @click="$router.go(-1)" class="button">Nazaj</a>
-        </p>
-      </div>
-      <div class="column field is-grouped is-grouped-right">
-        <p class="control">
-          <a @click="remove()" class="button is-danger">Izbrisi</a>
-        </p>
-        <p class="control">
-          <a @click="save()" class="button is-primary" :class="isSaving ? 'is-loading' : ''">Shrani</a>
-        </p>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -390,6 +413,13 @@ export default {
           .catch(e => this.$root.$emit("error", e));
       }
       this.$router.go(-1);
+    },
+    async toggleHidden(wine) {
+      const res = await this.$http
+        .put(`wines/${wine.id}/hidden`)
+        .then(data => data.json())
+        .catch(e => this.$root.$emit("error", e));
+      wine.hidden = res.hidden;
     }
   }
 };

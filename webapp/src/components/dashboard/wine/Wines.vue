@@ -45,17 +45,35 @@
       </div>
     </div>
 
-    <WineList :wines=displayed @wine-click=navigateToWine ref=winelist />
+    <div class="card" v-for="wine in displayed" v-bind:key="wine.id" :ref="'card' + wine.id" tabindex="0" :class="{ 'hidden': wine.hidden }">
+      <a class="card-header" @click="navigateToWine(wine)">
+        <div class="card-header-title level">
+          <p class="level-left">
+            <i class="has-text-grey" v-if=wine.winemaker>
+              <LocaleSpan v-bind:object="wine.winemaker.name" v-if="wine.winemaker" locale='sl'/>: 
+            </i> {{ wine.name }}
+          </p>
+          <div class="level-right " v-if="wine.code">
+            <span v-if="wine.year" class="tag is-light">{{ wine.year }}</span>
+            <span class="wine-code"> {{ wine.code }}</span>
+            
+            <div class="button" @click.stop="toggleHidden(wine)"><span class="icon is-small">
+              <i class="fas" :class="{ 'fa-eye-slash': !wine.hidden, 'fa-eye': wine.hidden }"></i>
+            </span></div>
+          </div>
+        </div>
+      </a>
+    </div>
   </div>
 </template>
 
 <script>
-import WineList from "./WineList";
+import LocaleSpan from "../../common/LocaleSpan";
 
 export default {
   name: "Wines",
   components: {
-    WineList
+    LocaleSpan
   },
   data() {
     return {
@@ -133,10 +151,42 @@ export default {
 
       if (this.selected) {
         this.$nextTick(() => {
-          this.$refs.winelist.$refs["card" + this.selected][0].focus();
+          this.$refs["card" + this.selected][0].focus();
         });
       }
+    },
+    async toggleHidden(wine) {
+      const res = await this.$http
+        .put(`wines/${wine.id}/hidden`)
+        .then(data => data.json())
+        .catch(e => this.$root.$emit("error", e));
+      wine.hidden = res.hidden;
     }
   }
 };
 </script>
+<style scoped>
+.card.hidden .level-left {
+  opacity: 0.3;
+}
+
+.card {
+  margin-bottom: 10px;
+}
+
+.card-header-title .tag {
+  margin-right: 10px;
+}
+
+.card-header-title .button {
+  margin-left: 10px;
+}
+
+.card-header-title .level-left i {
+  margin-right: 10px;
+}
+
+.a {
+  color: black;
+}
+</style>

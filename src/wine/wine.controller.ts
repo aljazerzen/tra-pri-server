@@ -43,4 +43,10 @@ export class WineController {
     await this.service.remove(wineId);
   }
 
+  @Put(':wineId/hidden')
+  async toggleHidden(@Param('wineId', new ParseIntPipe()) wineId: number) {
+    const wine = await this.service.get(wineId);
+    await this.service.toggleHidden(wine);
+    return DWine.create(wine);
+  }
 }

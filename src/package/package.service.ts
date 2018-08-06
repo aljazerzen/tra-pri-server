@@ -40,7 +40,7 @@ export class PackageService {
   }
 
   async createPackage() {
-    const wines = await this.wineService.listFull();
+    const wines = await this.wineService.listFullNotHidden();
     const currentModel = await this.fileService.getLastOfType(FILE_TYPE.MODEL);
     const { data, images } = this.simplify(wines, currentModel);
 

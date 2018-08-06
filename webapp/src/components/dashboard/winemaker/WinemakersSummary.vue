@@ -121,7 +121,6 @@ import LocalePicker from "../../common/LocalePicker";
 import LocaleString from "../../common/LocaleString";
 import LocaleText from "../../common/LocaleText";
 import ImageModal from "../../common/ImageModal";
-import WineList from "../wine/WineList";
 
 export default {
   components: {
@@ -131,7 +130,6 @@ export default {
     LocalePicker,
     LocaleString,
     LocaleText,
-    WineList,
     ImageModal
   },
   data() {

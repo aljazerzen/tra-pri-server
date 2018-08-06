@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { File } from '../file/file.entity';
 
@@ -22,7 +22,7 @@ export class WinePackage {
   @Column({ default: false })
   active: boolean;
 
-  @OneToOne(() => File, file => file.winePackageModel) @JoinColumn()
+  @ManyToOne(() => File, file => file.winePackageModel) @JoinColumn() @Index()
   model: File;
 
   @OneToOne(() => File, file => file.winePackageJson) @JoinColumn()

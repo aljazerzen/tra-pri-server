@@ -65,6 +65,9 @@ export class Wine {
   @OneToMany(() => Label, label => label.wine)
   labels: Label[];
 
+  @Column({ default: false })
+  hidden: boolean;
+
   // sequential number of class used in machine learning model generation for this wine 
   @Column({ nullable: true })
   classNumber: number; 

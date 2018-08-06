@@ -50,7 +50,7 @@ export class TFModelService {
   async prepareModelInput() {
 
     // get all wines
-    const wines = await this.wineService.list(['labels', 'labels.image']);;
+    const wines = await this.wineService.listNotHidden(['labels', 'labels.image']);;
 
     await this.refreshDataDir();
 

@@ -79,6 +79,8 @@ export class DWine {
   varietyIds: number[];
   varieties: DVariety[];
 
+  hidden: boolean;
+
   static create(entity: Wine) {
     const r = new DWine();
     r.id = entity.id;
@@ -100,6 +102,7 @@ export class DWine {
     r.winemakerId = entity.winemakerId;
     r.typeId = entity.typeId;
     r.sugarId = entity.sugarId;
+    r.hidden = entity.hidden;
 
     if (entity.winemaker)
       r.winemaker = DWinemaker.create(entity.winemaker);
