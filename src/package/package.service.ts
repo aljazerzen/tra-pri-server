@@ -155,7 +155,5 @@ export class PackageService {
     const pack = await this.repo.findOne({ where: { id: packageId }, relations: ['model'] });
 
     await this.repo.remove(pack);
-
-    await this.fileService.removeModelIfUnused(pack.model);
   }
 }
