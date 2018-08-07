@@ -1,6 +1,6 @@
 <template>
   <div class="picker">
-    <canvas v-bind:width="width" v-bind:height="height" ref="canvas"
+    <canvas :width="width * 5" :height="height * 5" ref="canvas"
       style="pointer-events: all;"
       @mousedown="dragStart"
       @mousemove="dragMove"
@@ -44,7 +44,7 @@ export default {
       const x = this.width * event.offsetX / this.$refs.canvas.clientWidth;
       const y = this.height * event.offsetY / this.$refs.canvas.clientHeight;
       this.dragging = this.points.find(
-        p => Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < 100
+        p => Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < 15
       );
     },
     dragMove(event) {
@@ -79,31 +79,23 @@ export default {
         return;
       this.ctx.beginPath();
 
-      this.ctx.moveTo(this.points[0].x, this.points[0].y);
-      this.ctx.quadraticCurveTo(
-        this.points[1].x,
-        this.points[1].y,
-        this.points[2].x,
-        this.points[2].y
-      );
-      this.ctx.lineTo(this.points[3].x, this.points[3].y);
-      this.ctx.quadraticCurveTo(
-        this.points[4].x,
-        this.points[4].y,
-        this.points[5].x,
-        this.points[5].y
-      );
-      this.ctx.lineTo(this.points[0].x, this.points[0].y);
+      this.ctx.moveTo(this.points[0].x * 5, this.points[0].y * 5);
+      this.ctx.lineTo(this.points[1].x * 5, this.points[1].y * 5)
+      this.ctx.lineTo(this.points[2].x * 5, this.points[2].y * 5)
+      this.ctx.lineTo(this.points[3].x * 5, this.points[3].y * 5)
+      this.ctx.lineTo(this.points[4].x * 5, this.points[4].y * 5)
+      this.ctx.lineTo(this.points[5].x * 5, this.points[5].y * 5);
+      this.ctx.lineTo(this.points[0].x * 5, this.points[0].y * 5);
 
       this.ctx.fillStyle = "rgba(255,255,255,0.5)";
       this.ctx.fill();
       this.ctx.strokeStyle = "rgba(128,128,128,1)";
-      this.ctx.lineWidth = 2;
+      this.ctx.lineWidth = 4;
       this.ctx.stroke();
     },
     drawCircle(x, y, r, opacity) {
       this.ctx.beginPath();
-      this.ctx.arc(x, y, r * this.width / 100, 0, Math.PI * 2);
+      this.ctx.arc(x * 5, y * 5, r * this.width / 20, 0, Math.PI * 2);
       this.ctx.fillStyle = `rgba(0,0,0,${opacity})`;
       this.ctx.fill();
     }

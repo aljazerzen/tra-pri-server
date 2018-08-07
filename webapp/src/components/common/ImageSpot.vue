@@ -42,8 +42,8 @@ export default {
   components: { PointPicker, CaptureImageButton, FileUploadButton },
   props: ["placeholder", "hasCoordinates", "image", "points"],
   data: () => ({
-    width: 100,
-    height: 100,
+    width: 1000,
+    height: 1000,
     draging: false
   }),
   mounted() {
