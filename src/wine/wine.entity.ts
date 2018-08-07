@@ -70,5 +70,5 @@ export class Wine {
 
   // sequential number of class used in machine learning model generation for this wine 
   @Column({ nullable: true })
-  classNumber: number; 
+  classNumber: number;
 }

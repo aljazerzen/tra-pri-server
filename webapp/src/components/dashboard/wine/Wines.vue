@@ -151,7 +151,8 @@ export default {
 
       if (this.selected) {
         this.$nextTick(() => {
-          this.$refs["card" + this.selected][0].focus();
+          if(this.$refs["card" + this.selected])
+            this.$refs["card" + this.selected][0].focus();
         });
       }
     },

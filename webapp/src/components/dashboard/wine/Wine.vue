@@ -34,7 +34,7 @@
           </div>
         </div>
         <p class="control">
-          <a @click="remove()" class="button is-danger">
+          <a @click="$refs.confirmModal.show()" class="button is-danger">
             <span class="icon is-small">
               <i class="fas fa-trash-alt"></i>
             </span>
@@ -254,6 +254,8 @@
         </div>
       </div>
     </div>
+
+    <confirm-modal actionConfirm="Izbriši" @confirm="remove()" ref=confirmModal />
   </div>
 </template>
 
@@ -262,6 +264,7 @@ import ImageBar from "../../common/ImageBar";
 import LocaleText from "../../common/LocaleText";
 import LocalePicker from "../../common/LocalePicker";
 import LocaleSpan from "../../common/LocaleSpan";
+import ConfirmModal from "../../common/ConfirmModal";
 
 export default {
   name: "Wine",
@@ -269,7 +272,8 @@ export default {
     ImageBar,
     LocaleText,
     LocalePicker,
-    LocaleSpan
+    LocaleSpan,
+    ConfirmModal
   },
   data() {
     return {

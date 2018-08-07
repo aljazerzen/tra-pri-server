@@ -1,6 +1,7 @@
-import { Entity, ManyToOne, OneToOne, JoinColumn, Column, PrimaryColumn, RelationId } from "typeorm";
-import { Wine } from "../wine/wine.entity";
-import { File } from "../file/file.entity";
+import { Column, Entity, ManyToOne, PrimaryColumn, RelationId } from 'typeorm';
+
+import { File } from '../file/file.entity';
+import { Wine } from '../wine/wine.entity';
 
 @Entity()
 export class Label {
@@ -14,7 +15,7 @@ export class Label {
   @PrimaryColumn() @RelationId((label: Label) => label.image)
   imageId: number;
 
-  @ManyToOne(() => Wine, wine => wine.labels)
+  @ManyToOne(() => Wine, wine => wine.labels, { onDelete: 'CASCADE' })
   wine: Wine;
 
   @ManyToOne(() => File, file => file.label)
