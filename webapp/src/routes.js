@@ -1,4 +1,5 @@
 import Dashboard from './components/dashboard/Dashboard';
+import Files from './components/dashboard/file/Files';
 import GenerateModel from './components/dashboard/model/GenerateModel';
 import ManualModel from './components/dashboard/model/ManualModel';
 import Packages from './components/dashboard/package/Packages';
@@ -37,6 +38,7 @@ export default [
       { path: '/etikete/:id', name: 'wine-label', component: WineLabels },
       { path: '/model/generacija', component: GenerateModel },
       { path: '/model/rocno', component: ManualModel },
+      { path: '/datoteke', component: Files },
       
     ]
   },

@@ -37,7 +37,7 @@ export class FileController {
 
   @Get('files/unused')
   async listUnused() {
-    return this.fileService.getUnused();
+    return (await this.fileService.getUnused()).map(f => DFile.create(f));
   }
 
   @Delete('files/unused')

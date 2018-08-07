@@ -8,12 +8,14 @@ export class DFile {
 
   url: string;
   createdAt: Date;
+  type: string;
 
   static create(entity: File) {
     const r = new DFile();
     r.id = entity.id;
     r.url = entity.url;
     r.createdAt = entity.createdAt;
+    r.type = entity.type.toString();
     return r;
   }
 }

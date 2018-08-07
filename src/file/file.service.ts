@@ -1,7 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'crypto';
 import * as fs from 'fs';
+import { scheduleJob as schedule } from 'node-schedule';
 import * as path from 'path';
 import * as sharp from 'sharp';
 import { Readable } from 'stream';
@@ -11,7 +12,7 @@ import { FILE_TYPE } from './file.constants';
 import { File } from './file.entity';
 
 @Injectable()
-export class FileService {
+export class FileService implements OnModuleInit {
 
   static UPLOAD_PATH = 'public/uploads';
 
@@ -24,6 +25,14 @@ export class FileService {
   constructor(
     @InjectRepository(File) private repo: Repository<File>,
   ) {
+  }
+
+  onModuleInit() {
+    schedule('0 0 0 * * *', async () => {
+      const files = await this.getUnused();
+      await this.remove(files);
+      console.log(`removed ${files.length} unused files`);
+    })
   }
 
   toStream(buffer: Buffer) {
