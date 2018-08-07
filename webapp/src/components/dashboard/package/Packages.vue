@@ -21,18 +21,18 @@
         </b>
       </div>
       <div class="column">
-        <a v-on:click="createPack()" class="button is-pulled-right is-white" v-bind:class="isCreating ? 'is-loading' : ''">
+        <a @click="createPack()" class="button is-pulled-right is-white" v-bind:class="isCreating ? 'is-loading' : ''">
           Zapakiraj novega
         </a>
       </div>
     </div> 
 
     <div class="notification is-danger" v-if="this.errors.length">
-      <button v-on:click="errors = []" class="delete"></button>
+      <button @click="errors = []" class="delete"></button>
       <div v-for="(error, index) in errors" v-bind:key="index"><b>{{error}}</b></div>
     </div>
 
-    <PackageCard v-for="pack in packages" v-bind:key="pack.id" v-bind:pack="pack" v-on:activated="activated($event)"/>
+    <PackageCard v-for="pack in packages" v-bind:key="pack.id" v-bind:pack="pack" @activated="activated" @removed="removed"/>
   </div>
 </template>
 
@@ -76,6 +76,10 @@ export default {
       for (let pack of this.packages) pack.active = pack.id === event.packageId;
     },
 
+    removed(event) {
+      this.packages = this.packages.filter(p => p.id !== event.packageId);
+    },
+
     async createPack() {
       this.isCreating = true;
       this.errors = [];
@@ -95,7 +99,7 @@ export default {
   },
   computed: {
     readyResourcesModelCreatedAt: function() {
-      return this.readyResources ? moment(this.readyResources.model.createdAt).calendar() : null;
+      return this.readyResources && this.readyResources.model ? moment(this.readyResources.model.createdAt).calendar() : null;
     },
   }
 };

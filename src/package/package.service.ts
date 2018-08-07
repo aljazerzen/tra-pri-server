@@ -150,4 +150,12 @@ export class PackageService {
     const size = archive.pointer();
     return { file, size };
   }
+
+  async remove(packageId: number) {
+    const pack = await this.repo.findOne({ where: { id: packageId }, relations: ['model'] });
+
+    await this.repo.remove(pack);
+
+    await this.fileService.removeModelIfUnused(pack.model);
+  }
 }

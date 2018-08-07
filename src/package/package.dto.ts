@@ -27,7 +27,7 @@ export class DPackage {
     r.id = entity.id;
     r.wineCount = entity.wineCount;
     r.date = entity.date;
-    r.url = entity.file.url;
+    r.url = entity.file ? entity.file.url : null;
     r.size = entity.size;
     r.sizeHuman = humanSize(entity.size, 2);
     r.active = entity.active;

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 
 import { AuthGuard } from '../auth/auth.guard';
 import { FILE_TYPE } from '../file/file.constants';
@@ -36,6 +36,12 @@ export class PackageController {
   @UseGuards(AuthGuard)
   async setActive(@Param('packageId', new ParseIntPipe()) packageId: number) {
     await this.packageService.setActive(packageId);
+  }
+
+  @Delete(':packageId')
+  @UseGuards(AuthGuard)
+  async removePackage(@Param('packageId', new ParseIntPipe()) packageId: number) {
+    await this.packageService.remove(packageId);
   }
 
   @Get('ready')

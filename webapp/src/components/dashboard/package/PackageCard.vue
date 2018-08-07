@@ -14,10 +14,19 @@
           </p>
           <p class="subtitle is-6">{{ pack.sizeHuman }}</p>
         </div>
-        <div class="media-right buttons has-addons">
-          <a class="button" v-on:click="activate()" v-if="!pack.active">Aktiviraj</a>
-          <a class="button is-primary is-active" v-if="pack.active">Aktiven</a>
-          <a class="button" v-bind:href="pack.url" target="_blank">Prenesi</a>
+        <div class="media-right">
+          <div class="buttons has-addons">
+            <a class="button" v-if=!pack.active @click=remove>
+              <span class="icon"><i class="fas fa-trash-alt"></i></span>
+            </a>
+            <a class="button" v-bind:href="pack.url" target="_blank">
+              <span class="icon"><i class="fas fa-download"></i></span>
+            </a>
+            <a class="button" v-on:click="activate()" v-if="!pack.active">Aktiviraj</a>
+            <a class="button is-info is-active" v-if="pack.active">
+              <span>Aktiven</span><span class="icon"><i class="fas fa-check-circle"></i></span>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -57,6 +66,15 @@ export default {
         this.$root.$emit('error', e);
       }
       this.isActivating = false;
+    },
+    async remove() {
+      const pack = this.$props.pack;
+      try {
+        await this.$http.delete("packages/" + pack.id);
+        this.$emit("removed", { packageId: pack.id });
+      } catch (e) {
+        this.$root.$emit('error', e);
+      }
     }
   },
   computed: {

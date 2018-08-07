@@ -195,6 +195,18 @@ export class FileService {
         .where('"imageId" IS NOT NULL')
         .getQuery()
       )
+      .andWhere('id NOT IN ' + qb.subQuery()
+        .select('"modelId"')
+        .from('wine_package', 'wine_package')
+        .where('"modelId" IS NOT NULL')
+        .getQuery()
+      )
+      .andWhere('id NOT IN ' + qb.subQuery()
+        .select('"jsonId"')
+        .from('wine_package', 'wine_package')
+        .where('"jsonId" IS NOT NULL')
+        .getQuery()
+      )
       .andWhere(`"createdAt" < (current_timestamp - interval '1 day')`)
       .getMany();
   }

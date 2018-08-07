@@ -22,7 +22,7 @@ export class WinePackage {
   @Column({ default: false })
   active: boolean;
 
-  @ManyToOne(() => File, file => file.winePackageModel) @JoinColumn() @Index()
+  @ManyToOne(() => File, file => file.winePackageModels) @JoinColumn() @Index()
   model: File;
 
   @OneToOne(() => File, file => file.winePackageJson) @JoinColumn()

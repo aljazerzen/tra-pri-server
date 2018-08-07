@@ -40,8 +40,8 @@ export class File {
   @OneToOne(() => WinePackage, pack => pack.file)
   winePackage: WinePackage;
 
-  @OneToOne(() => WinePackage, pack => pack.model)
-  winePackageModel: WinePackage;
+  @OneToMany(() => WinePackage, pack => pack.model)
+  winePackageModels: WinePackage[];
 
   @OneToOne(() => WinePackage, pack => pack.json)
   winePackageJson: WinePackage;
