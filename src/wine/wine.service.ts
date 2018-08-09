@@ -87,7 +87,7 @@ export class WineService {
 
   listNotHidden(relations: string[] = []) {
     return this.repo.find({
-      where: { hidden: false }, order: { winemakerId: 'ASC', name: 'ASC' }, relations
+      where: { hidden: false }, order: { id: 'ASC' }, relations
     });
   }
 
