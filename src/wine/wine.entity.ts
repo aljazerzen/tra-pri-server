@@ -65,6 +65,8 @@ export class Wine {
   @OneToMany(() => Label, label => label.wine)
   labels: Label[];
 
+  labelCount: number;
+
   @Column({ default: false })
   hidden: boolean;
 

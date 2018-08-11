@@ -81,8 +81,10 @@ export class WineService {
     await this.repo.delete({ id: wineId });
   }
 
-  async list(relations: string[] = []) {
-    return this.repo.find({ order: { winemakerId: 'ASC', name: 'ASC' }, relations });
+  async list(relations: string[] = [], omitHidden = false) {
+    const where = omitHidden ? { hidden: false } : {};
+
+    return this.repo.find({ where, order: { winemakerId: 'ASC', name: 'ASC' }, relations });
   }
 
   listNotHidden(relations: string[] = []) {
@@ -108,5 +110,19 @@ export class WineService {
   async toggleHidden(wine: Wine) {
     wine.hidden = !wine.hidden;
     await this.repo.save(wine);
+  }
+
+  async loadLabelCount(wines: Wine[]) {
+    const rows = await this.labelRepo.createQueryBuilder()
+      .select('"wineId"')
+      .addSelect('COUNT(*)', 'count')
+      .groupBy('"wineId"')
+      .execute() as { wineId: number, count: number }[];
+
+    for (let row of rows) {
+      wines
+        .filter(w => w.id === row.wineId)
+        .forEach(w => w.labelCount = row.count);
+    }
   }
 }

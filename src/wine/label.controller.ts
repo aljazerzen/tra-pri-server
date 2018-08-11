@@ -15,7 +15,9 @@ export class LabelController {
 
   @Get()
   async list() {
-    const wines = await this.service.list(['winemaker', 'labels']);
+    const wines = await this.service.list(['winemaker'], true);
+    await this.service.loadLabelCount(wines);
+    
     return DWineLabelSummary.createList(wines);
   }
 

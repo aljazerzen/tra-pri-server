@@ -129,7 +129,6 @@ export class DWineLabelSummary {
   name: string;
   year: number;
   labelImageCount: number;
-  hasLabelImageCoordinates: boolean;
 
   winemaker: DWinemaker;
 
@@ -138,10 +137,7 @@ export class DWineLabelSummary {
     r.id = entity.id;
     r.name = entity.name;
     r.year = entity.year;
-    r.labelImageCount = entity.labels.length;
-
-    const firstLabel = entity.labels.find(l => l.index == 0);
-    r.hasLabelImageCoordinates = firstLabel && firstLabel.coordinates !== null;
+    r.labelImageCount = entity.labelCount;
 
     if (entity.winemaker)
       r.winemaker = DWinemaker.create(entity.winemaker);

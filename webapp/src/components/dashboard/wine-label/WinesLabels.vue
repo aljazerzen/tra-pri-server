@@ -19,7 +19,6 @@
                 <span v-if="wine.year" class="tag is-light" style="margin-left: 1em">{{ wine.year}}</span>
               </div>
               <div class="level-right">
-                <span v-if="!wine.hasLabelImageCoordinates" class="tag is-danger">Ni označeno</span>
                 <span class="tag" v-bind:class="wine.labelImageCount >= 10 ? 'is-light' : 'is-danger'">{{ wine.labelImageCount }}/10</span>
               </div>
             </div>
