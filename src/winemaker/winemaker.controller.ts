@@ -15,7 +15,7 @@ export class WinemakerController {
 
   @Get()
   async list() {
-    const winemakers = await this.service.list();
+    const winemakers = await this.service.list(['place']);
     return DWinemaker.createList(winemakers);
   }
 

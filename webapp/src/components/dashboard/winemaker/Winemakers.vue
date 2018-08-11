@@ -55,7 +55,7 @@
                 , {{ winemaker.place.name }} </p>
             </div>
             <div class="level-right">
-              <span v-if=winemaker.code>- {{ winemaker.code }}</span>
+              <span v-if=winemaker.code>{{ winemaker.code }}</span>
             </div>
           </div>
         </div>
