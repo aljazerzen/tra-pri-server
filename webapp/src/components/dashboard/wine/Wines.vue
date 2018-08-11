@@ -45,6 +45,20 @@
       </div>
     </div>
 
+    <nav class="pagination is-rounded is-centered" role="navigation" aria-label="pagination" style="margin-bottom: 1em">
+      <!-- <div style="order: 1"></div>
+      <div style="order: 3"></div> -->
+      <a @click="page = Math.max(0, page-1); updateQuery()" class="pagination-previous"><span class="icon"><i class="fas fa-arrow-left"></i></span></a>
+      <a @click="page = Math.min(pages - 1, page+1); updateQuery()" class="pagination-next"><span class="icon"><i class="fas fa-arrow-right"></i></span></a>
+      <ul class="pagination-list" style="flex-grow: 0">
+        <li v-for="(item, index) in new Array(pages || 0)" :key="index" @click="page = index; updateQuery()">
+          <a class="pagination-link" aria-label="Goto page 1" :class="{ 'is-current': page == index }">
+            {{ index + 1 }}
+          </a>
+        </li>
+      </ul>
+    </nav>
+
     <div class="card" v-for="wine in displayed" v-bind:key="wine.id" :ref="'card' + wine.id" tabindex="0" :class="{ 'hidden': wine.hidden }">
       <a class="card-header" @click="navigateToWine(wine)">
         <div class="card-header-title level">
@@ -82,7 +96,10 @@ export default {
       sort: "name",
       selected: null,
       wines: [],
-      displayed: []
+      displayed: [],
+      page: 0,
+      pageSize: 15,
+      pages: 0
     };
   },
   mounted() {
@@ -90,6 +107,7 @@ export default {
     this.search = this.$route.query.search || null;
     this.sort = this.$route.query.sort || "name";
     this.selected = +this.$route.query.selected;
+    this.page = +this.$route.query.page || 0;
   },
   watch: {
     $route() {
@@ -110,7 +128,8 @@ export default {
         query: {
           search: this.search,
           sort: this.sort,
-          selected: this.selected || undefined
+          selected: this.selected || undefined,
+          page: this.page || undefined
         }
       });
     },
@@ -147,11 +166,15 @@ export default {
         orders[this.$route.query ? this.$route.query.sort || "name" : "name"]
       );
 
-      this.displayed = sorted;
+      this.displayed = sorted.slice(
+        this.page * this.pageSize,
+        (this.page + 1) * this.pageSize
+      );
+      this.pages = Math.ceil(sorted.length / this.pageSize);
 
       if (this.selected) {
         this.$nextTick(() => {
-          if(this.$refs["card" + this.selected])
+          if (this.$refs["card" + this.selected])
             this.$refs["card" + this.selected][0].focus();
         });
       }
