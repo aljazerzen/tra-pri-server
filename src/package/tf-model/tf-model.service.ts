@@ -64,10 +64,9 @@ export class TFModelService {
           fs.mkdir(process.env.ML_DATA_PATH + '/' + wine.id, resolve)
         );
 
-        let labelNumber = 1;
         for (let label of wine.labels) {
           if (label) {
-            let labelFilename = process.env.ML_DATA_PATH + '/' + wine.id + '/' + this.labelName(labelNumber++, label);
+            let labelFilename = process.env.ML_DATA_PATH + '/' + wine.id + '/' + this.labelName(label.index, label);
 
             await this.fileService.createLink(label.image, labelFilename);
 
