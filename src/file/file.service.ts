@@ -80,7 +80,7 @@ export class FileService implements OnModuleInit {
   }
 
   resize(buffer: Buffer, size: { width: number, height: number }) {
-    return sharp(buffer).resize(size.width, size.height).max().rotate();
+    return sharp(buffer).resize(size.width, size.height).max().rotate().jpeg();
   }
 
   async save(stream: Readable, type: FILE_TYPE, extension?: string, path?: string) {
