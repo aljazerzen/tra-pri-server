@@ -104,14 +104,17 @@ export class PackageService {
         video: (wine.winemaker.video || { url: null }).url,
         background: wine.winemaker.background,
         code: wine.winemaker.code,
-        place: wine.winemaker.place,
-        wines: wine.winemaker.wines,
+        place: {
+          id: wine.winemaker.place.id,
+          name: wine.winemaker.place.name,
+          image: useImage(wine.winemaker.place.image),
+        }
       },
       year: wine.year || null,
       classNumber: wine.classNumber,
     }));
 
-    return { data: { wines: mappedWines, model: model.url }, images };
+    return { data: { wines: mappedWines, model: model ? model.url : null }, images };
   }
 
   async compress(jsonFile: Buffer, images: { name: string, file: File }[], name: string) {

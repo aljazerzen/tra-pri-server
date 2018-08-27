@@ -1,22 +1,24 @@
-import { IsDefined, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { DCoordinates } from '../coordinates/coordinates.dto';
+import { IsDefined, IsString, ValidateNested } from 'class-validator';
+
+import { DFile } from '../file/file.dto';
 import { Place } from './place.entity';
 
 export class DPlace {
   id: number;
 
-  @IsString()
+  @IsDefined() @IsString()
   name: string;
 
-  @ValidateNested() @Type(() => DCoordinates) @IsDefined()
-  coordinates: DCoordinates;
+  @IsDefined() @ValidateNested() @Type(() => DFile)
+  image: DFile;
 
   static create(entity: Place) {
     const r = new DPlace();
     r.id = entity.id;
     r.name = entity.name;
-    r.coordinates = DCoordinates.create(entity.coordinates);
+    if (entity.image)
+      r.image = DFile.create(entity.image);
     return r;
   }
 

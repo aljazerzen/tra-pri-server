@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { WinePackage } from '../package/wine-package.entity';
+import { Place } from '../place/place.entity';
 import { Variety } from '../variety/variety.entity';
 import { Label } from '../wine/label.entity';
 import { Winemaker } from '../winemaker/winemaker.entity';
@@ -45,6 +46,9 @@ export class File {
 
   @OneToOne(() => WinePackage, pack => pack.json)
   winePackageJson: WinePackage;
+
+  @OneToOne(() => Place, place => place.image)
+  place: Place;
 
   @CreateDateColumn()
   createdAt: Date

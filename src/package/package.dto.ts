@@ -50,6 +50,6 @@ export class DReadyResources {
     public fileCount: number,
     model: File,
   ) {
-    this.model = DFile.create(model);
+    this.model = model ? DFile.create(model) : null;
   }
 }

@@ -11,7 +11,12 @@
       </div>
     </div>
 
-    <div ref="map" id="map"></div>
+    <div class="field">
+      <figure v-if="place && place.image">
+        <img :src=place.image.url />
+      </figure>
+      <FileUploadButton route='image' caption='Naloži sliko' @file-uploaded='place.image = $event; $forceUpdate()'/>
+    </div>
 
     <div class="columns">
       <div class="column field">
@@ -28,10 +33,11 @@
 </template>
 
 <script>
-const vipava = { lat: 45.8395977, lng: 13.9481168 };
+import FileUploadButton from '../../common/FileUploadButton.vue';
 
 export default {
   name: "Place",
+  components: { FileUploadButton },
   data() {
     return {
       place: {},
@@ -41,9 +47,6 @@ export default {
   },
   created() {
     this.load();
-  },
-  mounted() {
-    this.initMaps();
   },
   watch: {
     $route: "load"
@@ -56,21 +59,11 @@ export default {
     async load() {
       this.place.id = this.$route.params.id;
 
-      if (this.isNew()) this.place = { name: "", coordinates: vipava };
+      if (this.isNew()) this.place = { name: "" };
       else {
         this.place = await this.$http
           .get("places/" + this.place.id)
           .then(data => data.json());
-
-        const mapCenter =
-          this.place.coordinates &&
-          this.place.coordinates.lat &&
-          this.place.coordinates.lng
-            ? this.place.coordinates
-            : vipava;
-
-        this.marker.setPosition(mapCenter);
-        this.map.setCenter(mapCenter);
       }
     },
 
@@ -96,24 +89,6 @@ export default {
       } catch (e) {
         this.$root.$emit('error', e);
       }
-    },
-
-    initMaps() {
-      // eslint-disable-next-line
-      this.map = new google.maps.Map(this.$refs.map, {
-        center: vipava,
-        zoom: 13
-      });
-      // eslint-disable-next-line
-      this.marker = new google.maps.Marker({ position: vipava, map: this.map });
-
-      this.map.addListener("click", event => {
-        this.marker.setPosition(event.latLng);
-        this.place.coordinates = {
-          lat: event.latLng.lat(),
-          lng: event.latLng.lng()
-        };
-      });
     },
 
     back() {

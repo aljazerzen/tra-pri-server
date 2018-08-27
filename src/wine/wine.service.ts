@@ -95,7 +95,7 @@ export class WineService {
 
   listFullNotHidden() {
     return this.listNotHidden([
-      'winemaker', 'winemaker.video', 'winemaker.place', 'winemaker.images', 'varieties', 'varieties.images', 'sugar', 'type', 'images'
+      'winemaker', 'winemaker.video', 'winemaker.place', 'winemaker.place.image', 'winemaker.images', 'varieties', 'varieties.images', 'sugar', 'type', 'images'
     ]);
   }
 

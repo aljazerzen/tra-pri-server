@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { FileService } from '../file/file.service';
 import { DPlace } from './place.dto';
 import { Place } from './place.entity';
 
@@ -9,7 +10,8 @@ import { Place } from './place.entity';
 export class PlaceService {
 
   constructor(
-    @InjectRepository(Place) private repo: Repository<Place>
+    @InjectRepository(Place) private repo: Repository<Place>,
+    private file: FileService,
   ) {
   }
 
@@ -20,12 +22,12 @@ export class PlaceService {
 
   async update(place: Place, data: DPlace) {
     place.name = data.name;
-    place.coordinates = data.coordinates;
+    place.image = await this.file.get(data.image.id);
     return this.repo.save(place);
   }
 
   async get(id: number) {
-    const place = await this.repo.findOne(id);
+    const place = await this.repo.findOne(id, { relations: ['image'] });
     if (!place) throw new NotFoundException('place');
     return place;
   }

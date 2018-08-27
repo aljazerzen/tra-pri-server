@@ -1,5 +1,6 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Coordinates } from '../coordinates/coordinates.entity';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+
+import { File } from '../file/file.entity';
 import { Winemaker } from '../winemaker/winemaker.entity';
 
 @Entity()
@@ -11,8 +12,8 @@ export class Place {
   @Column()
   name : string;
 
-  @Column(() => Coordinates)
-  coordinates: Coordinates;
+  @OneToOne(() => File, file => file.place) @JoinColumn()
+  image: File;
 
   @OneToMany(() => Winemaker, winemaker => winemaker.place)
   winemakers: Winemaker[];
