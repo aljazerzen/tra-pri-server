@@ -6,6 +6,7 @@
         <h1 class="title">Sladkor <span class="button is-loading is-white" v-if="isLoading"></span></h1>
       </div>
       <div class="level-right">
+        <div class="button" v-on:click="save()" v-bind:class="isSaving ? 'is-loading' : ''" style="margin-right: 1em">Shrani</div>
         <LocalePicker v-bind:locale="locale"/>
       </div>
     </nav>
@@ -28,10 +29,6 @@
         <a class="button" v-on:click="add()">Dodaj</a>
       </p>
     </div>
-
-    <div class="control field has-addons">
-      <div class="button is-primary" v-on:click="save()" v-bind:class="isSaving ? 'is-loading' : ''">Shrani</div>
-    </div>
   </div>
 </template>
 
@@ -51,6 +48,9 @@ export default {
   }),
   created() {
     this.load();
+  },
+  beforeRouteLeave(to, from, next) {
+    this.save().then(next);
   },
   methods: {
     async load() {

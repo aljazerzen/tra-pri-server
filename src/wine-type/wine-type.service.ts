@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { FileService } from '../file/file.service';
 import { DWineType } from './wine-type.dto';
 import { WineType } from './wine-type.entity';
 
@@ -9,7 +10,8 @@ import { WineType } from './wine-type.entity';
 export class WineTypeService {
 
   constructor(
-    @InjectRepository(WineType) private repo: Repository<WineType>
+    @InjectRepository(WineType) private repo: Repository<WineType>,
+    private file: FileService,
   ) {
   }
 
@@ -20,12 +22,13 @@ export class WineTypeService {
 
   async update(wineType: WineType, data: DWineType) {
     wineType.name = data.name;
+    wineType.image = data.image ? await this.file.get(data.image.id) : null;
     return this.repo.save(wineType);
   }
 
   async get(id: number) {
-    const wineType = await this.repo.findOne(id);
-    if(!wineType) throw new NotFoundException('wineType');
+    const wineType = await this.repo.findOne(id, { relations: ['image'] });
+    if (!wineType) throw new NotFoundException('wineType');
     return wineType;
   }
 
@@ -34,6 +37,6 @@ export class WineTypeService {
   }
 
   async list() {
-    return this.repo.find({});
+    return this.repo.find({ order: { id: 'ASC' }, relations: ['image'] });
   }
 }

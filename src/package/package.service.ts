@@ -89,7 +89,10 @@ export class PackageService {
       price: +wine.price,
       sugar: wine.sugar ? wine.sugar.name : '',
       temperature: wine.temperature,
-      type: wine.type ? wine.type.name : '',
+      type: wine.type ? {
+        name: wine.type.name,
+        image: useImage(wine.type.image),
+      } : null,
       varieties: (wine.varieties || []).map(variety => ({
         name: defaultToSl(variety.name),
         description: variety.description,

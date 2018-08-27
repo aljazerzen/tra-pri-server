@@ -3,6 +3,7 @@ import { Column, CreateDateColumn, Entity, ManyToMany, OneToMany, OneToOne, Prim
 import { WinePackage } from '../package/wine-package.entity';
 import { Place } from '../place/place.entity';
 import { Variety } from '../variety/variety.entity';
+import { WineType } from '../wine-type/wine-type.entity';
 import { Label } from '../wine/label.entity';
 import { Winemaker } from '../winemaker/winemaker.entity';
 import { Wine } from './../wine/wine.entity';
@@ -49,6 +50,9 @@ export class File {
 
   @OneToOne(() => Place, place => place.image)
   place: Place;
+
+  @OneToOne(() => WineType, t => t.image)
+  wineType: WineType;
 
   @CreateDateColumn()
   createdAt: Date

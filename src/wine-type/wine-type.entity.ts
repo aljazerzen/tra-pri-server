@@ -1,6 +1,8 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Wine } from '../wine/wine.entity';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+
+import { File } from '../file/file.entity';
 import { LocaleString } from '../locale/locale.entity';
+import { Wine } from '../wine/wine.entity';
 
 @Entity()
 export class WineType {
@@ -9,6 +11,9 @@ export class WineType {
 
   @Column(() => LocaleString)
   name: LocaleString;
+
+  @OneToOne(() => File, file => file.wineType) @JoinColumn()
+  image: File;
 
   @OneToMany(() => Wine, wine => wine.winemaker)
   wines: Wine[];
