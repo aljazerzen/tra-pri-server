@@ -26,11 +26,14 @@
       </div>
       <div class="column field is-grouped is-grouped-right">
         <div class="control">
-          <div class="button" @click.stop="toggleHidden(wine)">
-            <span class="icon is-small">
-              <i class="fas" :class="{ 'fa-eye-slash': !wine.hidden, 'fa-eye': wine.hidden }"></i>
-            </span>
-            <span>{{ wine.hidden ? 'Pokaži' : 'Skrij' }}</span>
+          <div class="button" @click.stop="toggleHidden(wine)" v-if=wine.hidden>
+            <span class="icon is-small"><i class="fas fa-eye-slash"></i></span>
+            <span>Pokaži</span>
+          </div>
+
+          <div class="button" @click.stop="toggleHidden(wine)" v-else>
+            <span class="icon is-small"><i class="fas fa-eye"></i></span>
+            <span>Skrij</span>
           </div>
         </div>
         <p class="control">
@@ -366,9 +369,13 @@ export default {
       this.wine.price = +this.wine.price || null;
       this.wine.abv = +this.wine.abv || null;
       this.wine.volume = +this.wine.volume || null;
-      if(this.wine.temperature) {
-        this.wine.temperature.from = this.wine.temperature.from == null ? null : +this.wine.temperature.from;
-        this.wine.temperature.to = this.wine.temperature.to == null ? null : +this.wine.temperature.to;
+      if (this.wine.temperature) {
+        this.wine.temperature.from =
+          this.wine.temperature.from == null
+            ? null
+            : +this.wine.temperature.from;
+        this.wine.temperature.to =
+          this.wine.temperature.to == null ? null : +this.wine.temperature.to;
       }
       if (this.wine.varieties) {
         this.wine.varietyIds = this.wine.varieties.map(v => v.id);

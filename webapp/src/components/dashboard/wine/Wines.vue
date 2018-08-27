@@ -71,9 +71,10 @@
             <span v-if="wine.year" class="tag is-light">{{ wine.year }}</span>
             <span class="wine-code"> {{ wine.code }}</span>
             
-            <div class="button" @click.stop="toggleHidden(wine)"><span class="icon is-small">
-              <i class="fas" :class="{ 'fa-eye-slash': !wine.hidden, 'fa-eye': wine.hidden }"></i>
-            </span></div>
+            <div class="button" @click.stop="toggleHidden(wine)">
+              <span v-if=wine.hidden><span class="icon is-small"><i class="fas fa-eye-slash"></i></span></span>
+              <span v-else><span class="icon is-small"><i class="fas fa-eye"></i></span></span>
+            </div>
           </div>
         </div>
       </a>
