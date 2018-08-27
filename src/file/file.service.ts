@@ -62,14 +62,14 @@ export class FileService implements OnModuleInit {
     return file;
   }
 
-  async saveUpload(upload, type: FILE_TYPE, resize?: { width: number, height: number }, filename?: string) {
+  async saveUpload(upload, type: FILE_TYPE, resize?: { width: number, height: number }, filename?: string, format?: 'jpeg' | 'png' | null) {
     if (!upload)
       throw new BadRequestException('file missing', 'FILE_MISSING');
 
     const extension = this.isAllowedExtension(upload.originalname, type);
 
     const stream = resize
-      ? this.resize(upload.buffer, resize)
+      ? this.resize(upload.buffer, resize, format)
       : (type === FILE_TYPE.IMAGE ? this.removeEXIF(upload.buffer) : this.toStream(upload.buffer));
 
     return this.save(stream, type, extension, filename);
@@ -79,8 +79,13 @@ export class FileService implements OnModuleInit {
     return sharp(buffer).rotate();
   }
 
-  resize(buffer: Buffer, size: { width: number, height: number }) {
-    return sharp(buffer).resize(size.width, size.height).max().rotate().jpeg();
+  resize(buffer: Buffer, size: { width: number, height: number }, format?: 'jpeg' | 'png' | null) {
+    let stream = sharp(buffer).resize(size.width, size.height).max().rotate();
+
+    if (format === 'jpeg') stream = stream.jpeg();
+    if (format === 'png') stream = stream.png();
+
+    return stream;
   }
 
   async save(stream: Readable, type: FILE_TYPE, extension?: string, path?: string) {
