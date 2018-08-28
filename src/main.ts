@@ -1,12 +1,17 @@
-import "reflect-metadata";
+import 'reflect-metadata';
+
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { config } from 'dotenv';
-import { ValidatorPipe } from './validator.pipe';
 import * as express from 'express';
+
+import { AppModule } from './app.module';
+import updateEnv from './update-env';
+import { ValidatorPipe } from './validator.pipe';
 
 async function bootstrap() {
   config();
+
+  await updateEnv();
 
   const expressInstance = express();
   expressInstance.use(express.static('public'));
