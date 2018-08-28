@@ -72,7 +72,7 @@ export class FileService implements OnModuleInit {
       ? this.resize(upload.buffer, resize, format)
       : (type === FILE_TYPE.IMAGE ? this.removeEXIF(upload.buffer) : this.toStream(upload.buffer));
 
-    return this.save(stream, type, extension, filename);
+    return this.save(stream, type, format ? '.' + format : extension, filename);
   }
 
   removeEXIF(buffer: Buffer) {
