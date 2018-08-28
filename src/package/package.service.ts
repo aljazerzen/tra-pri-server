@@ -91,7 +91,7 @@ export class PackageService {
       temperature: wine.temperature,
       type: wine.type ? {
         name: wine.type.name,
-        image: useImage(wine.type.image),
+        image: wine.type.image ? useImage(wine.type.image) : null,
       } : null,
       varieties: (wine.varieties || []).map(variety => ({
         name: defaultToSl(variety.name),
@@ -110,7 +110,7 @@ export class PackageService {
         place: {
           id: wine.winemaker.place.id,
           name: wine.winemaker.place.name,
-          image: useImage(wine.winemaker.place.image),
+          image: wine.winemaker.place.image ? useImage(wine.winemaker.place.image) : null,
         }
       },
       year: wine.year || null,
