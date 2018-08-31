@@ -221,6 +221,18 @@ export class FileService implements OnModuleInit {
         .where('"jsonId" IS NOT NULL')
         .getQuery()
       )
+      .andWhere('id NOT IN ' + qb.subQuery()
+        .select('"imageId"')
+        .from('place', 'place')
+        .where('place."imageId" IS NOT NULL')
+        .getQuery()
+      )
+      .andWhere('id NOT IN ' + qb.subQuery()
+        .select('"imageId"')
+        .from('wine_type', 'wine_type')
+        .where('wine_type."imageId" IS NOT NULL')
+        .getQuery()
+      )
       .andWhere(`"createdAt" < (current_timestamp - interval '1 day')`)
       .getMany();
   }
