@@ -11,7 +11,7 @@
     </nav>
 
     <div>
-      <a class="button is-dark is-outlined" :href="$url.options.root + 'tf-models/manual'">Prenos ZIP arhiva s slikami etiket in konfiguracijo za učenje</a>
+      <a class="button is-dark is-outlined" :href="joinUri($url.options.root, 'tf-models/manual')">Prenos ZIP arhiva s slikami etiket in konfiguracijo za učenje</a>
     </div>
     <br/>
   
@@ -54,7 +54,7 @@ export default {
   name: "ManualModel",
   data: () => ({
     isUploading: false,
-    result: null,
+    result: null
   }),
   methods: {
     async upload() {
@@ -79,11 +79,15 @@ export default {
           this.result = await this.$http
             .post("tf-models/manual", formData)
             .then(data => data.json());
-          
         } catch (e) {
           this.$root.$emit("error", e);
         }
         this.isUploading = false;
+      }
+    },
+    joinUri(a, b) {
+      if (!a.endsWith("/") && !b.startsWith("/")) {
+        return a + "/" + b;
       }
     }
   }
