@@ -34,9 +34,8 @@ export class TFModelController {
   }
 
   @Get('manual')
-  @Header('Content-Disposition', 'attachment; filename="model_input.zip"')
+  @Header('Content-Disposition', 'attachment; filename="model_input.tar"')
   async prepareManual(@Res() res: Response) {
-    await this.tfModelService.prepareModelInput();
 
     this.tfModelService.zipModelInput(res);
   }

@@ -38,73 +38,9 @@ export class TFModelService {
     this.generate();
   }
 
-  async refreshDataDir() {
-    await new Promise(resolve =>
-      rimraf(process.env.ML_DATA_PATH, resolve)
-    );
-    await new Promise(resolve =>
-      fs.mkdir(process.env.ML_DATA_PATH, resolve)
-    );
-  }
-
-  async prepareModelInput() {
-
-    // get all wines
-    const wines = await this.wineService.listNotHidden();
-    await this.wineService.loadLabels(wines);
-
-    await this.refreshDataDir();
-
-    // create sym links to image files for each label
-    const classes = [];
-    for (let wine of wines) {
-
-      if (wine.labels.length > 0 && wine.labels.find(l => l.index === 0)) {
-
-        await new Promise(resolve =>
-          fs.mkdir(process.env.ML_DATA_PATH + '/' + wine.id, resolve)
-        );
-
-        for (let label of wine.labels) {
-          if (label) {
-            let labelFilename = process.env.ML_DATA_PATH + '/' + wine.id + '/' + this.labelName(label.index, label);
-
-            await this.fileService.createLink(label.image, labelFilename);
-
-            if (label.index === 0) {
-              classes.push({
-                folder: '' + wine.id,
-                labelFilename,
-                labelCoordinates: label.coordinates
-              });
-            }
-          }
-        }
-      }
-    }
-    
-    // prepare JSON file
-
-    const config = {
-      config: {
-        path: process.env.ML_DATA_PATH,
-        training_batch_size: +process.env.ML_TRAINING_BATCH_SIZE,
-        number_of_epochs: +process.env.ML_NUMBER_OF_EPOCHS,
-        learning_rate: +process.env.ML_LEARNING_RATE,
-      },
-      classes
-    };
-
-    const configJSON = JSON.stringify(config, null, 2);
-    await new Promise((resolve, reject) =>
-      fs.writeFile(process.env.ML_SCRIPT_PATH + '/config.json', configJSON, err => err ? reject(err) : resolve())
-    );
-
-  }
-
   async zipModelInput(stream: Response) {
 
-    const archive = archiver('zip', { zlib: { level: 9 } });
+    const archive = archiver('tar');
 
     // good practice to catch warnings (ie stat failures and other non-blocking errors)
     archive.on('warning', function (err) {
@@ -123,18 +59,56 @@ export class TFModelService {
 
     // pipe archive data to the file
 
-    archive.directory(process.env.ML_DATA_PATH, false);
-    archive.file(process.env.ML_SCRIPT_PATH + '/config.json', { name: 'config.json' });
+    archive.pipe(stream);
+
+    // get all wines
+    const wines = await this.wineService.listNotHidden();
+    await this.wineService.loadLabels(wines);
+
+    // create sym links to image files for each label
+    const classes = [];
+    //Promise.each(wines, function(wine) {
+    for (let wine of wines) {
+
+      if (wine.labels.length > 0 && wine.labels.find(l => l.index === 0)) {
+
+        for (let label of wine.labels) {
+          if (label) {
+
+            archive.append(this.fileService.readStream(label.image), { name: this.labelName(label.index, label), prefix: process.env.ML_DATA_PATH + '/' + wine.id });
+
+            if (label.index === 0) {
+              classes.push({
+                folder: '' + wine.id,
+                labelFilename : process.env.ML_DATA_PATH + '/' + wine.id + '/' + this.labelName(label.index, label),
+                labelCoordinates: label.coordinates
+              });
+            }
+          }
+        }
+      }
+    }
+    // prepare JSON file
+
+    const config = {
+      config: {
+        path: process.env.ML_DATA_PATH,
+        training_batch_size: +process.env.ML_TRAINING_BATCH_SIZE,
+        number_of_epochs: +process.env.ML_NUMBER_OF_EPOCHS,
+        learning_rate: +process.env.ML_LEARNING_RATE,
+      },
+      classes
+    };
+
+    const configJSON = JSON.stringify(config, null, 2);
+
+    archive.append(configJSON, { name: "config.json" });
 
     let promise = new Promise(resolve => archive.on('finish', resolve));
-
-    archive.pipe(stream);
 
     archive.finalize();
 
     await promise;
-    console.timeEnd('zipModelInput');
-    await this.refreshDataDir();
   }
 
   async loadLabelMap(labelMapFile: Buffer) {
