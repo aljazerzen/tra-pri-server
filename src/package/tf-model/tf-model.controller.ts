@@ -17,18 +17,18 @@ export class TFModelController {
 
   @Get('stream')
   async attachToCurrentProcess(@Res() res: Response) {
-    this.tfModelService.attach(res);  
+    this.tfModelService.attach(res);
   }
-  
+
   @Post()
   generateNew() {
     return this.tfModelService.start();
   }
 
   @Post('manual')
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'model', maxCount: 1 } , { name: 'label_map', maxCount: 1 }]))
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'model', maxCount: 1 }, { name: 'label_map', maxCount: 1 }]))
   async uploadManual(@UploadedFiles() files) {
-    await this.fileService.saveUpload(files.model[0], FILE_TYPE.MODEL, null, this.tfModelService.createModelFilename());    
+    await this.fileService.saveUpload(files.model[0], FILE_TYPE.MODEL, null, this.tfModelService.createModelFilename());
 
     return this.tfModelService.loadLabelMap(files.label_map[0].buffer);
   }

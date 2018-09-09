@@ -50,7 +50,8 @@ export class TFModelService {
   async prepareModelInput() {
 
     // get all wines
-    const wines = await this.wineService.listNotHidden(['labels', 'labels.image']);;
+    const wines = await this.wineService.listNotHidden();
+    await this.wineService.loadLabels(wines);
 
     await this.refreshDataDir();
 
@@ -81,7 +82,7 @@ export class TFModelService {
         }
       }
     }
-
+    
     // prepare JSON file
 
     const config = {
@@ -132,6 +133,7 @@ export class TFModelService {
     archive.finalize();
 
     await promise;
+    console.timeEnd('zipModelInput');
     await this.refreshDataDir();
   }
 

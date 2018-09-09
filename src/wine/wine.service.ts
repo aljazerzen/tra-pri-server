@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { File } from '../file/file.entity';
 import { VarietyService } from '../variety/variety.service';
 import { Label } from '../wine/label.entity';
 import { FileService } from './../file/file.service';
@@ -97,6 +98,31 @@ export class WineService {
     return this.listNotHidden([
       'winemaker', 'winemaker.video', 'winemaker.place', 'winemaker.place.image', 'winemaker.images', 'varieties', 'varieties.images', 'sugar', 'type', 'images'
     ]);
+  }
+
+  async loadLabels(wines: Wine[]) {
+    wines.forEach(w => w.labels = []);
+
+    const results = await this.labelRepo.createQueryBuilder('l')
+      .where('"wineId" IN (:...wineIds)', { wineIds: wines.map(w => w.id) })
+      .leftJoinAndSelect(File, "f", "f.id = l.imageId")
+      .execute() as any[];
+
+    for (const result of results) {
+      const label = new Label();
+      label.index = result.l_index;
+      label.wineId = +result.l_wineId;
+      label.imageId = +result.l_imageId;
+      label.coordinates = result.l_coordinates;
+      label.image = new File();
+      label.image.id = +result.f_id;
+      label.image.type = result.f_type;
+      label.image.path = result.f_path;
+      label.image.url = result.f_url;
+      label.image.createdAt = new Date(result.f_createdAt);
+
+      wines.find(w => w.id == label.wineId).labels.push(label);
+    }
   }
 
   async saveAll(wines: Wine[]) {
