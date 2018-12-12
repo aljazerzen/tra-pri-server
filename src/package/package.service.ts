@@ -11,6 +11,8 @@ import { Wine } from '../wine/wine.entity';
 import { WineService } from '../wine/wine.service';
 import { WinePackage } from './wine-package.entity';
 
+const nullLocale = { sl: '', en: '' };
+
 // noinspection ES6UnusedImports
 const defaultToSl = (locale: { sl: string, en: string }) => ({ sl: locale.sl, en: locale.en || locale.sl });
 
@@ -87,12 +89,12 @@ export class PackageService {
       name: wine.name,
       images: (wine.images || []).map(useImage),
       price: +wine.price,
-      sugar: wine.sugar ? wine.sugar.name : '',
+      sugar: wine.sugar ? wine.sugar.name : nullLocale,
       temperature: wine.temperature,
       type: wine.type ? {
         name: wine.type.name,
         image: wine.type.image ? useImage(wine.type.image) : null,
-      } : null,
+      } : { name: nullLocale, image: null },
       varieties: (wine.varieties || []).map(variety => ({
         name: defaultToSl(variety.name),
         description: variety.description,
